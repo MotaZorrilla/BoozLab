@@ -197,7 +197,6 @@
 - [x] **OpenSpec y QA/TDD:**
   - Incorporadas 3 nuevas especificaciones OpenSpec en Gherkin canónico (`system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`).
   - **10/10 especificaciones OpenSpec validadas al 100%** (`npm run opsx -- validate --specs`).
-  - Nuevas pruebas Feature implementadas: `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`.
-  - Suite de pruebas de regresión: **113 tests pasados en verde (415 assertions)** en PHPUnit.
+  - Nuevas pruebas Feature implementadas: `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`.
+  - Suite de pruebas de regresión: **116 tests pasados en verde (442 assertions)** en PHPUnit.
   - Compilación Vite de producción verificada: **2.761 módulos transformados sin errores**.
-

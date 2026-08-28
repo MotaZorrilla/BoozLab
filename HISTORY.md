@@ -171,8 +171,8 @@ graph TD
 - **Validación OpenSpec y Cobertura QA:**
   - 3 nuevas especificaciones creadas: `system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`.
   - **10/10 especificaciones OpenSpec validadas al 100%** en verde.
-  - 4 nuevas suites de pruebas Feature (`AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`).
-  - Hito histórico alcanzado: **113 tests pasados en verde (415 assertions)** con PHPUnit 11.
+  - 5 nuevas suites de pruebas Feature (`AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`).
+  - Hito histórico alcanzado: **116 tests pasados en verde (442 assertions)** con PHPUnit 11.
   - Compilación Vite de producción verificada: **2.761 módulos transformados sin errores**.
 
 ---
@@ -184,6 +184,6 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 113 tests pasados (415 assertions) 100% en verde con PHPUnit 11.
+- **Suite de Pruebas Automatizadas:** 116 tests pasados (442 assertions) 100% en verde con PHPUnit 11.
 - **Especificaciones OpenSpec:** 10 especificaciones BDD 100% validadas.
 
