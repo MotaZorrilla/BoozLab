@@ -26,7 +26,7 @@ class QuoteController extends Controller
             $nextSeq = $lastQuote ? ((int) substr($lastQuote->quote_number, strrpos($lastQuote->quote_number, '-') + 1)) + 1 : 1;
             $quoteNumber = sprintf('BOOZ-COT-%s-%04d', $year, $nextSeq);
 
-            return Quote::create([
+            $createdQuote = Quote::create([
                 'quote_number' => $quoteNumber,
                 'customer_name' => $validated['customer_name'] ?? 'Cliente Web',
                 'customer_contact' => $validated['customer_contact'] ?? null,
@@ -35,6 +35,13 @@ class QuoteController extends Controller
                 'total_items' => array_sum(array_column($validated['items'], 'quantity')),
                 'status' => 'Pendiente',
             ]);
+
+            // Incrementar métricas de demanda por producto
+            foreach ($validated['items'] as $item) {
+                \App\Models\Product::where('id', $item['product_id'])->increment('quote_inquiries_count', $item['quantity']);
+            }
+
+            return $createdQuote;
         });
 
         return response()->json([

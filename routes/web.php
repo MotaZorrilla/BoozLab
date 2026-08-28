@@ -54,9 +54,12 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::delete('/admin/products/{product}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
 
     // Pharmacovigilance & Quality Reports Management
+    Route::get('/admin/reports/export-csv', [AdminReportController::class, 'exportCsv'])->name('admin.reports.exportCsv');
+    Route::get('/admin/reports/{report}/print', [AdminReportController::class, 'print'])->name('admin.reports.print');
     Route::put('/admin/reports/{report}/status', [AdminReportController::class, 'updateStatus'])->name('admin.reports.updateStatus');
 
     // Contact & Lira AI Leads Management
+    Route::get('/admin/messages/export-csv', [\App\Http\Controllers\Admin\AdminMessageController::class, 'exportCsv'])->name('admin.messages.exportCsv');
     Route::put('/admin/messages/{message}/status', [\App\Http\Controllers\Admin\AdminMessageController::class, 'updateStatus'])->name('admin.messages.updateStatus');
 });
 

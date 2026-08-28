@@ -120,6 +120,23 @@ graph TD
   - **94 tests pasados en verde (342 assertions)**.
   - 6 especificaciones OpenSpec validadas al 100%.
 
+### Fase 17: Exportación de Datos, Alertas Regulatorias & Analítica de Catálogo (28 de Agosto de 2026)
+- **Exportaciones Masivas en CSV y Acta Oficial INH:**
+  - Creados endpoints `GET /admin/reports/export-csv` y `GET /admin/messages/export-csv` con codificación UTF-8 BOM para apertura nativa y sin errores de caracteres en Microsoft Excel.
+  - Diseñada plantilla clínica `acta-sanitaria.blade.php` para la impresión oficial o guardado en PDF de reportes sanitarios con membrete legal de Booz Laboratorio, RIF J-40906185-0, ticket correlativo y espacio de firmas y sellos bajo norma INH.
+  - Integrado botón "🖨️ Imprimir / PDF Acta INH" en el modal de farmacovigilancia y botones de descarga CSV en las bandejas correspondientes.
+- **Sistema de Alertas Administrativas:**
+  - Creados Mailables `NewPharmacovigilanceAlert` (con asunto destacado `🚨 [URGENTE INH]` para casos Graves/Moderados) y `NewMessageLeadAlert`.
+  - Integrado despacho automático seguro en `PharmacovigilanceController` y `MessageController` con webhook opcional configurable.
+- **Métricas de Demanda y Conversión de Catálogo:**
+  - Migración para incorporar `views_count`, `chatbot_inquiries_count` y `quote_inquiries_count` en la tabla `products`.
+  - Incremento atómico en tiempo real ante visitas de producto, consultas en Lira AI y pedidos en bolsa de cotizaciones.
+  - Nueva pestaña en Dashboard: **Analítica & Demanda** con ranking de medicamentos más solicitados y desglose de interés por línea terapéutica.
+- **Validación y Pruebas:**
+  - Creada especificación OpenSpec `admin-analytics-and-exports` (**7/7 especificaciones 100% validadas**).
+  - Creada suite de pruebas Feature `AdminExportAndAlertsTest`.
+  - Hito histórico alcanzado: **100 tests pasados en verde (363 assertions)** con PHPUnit 11.
+
 ---
 
 ## 📊 4. Métricas de Datos Clínicos y Portafolio Oficial
@@ -129,5 +146,5 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 94 tests pasados (342 assertions) 100% en verde con PHPUnit 11.
-- **Especificaciones OpenSpec:** 6 especificaciones BDD 100% validadas.
+- **Suite de Pruebas Automatizadas:** 100 tests pasados (363 assertions) 100% en verde con PHPUnit 11.
+- **Especificaciones OpenSpec:** 7 especificaciones BDD 100% validadas.

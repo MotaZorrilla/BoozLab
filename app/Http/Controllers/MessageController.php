@@ -36,6 +36,30 @@ class MessageController extends Controller
             'status' => 'Pendiente',
         ]);
 
+        // Despacho seguro de alertas administrativas
+        try {
+            $adminEmail = config('mail.from.address', 'admin@boozlaboratorio.com');
+            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\NewMessageLeadAlert($message));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('No se pudo enviar correo de alerta de mensaje: '.$e->getMessage());
+        }
+
+        if ($webhookUrl = env('ADMIN_ALERT_WEBHOOK_URL')) {
+            try {
+                \Illuminate\Support\Facades\Http::timeout(3)->post($webhookUrl, [
+                    'event' => 'new_message_lead',
+                    'id' => $message->id,
+                    'source' => $message->source,
+                    'name' => $message->name,
+                    'phone' => $message->phone,
+                    'email' => $message->email,
+                    'message' => $message->message,
+                ]);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Webhook mensaje falló: '.$e->getMessage());
+            }
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Mensaje recibido correctamente. Nuestro equipo se comunicará a la brevedad.',

@@ -142,5 +142,24 @@
   - Nuevas pruebas Feature: `LiraAdminHandoffTest` y `AdminMessageManagementTest`.
   - Suite completa: **94 tests pasados en verde (342 assertions)**.
 
+## 📊 FASE 17: Exportación de Datos, Alertas Regulatorias & Analítica de Catálogo (28 de Agosto de 2026)
+- [x] **Exportación Oficial de Reportes y Leads en CSV (Excel):**
+  - Creados endpoints `GET /admin/reports/export-csv` y `GET /admin/messages/export-csv` con codificación UTF-8 BOM (`\xEF\xBB\xBF`) y cabeceras estándar para descarga directa compatible con Microsoft Excel.
+  - Botones de descarga integrados en la cabecera de las bandejas de Farmacovigilancia y Mensajes en el Dashboard.
+- [x] **Acta Oficial de Farmacovigilancia para Imprimir o Guardar como PDF:**
+  - Creada plantilla clínica `resources/views/reports/acta-sanitaria.blade.php` y ruta `GET /admin/reports/{report}/print` con membrete corporativo (RIF J-40906185-0, Planta Valle de Guanape), datos del lote, paciente/notificante, dictamen técnico y firmas según la normativa sanitaria del Instituto Nacional de Higiene "Rafael Rangel" (INH).
+  - Botón de acceso directo "🖨️ Imprimir / PDF Acta INH" integrado en el modal de revisión de farmacovigilancia.
+- [x] **Despacho Automatizado de Alertas por Correo y Webhook:**
+  - Creados Mailables `NewPharmacovigilanceAlert` (con prioridad `🚨 [URGENTE INH]` para casos Graves/Moderados) y `NewMessageLeadAlert`.
+  - Integrado despacho automático en `PharmacovigilanceController::store` y `MessageController::store` con soporte de webhook opcional configurable (`ADMIN_ALERT_WEBHOOK_URL`).
+- [x] **Métricas de Demanda y Conversión de Catálogo:**
+  - Migración `2026_08_28_220000_add_metrics_to_products_table.php` añadiendo `views_count`, `chatbot_inquiries_count` y `quote_inquiries_count`.
+  - Incremento atómico en tiempo real al visualizar productos (`ProductController::show`), consultar medicamentos con Lira (`ChatbotController::query`) o cotizar en bolsa de WhatsApp (`QuoteController::store`).
+  - Nueva pestaña **"Analítica & Demanda"** en el Dashboard con tarjetas de resumen, ranking de los fármacos más solicitados y distribución de demanda por línea terapéutica.
+- [x] **OpenSpec y QA/TDD:**
+  - Creada especificación formal `openspec/specs/admin-analytics-and-exports/spec.md` (7/7 especificaciones 100% en verde).
+  - Creada suite `AdminExportAndAlertsTest.php`.
+  - Suite de pruebas completa: **100 tests pasados en verde (363 assertions)**.
+
 > [!IMPORTANT]
 > **Rotación manual pendiente:** la `GEMINI_API_KEY` real que sigue en `.env` debe rotarse por el propietario (el código ya la consume vía config y los tests no dependen de ella).

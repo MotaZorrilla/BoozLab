@@ -26,6 +26,9 @@ class Product extends Model
         'stock',
         'is_prescription_required',
         'is_active',
+        'views_count',
+        'chatbot_inquiries_count',
+        'quote_inquiries_count',
         'image_path',
         'pdf_path',
     ];
@@ -35,6 +38,9 @@ class Product extends Model
         return [
             'price' => 'decimal:2',
             'stock' => 'integer',
+            'views_count' => 'integer',
+            'chatbot_inquiries_count' => 'integer',
+            'quote_inquiries_count' => 'integer',
             'is_prescription_required' => 'boolean',
             'is_active' => 'boolean',
         ];

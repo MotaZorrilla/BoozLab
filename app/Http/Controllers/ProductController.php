@@ -49,6 +49,8 @@ class ProductController extends Controller
             ->active()
             ->firstOrFail();
 
+        $product->increment('views_count');
+
         $relatedProducts = Product::with('productLine')
             ->where('product_line_id', $product->product_line_id)
             ->where('id', '!=', $product->id)

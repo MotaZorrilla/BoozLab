@@ -99,6 +99,10 @@ class ChatbotController extends Controller
         }
 
         if ($matchedProducts->isNotEmpty()) {
+            foreach ($matchedProducts as $mp) {
+                $mp->increment('chatbot_inquiries_count');
+            }
+
             $first = $matchedProducts->first();
             $safeName = e($first->name);
             $safePres = e($first->presentation);
@@ -135,6 +139,9 @@ class ChatbotController extends Controller
 
         if (str_contains($q, 'pie') || str_contains($q, 'diabetico') || str_contains($q, 'diabético') || str_contains($q, 'bactrocis') || str_contains($q, 'moxifloxacina')) {
             $bactrocis = Product::active()->where('slug', 'like', '%bactrocis%')->first();
+            if ($bactrocis) {
+                $bactrocis->increment('chatbot_inquiries_count');
+            }
 
             return response()->json([
                 'reply' => 'Para el manejo especializado de heridas complejas en Pie Diabético, Booz Laboratorio ha desarrollado <strong>Bactrocis Crema (Moxifloxacina 0.5%)</strong>. Es una innovación médica que genera un biofilm bioprotector que acelera la granulación dérmica y previene el riesgo de amputación. <br><span class="text-amber-500 font-bold">Nota médica: Requiere récipe médico para su adquisición.</span>',

@@ -52,6 +52,29 @@ class PharmacovigilanceController extends Controller
             });
         }, 50);
 
+        // Despacho seguro de alertas administrativas
+        try {
+            $adminEmail = config('mail.from.address', 'admin@boozlaboratorio.com');
+            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\NewPharmacovigilanceAlert($report));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('No se pudo enviar correo de alerta de farmacovigilancia: '.$e->getMessage());
+        }
+
+        if ($webhookUrl = env('ADMIN_ALERT_WEBHOOK_URL')) {
+            try {
+                \Illuminate\Support\Facades\Http::timeout(3)->post($webhookUrl, [
+                    'event' => 'pharmacovigilance_report',
+                    'ticket' => $report->ticket_number,
+                    'product' => $report->product_name,
+                    'severity' => $report->severity,
+                    'reporter' => $report->reporter_name,
+                    'reaction' => $report->adverse_reaction,
+                ]);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Webhook farmacovigilancia falló: '.$e->getMessage());
+            }
+        }
+
         if ($request->wantsJson()) {
             return response()->json([
                 'status' => 'success',

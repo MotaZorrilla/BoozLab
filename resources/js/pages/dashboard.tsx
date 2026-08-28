@@ -2,7 +2,8 @@ import { Head, router } from '@inertiajs/react';
 import { 
     Package, ShieldAlert, Plus, Edit2, Trash2, CheckCircle2, 
     XCircle, Eye, RefreshCw, Search, ArrowUpRight, Filter, AlertTriangle,
-    MessageSquare, Phone, Mail, ExternalLink, MessageCircle
+    MessageSquare, Phone, Mail, ExternalLink, MessageCircle,
+    Download, Printer, BarChart3, TrendingUp, ShoppingCart, Bot
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import Modal from '@/components/modal';
@@ -23,6 +24,16 @@ export interface MessageItem {
     created_at: string;
 }
 
+export interface AnalyticsData {
+    total_views: number;
+    total_chatbot_inquiries: number;
+    total_quote_inquiries: number;
+    top_chatbot_products: { id: number; name: string; presentation: string; chatbot_inquiries_count: number }[];
+    top_quote_products: { id: number; name: string; presentation: string; quote_inquiries_count: number }[];
+    top_viewed_products: { id: number; name: string; presentation: string; views_count: number }[];
+    line_demand: { id: number; name: string; products_count: number; total_views: number; total_chatbot: number; total_quotes: number }[];
+}
+
 interface DashboardProps {
     stats: {
         total_products: number;
@@ -32,7 +43,9 @@ interface DashboardProps {
         pending_messages?: number;
         total_messages?: number;
         total_lines: number;
+        total_quotes?: number;
     };
+    analytics?: AnalyticsData;
     products: Product[];
     productLines: ProductLine[];
     reports: PharmacovigilanceReport[];
@@ -42,7 +55,16 @@ interface DashboardProps {
 }
 
 export default function Dashboard({
-    stats = { total_products: 0, active_products: 0, pending_reports: 0, total_reports: 0, pending_messages: 0, total_messages: 0, total_lines: 0 },
+    stats = { total_products: 0, active_products: 0, pending_reports: 0, total_reports: 0, pending_messages: 0, total_messages: 0, total_lines: 0, total_quotes: 0 },
+    analytics = {
+        total_views: 0,
+        total_chatbot_inquiries: 0,
+        total_quote_inquiries: 0,
+        top_chatbot_products: [],
+        top_quote_products: [],
+        top_viewed_products: [],
+        line_demand: [],
+    },
     products = [],
     productLines = [],
     reports = [],
@@ -50,7 +72,7 @@ export default function Dashboard({
     faqs = [],
     testimonials = [],
 }: DashboardProps) {
-    const [activeTab, setActiveTab] = useState<'products' | 'reports' | 'messages'>('products');
+    const [activeTab, setActiveTab] = useState<'products' | 'reports' | 'messages' | 'analytics'>('products');
     const [searchFilter, setSearchFilter] = useState('');
     const [selectedLineFilter, setSelectedLineFilter] = useState<number | null>(null);
     const [messageSearchFilter, setMessageSearchFilter] = useState('');
@@ -342,6 +364,18 @@ export default function Dashboard({
                             </span>
                         )}
                     </button>
+
+                    <button
+                        onClick={() => setActiveTab('analytics')}
+                        className={`pb-3 px-4 border-b-2 transition-all flex items-center gap-2 cursor-pointer flex-shrink-0 ${
+                            activeTab === 'analytics'
+                                ? 'border-[#002072] dark:border-cyan-400 text-[#002072] dark:text-cyan-400'
+                                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                        }`}
+                    >
+                        <BarChart3 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                        <span>Analítica & Demanda</span>
+                    </button>
                 </div>
 
                 {/* TAB 1: GESTIÓN DE PRODUCTOS */}
@@ -464,8 +498,22 @@ export default function Dashboard({
 
                 {/* TAB 2: BANDEJA DE FARMACOVIGILANCIA (EXIGENCIA SANITARIA INH) */}
                 {activeTab === 'reports' && (
-                    <div className="bg-white dark:bg-[#0D172E] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
-                        <div className="overflow-x-auto">
+                    <div className="space-y-4">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#0D172E] p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+                            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                Registro oficial de notificaciones bajo normativa sanitaria INH "Rafael Rangel". Mostrando <strong className="text-slate-900 dark:text-white">{reports.length}</strong> reporte(s).
+                            </div>
+                            <a
+                                href="/admin/reports/export-csv"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow transition-all cursor-pointer"
+                            >
+                                <Download className="h-4 w-4" />
+                                <span>Exportar Reportes (CSV)</span>
+                            </a>
+                        </div>
+
+                        <div className="bg-white dark:bg-[#0D172E] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+                            <div className="overflow-x-auto">
                             <table className="w-full text-left text-xs min-w-[640px]">
                                 <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold border-b border-slate-200 dark:border-slate-800">
                                     <tr>
@@ -540,6 +588,7 @@ export default function Dashboard({
                             </table>
                         </div>
                     </div>
+                </div>
                 )}
 
                 {/* TAB 3: BANDEJA DE MENSAJES & LEADS (CONTACTOS / ASISTENTE LIRA) */}
@@ -558,8 +607,17 @@ export default function Dashboard({
                                 />
                             </div>
 
-                            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                                Mostrando <strong className="text-slate-900 dark:text-white">{filteredMessages.length}</strong> mensaje(s) recibidos
+                            <div className="flex items-center gap-4">
+                                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                    Mostrando <strong className="text-slate-900 dark:text-white">{filteredMessages.length}</strong> mensaje(s)
+                                </span>
+                                <a
+                                    href="/admin/messages/export-csv"
+                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition-all cursor-pointer"
+                                >
+                                    <Download className="h-4 w-4" />
+                                    <span>Exportar Leads (CSV)</span>
+                                </a>
                             </div>
                         </div>
 
@@ -678,6 +736,150 @@ export default function Dashboard({
                                         )}
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* TAB 4: ANALÍTICA Y DEMANDA DE CATÁLOGO */}
+                {activeTab === 'analytics' && (
+                    <div className="space-y-6">
+                        {/* 3 Metric Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
+                                <div>
+                                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Vistas de Vademécum</span>
+                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">{analytics.total_views}</h3>
+                                    <span className="text-[10px] text-blue-600 dark:text-cyan-400 font-bold">Fichas técnicas consultadas</span>
+                                </div>
+                                <div className="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#002072] dark:text-cyan-400 flex items-center justify-center">
+                                    <Eye className="h-6 w-6" />
+                                </div>
+                            </div>
+
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
+                                <div>
+                                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Consultas Lira AI</span>
+                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">{analytics.total_chatbot_inquiries}</h3>
+                                    <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">Interacciones guiadas por IA</span>
+                                </div>
+                                <div className="h-12 w-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-900 dark:text-indigo-300 flex items-center justify-center">
+                                    <Bot className="h-6 w-6" />
+                                </div>
+                            </div>
+
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
+                                <div>
+                                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Unidades Cotizadas</span>
+                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">{analytics.total_quote_inquiries}</h3>
+                                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">En {stats.total_quotes ?? 0} cotizaciones WhatsApp</span>
+                                </div>
+                                <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
+                                    <ShoppingCart className="h-6 w-6" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Top Tables Grid */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Top Quoted */}
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <ShoppingCart className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                                        Top Fármacos más Demandados en Cotizaciones (WhatsApp)
+                                    </h3>
+                                </div>
+                                {analytics.top_quote_products.length === 0 ? (
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">Aún no se registran unidades cotizadas en la bolsa.</p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {analytics.top_quote_products.map((item, idx) => (
+                                            <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="h-6 w-6 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-black text-xs flex items-center justify-center">
+                                                        #{idx + 1}
+                                                    </span>
+                                                    <div>
+                                                        <strong className="text-slate-900 dark:text-white block">{item.name}</strong>
+                                                        <span className="text-[11px] text-slate-500 dark:text-slate-400">{item.presentation}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm">{item.quote_inquiries_count}</span>
+                                                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block">unidades</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Top Chatbot Consulted */}
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Bot className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                                        Top Fármacos más Consultados con Lira AI
+                                    </h3>
+                                </div>
+                                {analytics.top_chatbot_products.length === 0 ? (
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">Aún no se registran consultas a medicamentos específicos.</p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {analytics.top_chatbot_products.map((item, idx) => (
+                                            <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="h-6 w-6 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 font-black text-xs flex items-center justify-center">
+                                                        #{idx + 1}
+                                                    </span>
+                                                    <div>
+                                                        <strong className="text-slate-900 dark:text-white block">{item.name}</strong>
+                                                        <span className="text-[11px] text-slate-500 dark:text-slate-400">{item.presentation}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="font-black text-indigo-600 dark:text-indigo-400 text-sm">{item.chatbot_inquiries_count}</span>
+                                                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block">consultas</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Demand by Line */}
+                        <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+                            <div className="flex items-center gap-2 mb-4">
+                                <TrendingUp className="h-5 w-5 text-[#002072] dark:text-cyan-400" />
+                                <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                                    Distribución de Interés por Línea Terapéutica Oficial
+                                </h3>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                {analytics.line_demand.map((ld) => (
+                                    <div key={ld.id} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2 transition-colors">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-black text-slate-900 dark:text-white">{ld.name}</span>
+                                            <span className="text-[10px] font-bold text-slate-400">{ld.products_count} prod.</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-1 text-[11px] pt-1 border-t border-slate-200 dark:border-slate-700">
+                                            <div>
+                                                <span className="text-slate-400 block text-[9px] uppercase">Vistas</span>
+                                                <strong className="text-slate-800 dark:text-slate-200">{ld.total_views}</strong>
+                                            </div>
+                                            <div>
+                                                <span className="text-slate-400 block text-[9px] uppercase">Lira</span>
+                                                <strong className="text-indigo-600 dark:text-indigo-400">{ld.total_chatbot}</strong>
+                                            </div>
+                                            <div>
+                                                <span className="text-slate-400 block text-[9px] uppercase">Cotiz.</span>
+                                                <strong className="text-emerald-600 dark:text-emerald-400">{ld.total_quotes}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -908,20 +1110,32 @@ export default function Dashboard({
                             />
                         </div>
 
-                        <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
-                            <button
-                                type="button"
-                                onClick={() => setSelectedReport(null)}
-                                className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold cursor-pointer transition-colors"
+                        <div className="pt-4 flex justify-between items-center border-t border-slate-100 dark:border-slate-800">
+                            <a
+                                href={`/admin/reports/${selectedReport.id}/print`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700"
                             >
-                                Cerrar
-                            </button>
-                            <button
-                                type="submit"
-                                className="px-6 py-2 rounded-xl bg-[#002072] dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-500 text-white text-xs font-bold shadow-md cursor-pointer transition-all"
-                            >
-                                Actualizar Estado
-                            </button>
+                                <Printer className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
+                                <span>Imprimir / PDF Acta INH</span>
+                            </a>
+
+                            <div className="flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedReport(null)}
+                                    className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold cursor-pointer transition-colors"
+                                >
+                                    Cerrar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-6 py-2 rounded-xl bg-[#002072] dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-500 text-white text-xs font-bold shadow-md cursor-pointer transition-all"
+                                >
+                                    Actualizar Estado
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </Modal>
