@@ -33,6 +33,9 @@ class DynamicSystemSettingsTest extends TestCase
         $response = $this->actingAs($superAdmin)->put(route('admin.settings.update'), [
             'whatsapp_sales_phone' => '+58 (412) 999-8877',
             'whatsapp_default_message' => 'Hola Booz, deseo información comercial.',
+            'whatsapp_cart_header' => '*COTIZACIÓN BOOZ LAB*',
+            'whatsapp_cart_footer' => '_Confirmar disponibilidad inmediata_',
+            'whatsapp_cart_customer_types' => 'Paciente,Farmacia,Clínica,Distribuidor',
             'company_name' => 'Booz Laboratorio VGME, C.A.',
             'company_rif' => 'J-40906185-0',
             'plant_location' => 'Valle de Guanape, Anzoátegui',
@@ -41,6 +44,9 @@ class DynamicSystemSettingsTest extends TestCase
         $response->assertRedirect();
         $this->assertEquals('584129998877', SettingService::whatsappPhone());
         $this->assertEquals('Hola Booz, deseo información comercial.', SettingService::whatsappDefaultMessage());
+        $this->assertEquals('*COTIZACIÓN BOOZ LAB*', SettingService::whatsappCartHeader());
+        $this->assertEquals('_Confirmar disponibilidad inmediata_', SettingService::whatsappCartFooter());
+        $this->assertEquals('Paciente,Farmacia,Clínica,Distribuidor', SettingService::whatsappCartCustomerTypes());
     }
 
     public function test_encrypted_setting_handling(): void
@@ -62,6 +68,9 @@ class DynamicSystemSettingsTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->has('settings.whatsapp_sales_phone')
             ->has('settings.whatsapp_default_message')
+            ->has('settings.whatsapp_cart_header')
+            ->has('settings.whatsapp_cart_footer')
+            ->has('settings.whatsapp_cart_customer_types')
             ->has('settings.company_rif')
         );
     }

@@ -8,6 +8,9 @@ class SettingService
 {
     public const DEFAULT_WHATSAPP_PHONE = '584148873615';
     public const DEFAULT_WHATSAPP_MESSAGE = 'Hola Booz Laboratorio, deseo cotizar productos farmacéuticos.';
+    public const DEFAULT_WHATSAPP_CART_HEADER = "*HOLA BOOZ LABORATORIO* 🔬\nDeseo solicitar cotización y disponibilidad para el siguiente pedido:";
+    public const DEFAULT_WHATSAPP_CART_FOOTER = "_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega oficial._";
+    public const DEFAULT_WHATSAPP_CART_CUSTOMER_TYPES = 'Paciente,Farmacia,Clínica,Distribuidor';
     public const DEFAULT_COMPANY_RIF = 'J-40906185-0';
     public const DEFAULT_COMPANY_NAME = 'Booz Laboratorio VGME, C.A.';
     public const DEFAULT_PLANT_LOCATION = 'Valle de Guanape, Edo. Anzoátegui';
@@ -21,6 +24,21 @@ class SettingService
     public static function whatsappDefaultMessage(): string
     {
         return SystemSetting::get('whatsapp_default_message', self::DEFAULT_WHATSAPP_MESSAGE);
+    }
+
+    public static function whatsappCartHeader(): string
+    {
+        return SystemSetting::get('whatsapp_cart_header', self::DEFAULT_WHATSAPP_CART_HEADER);
+    }
+
+    public static function whatsappCartFooter(): string
+    {
+        return SystemSetting::get('whatsapp_cart_footer', self::DEFAULT_WHATSAPP_CART_FOOTER);
+    }
+
+    public static function whatsappCartCustomerTypes(): string
+    {
+        return SystemSetting::get('whatsapp_cart_customer_types', self::DEFAULT_WHATSAPP_CART_CUSTOMER_TYPES);
     }
 
     public static function companyRif(): string
@@ -66,6 +84,9 @@ class SettingService
         return [
             'whatsapp_sales_phone' => self::whatsappPhone(),
             'whatsapp_default_message' => self::whatsappDefaultMessage(),
+            'whatsapp_cart_header' => self::whatsappCartHeader(),
+            'whatsapp_cart_footer' => self::whatsappCartFooter(),
+            'whatsapp_cart_customer_types' => self::whatsappCartCustomerTypes(),
             'company_name' => self::companyName(),
             'company_rif' => self::companyRif(),
             'plant_location' => self::plantLocation(),

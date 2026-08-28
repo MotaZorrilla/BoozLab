@@ -23,18 +23,18 @@ export default function StoreCartDrawer({
     onClearCart,
 }: StoreCartDrawerProps) {
     const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
-    const [customerType, setCustomerType] = useState<CustomerType>('Paciente');
+    const { createWhatsAppUrl, cartHeader, cartFooter, customerTypes } = useWhatsApp();
+    const availableTypes = customerTypes.length > 0 ? customerTypes : ['Paciente', 'Farmacia', 'Clínica', 'Distribuidor'];
+    const [customerType, setCustomerType] = useState<string>(availableTypes[0] || 'Paciente');
     const [customerName, setCustomerName] = useState('');
     const [customerContact, setCustomerContact] = useState('');
-    const { createWhatsAppUrl } = useWhatsApp();
 
     if (!isOpen) return null;
 
     const totalUnits = items.reduce((acc, item) => acc + item.quantity, 0);
 
     const generateWhatsAppOrderUrl = () => {
-        let text = `*HOLA BOOZ LABORATORIO* 🔬\n`;
-        text += `Deseo solicitar cotización y disponibilidad para el siguiente pedido:\n\n`;
+        let text = `${cartHeader}\n\n`;
         text += `🏛️ *Tipo de Solicitante:* ${customerType}\n`;
         if (customerName.trim()) {
             text += `👤 *Nombre / Razón Social:* ${customerName.trim()}\n`;
@@ -54,7 +54,7 @@ export default function StoreCartDrawer({
             text += `\n`;
         });
 
-        text += `_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega oficial._`;
+        text += `${cartFooter}`;
         return createWhatsAppUrl(text);
     };
 
@@ -206,27 +206,20 @@ export default function StoreCartDrawer({
                                     ¿Cómo solicitas esta cotización?
                                 </label>
                                 <div className="grid grid-cols-2 gap-1.5">
-                                    {[
-                                        { id: 'Paciente', label: 'Paciente', icon: User },
-                                        { id: 'Farmacia', label: 'Farmacia', icon: Building },
-                                        { id: 'Clínica', label: 'Clínica / Méd.', icon: Hospital },
-                                        { id: 'Distribuidor', label: 'Distribuidor', icon: Truck },
-                                    ].map((t) => {
-                                        const Icon = t.icon;
-                                        const isSelected = customerType === t.id;
+                                    {availableTypes.map((typeName) => {
+                                        const isSelected = customerType === typeName;
                                         return (
                                             <button
-                                                key={t.id}
+                                                key={typeName}
                                                 type="button"
-                                                onClick={() => setCustomerType(t.id as CustomerType)}
-                                                className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 border transition-all cursor-pointer ${
+                                                onClick={() => setCustomerType(typeName)}
+                                                className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 border transition-all cursor-pointer ${
                                                     isSelected
                                                         ? 'bg-[#002072] text-white border-[#002072] dark:bg-blue-600 dark:border-blue-500 shadow-xs'
                                                         : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60'
                                                 }`}
                                             >
-                                                <Icon className="h-3 w-3" />
-                                                <span>{t.label}</span>
+                                                <span>{typeName}</span>
                                             </button>
                                         );
                                     })}
