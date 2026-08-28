@@ -40,8 +40,9 @@ class MakeAdminCommand extends Command
             $user->email_verified_at = now();
         }
         $user->save();
+        $user->assignRole('super_admin');
 
-        $this->info("¡Éxito! El usuario [{$user->name}] ({$user->email}) ahora tiene rol de Administrador activo.");
+        $this->info("¡Éxito! El usuario [{$user->name}] ({$user->email}) ahora tiene rol de Super Administrador activo.");
         return self::SUCCESS;
     }
 }
