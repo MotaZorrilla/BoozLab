@@ -27,7 +27,12 @@ const setCookie = (name: string, value: string, days = 365): void => {
 const getStoredAppearance = (): Appearance => {
     if (typeof window === 'undefined') return 'system';
 
-    return (localStorage.getItem('appearance') as Appearance) || 'system';
+    const stored = localStorage.getItem('appearance') || localStorage.getItem('booz_theme');
+    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+        return stored;
+    }
+
+    return 'system';
 };
 
 const isDarkMode = (appearance: Appearance): boolean => {
@@ -65,16 +70,29 @@ const handleSystemThemeChange = (): void => {
 export function initializeTheme(): void {
     if (typeof window === 'undefined') return;
 
-    if (!localStorage.getItem('appearance')) {
-        localStorage.setItem('appearance', 'system');
-        setCookie('appearance', 'system');
-    }
+    const stored = getStoredAppearance();
+    currentAppearance = stored;
 
-    currentAppearance = getStoredAppearance();
+    localStorage.setItem('appearance', stored);
+    localStorage.setItem('booz_theme', stored);
+    setCookie('appearance', stored);
+
     applyTheme(currentAppearance);
 
     // Set up system theme change listener
     mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+
+    // Set up storage listener for cross-tab or cross-window synchronization
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'appearance' || e.key === 'booz_theme') {
+            const next = getStoredAppearance();
+            if (next !== currentAppearance) {
+                currentAppearance = next;
+                applyTheme(next);
+                notify();
+            }
+        }
+    });
 }
 
 export function useAppearance(): UseAppearanceReturn {
@@ -92,8 +110,9 @@ export function useAppearance(): UseAppearanceReturn {
     const updateAppearance = useCallback((mode: Appearance): void => {
         currentAppearance = mode;
 
-        // Store in localStorage for client-side persistence...
+        // Store in both keys for 100% backward & cross-view compatibility...
         localStorage.setItem('appearance', mode);
+        localStorage.setItem('booz_theme', mode);
 
         // Store in cookie for SSR...
         setCookie('appearance', mode);

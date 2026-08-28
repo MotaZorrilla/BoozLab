@@ -5,18 +5,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        {{-- Inline script to detect system dark mode preference and apply it immediately --}}
+        {{-- Inline script to detect stored theme or system preference and apply it immediately without flash --}}
         <script>
             (function() {
-                const appearance = '{{ $appearance ?? "system" }}';
+                try {
+                    const stored = localStorage.getItem('appearance') || localStorage.getItem('booz_theme');
+                    const serverAppearance = '{{ $appearance ?? "system" }}';
+                    const appearance = stored || serverAppearance;
 
-                if (appearance === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-                    if (prefersDark) {
+                    if (appearance === 'dark') {
                         document.documentElement.classList.add('dark');
+                        document.documentElement.style.colorScheme = 'dark';
+                    } else if (appearance === 'light') {
+                        document.documentElement.classList.remove('dark');
+                        document.documentElement.style.colorScheme = 'light';
+                    } else {
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        if (prefersDark) {
+                            document.documentElement.classList.add('dark');
+                            document.documentElement.style.colorScheme = 'dark';
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            document.documentElement.style.colorScheme = 'light';
+                        }
                     }
-                }
+                } catch (e) {}
             })();
         </script>
 

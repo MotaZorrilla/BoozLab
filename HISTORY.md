@@ -96,6 +96,7 @@ graph TD
   - Animación 3D del Hero con scroll throttled mediante `requestAnimationFrame`.
   - Descongestión de navbar superior en móviles y adaptación safe-area en la barra de navegación inferior (`md:hidden`).
   - Modal de Lira con altura responsiva en móviles (`h-[78dvh] sm:h-[540px]`) y atributos de accesibilidad ARIA live.
+  - Consistencia Universal Claro/Oscuro: Unificación del hook `useAppearance()` en `BoozLayout`, incorporación de botón toggle en `AppSidebarHeader` del panel administrativo, soporte de Dark Mode en toda la consola de gestión (`dashboard.tsx`, `modal.tsx`, `app-logo.tsx`) y script síncrono en `app.blade.php` para eliminar FOUC con soporte sincronizado para `appearance` y `booz_theme`.
 - **OpenSpec (Gherkin BDD):**
   - Creadas 3 nuevas especificaciones: `whatsapp-order-bag`, `theme-mode-dynamic` y `mobile-bottom-nav`.
   - Validación automatizada: `npm run opsx -- validate --specs` -> 6 specs pasadas, 0 fallos.

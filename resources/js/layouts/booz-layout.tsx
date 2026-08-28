@@ -20,15 +20,16 @@ import LiraAssistantModal from '@/components/lira-assistant-modal';
 import Modal from '@/components/modal';
 import SearchModal from '@/components/search-modal';
 import StoreCartDrawer, { type CartItem } from '@/components/store-cart-drawer';
+import { useAppearance } from '@/hooks/use-appearance';
 import type { Product } from '@/types';
 
 export default function BoozLayout({ children }: { children: React.ReactNode }) {
+    const { resolvedAppearance, updateAppearance } = useAppearance();
     const [isAIOpen, setIsAIOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isLegalOpen, setIsLegalOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showScrollUp, setShowScrollUp] = useState(false);
-    const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
     // Cart state persisted in localStorage
     const [cartItems, setCartItems] = useState<CartItem[]>(() => {
@@ -92,19 +93,6 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
     };
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('booz_theme') as 'light' | 'dark' | null;
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initial = savedTheme || (prefersDark ? 'dark' : 'light');
-        setTheme(initial);
-
-        if (initial === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.documentElement.style.colorScheme = 'dark';
-        } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.style.colorScheme = 'light';
-        }
-
         const handleScroll = () => {
             setShowScrollUp(window.scrollY > 300);
         };
@@ -125,16 +113,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
     }, []);
 
     const toggleTheme = () => {
-        const next = theme === 'light' ? 'dark' : 'light';
-        setTheme(next);
-        localStorage.setItem('booz_theme', next);
-        if (next === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.documentElement.style.colorScheme = 'dark';
-        } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.style.colorScheme = 'light';
-        }
+        updateAppearance(resolvedAppearance === 'dark' ? 'light' : 'dark');
     };
 
     const totalCartUnits = cartItems.reduce((acc, i) => acc + i.quantity, 0);
@@ -181,10 +160,10 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                             <button
                                 onClick={toggleTheme}
                                 className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer min-h-[42px] min-w-[42px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-blue-600"
-                                title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+                                title={resolvedAppearance === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
                                 aria-label="Cambiar tema de color"
                             >
-                                {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                                {resolvedAppearance === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                             </button>
 
                             {/* Search Button */}

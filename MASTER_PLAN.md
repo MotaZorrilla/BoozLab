@@ -114,6 +114,7 @@
   - Barra inferior móvil fija con padding `pb-safe` para barras gestuales de iOS/Android.
   - Throttling con `requestAnimationFrame` en la animación 3D de scroll del Hero.
   - Modal de Lira con altura responsiva (`h-[78dvh] sm:h-[540px]`) y accesibilidad ARIA live.
+  - Consistencia Universal Claro/Oscuro: Botón de alternancia integrado en `AppSidebarHeader` del panel administrativo y unificación de estado con `useAppearance()`, script síncrono anti-parpadeo en `app.blade.php`, estilos oscuros en `dashboard.tsx` y soporte dual para `appearance` y `booz_theme`.
 - [x] **Nuevas Especificaciones OpenSpec (Gherkin BDD):**
   - `openspec/specs/whatsapp-order-bag/spec.md`: Bolsa de pedidos y cotizaciones por WhatsApp.
   - `openspec/specs/theme-mode-dynamic/spec.md`: Modo Claro / Oscuro dinámico con persistencia local.
