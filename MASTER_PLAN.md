@@ -182,7 +182,13 @@
     - `/admin/products`: Gestión integral del catálogo de 18 fármacos, filtros taxonómicos y modales CRUD.
     - `/admin/reports`: Consola de revisión de Farmacovigilancia INH, emisión de actas y descarga CSV.
     - `/admin/messages`: Bandeja de leads y consultas de contacto con respuesta directa en 1-clic vía WhatsApp.
-    - `/admin/quotes`: Trazabilidad de cotizaciones de la tienda y métricas de demanda por fármaco.
+    - `/admin/quotes`: **Administrador Integral de Tienda Virtual y Demanda Comercial**:
+      - CRUD completo de cotizaciones con filtros combinados (estado, tipo de cliente, canal).
+      - Módulo de **Nueva Cotización Manual** para pedidos telefónicos/planta con cálculo dinámico en USD.
+      - Pestaña de **Control y Carga Rápida de Stock** para actualizar unidades disponibles por fármaco.
+      - **Comprobante Oficial de Cotización** imprimible y exportable en PDF con RIF y membrete del laboratorio.
+      - Embudo de conversión y analítica comparativa (WhatsApp vs Carrito Web vs Manual).
+      - Exportación de auditoría completa a CSV.
     - `/admin/users`: Administración de colaboradores, asignación de roles y matriz de responsabilidades.
     - `/admin/ai`: Consola de Inteligencia Artificial con clave de Gemini enmascarada y simulador/playground de pruebas en vivo.
     - `/admin/settings`: Edición del WhatsApp oficial y datos legales de la planta de producción.
@@ -199,5 +205,5 @@
   - Incorporadas 3 nuevas especificaciones OpenSpec en Gherkin canónico (`system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`).
   - **10/10 especificaciones OpenSpec validadas al 100%** (`npm run opsx -- validate --specs`).
   - Nuevas pruebas Feature implementadas: `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`.
-  - Suite de pruebas de regresión: **116 tests pasados en verde (442 assertions)** en PHPUnit.
-  - Compilación Vite de producción verificada: **2.761 módulos transformados sin errores**.
+  - Suite de pruebas de regresión: **123 tests pasados en verde (481 assertions)** en PHPUnit.
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores**.

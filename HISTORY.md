@@ -156,7 +156,7 @@ graph TD
     - `/admin/products`: Catálogo y vademécum de 18 productos con filtros por línea terapéutica y modales CRUD.
     - `/admin/reports`: Consola de farmacovigilancia INH, dictámenes técnicos y descarga en CSV.
     - `/admin/messages`: Bandeja de leads y consultas de contacto con respuesta en 1-clic por WhatsApp.
-    - `/admin/quotes`: Trazabilidad de cotizaciones de la tienda y analítica de demanda farmacéutica.
+    - `/admin/quotes`: Administrador Integral de Tienda Virtual: CRUD de cotizaciones con filtros, creación de cotizaciones manuales, carga rápida de unidades disponibles/stock, comprobante oficial imprimible (`quote-voucher`), analítica de canales y exportación CSV.
     - `/admin/users`: Gestión de personal y asignación de roles.
     - `/admin/ai`: Consola de Inteligencia Artificial con clave enmascarada y playground simulador en vivo.
     - `/admin/settings`: Configuración general de WhatsApp y datos legales.
@@ -175,8 +175,8 @@ graph TD
   - 3 nuevas especificaciones creadas: `system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`.
   - **10/10 especificaciones OpenSpec validadas al 100%** en verde.
   - 5 nuevas suites de pruebas Feature (`AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`).
-  - Hito histórico alcanzado: **116 tests pasados en verde (442 assertions)** con PHPUnit 11.
-  - Compilación Vite de producción verificada: **2.761 módulos transformados sin errores**.
+  - Hito histórico alcanzado: **123 tests pasados en verde (481 assertions)** con PHPUnit 11.
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores**.
 
 ---
 
@@ -187,6 +187,6 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 116 tests pasados (442 assertions) 100% en verde con PHPUnit 11.
+- **Suite de Pruebas Automatizadas:** 123 tests pasados (481 assertions) 100% en verde con PHPUnit 11.
 - **Especificaciones OpenSpec:** 10 especificaciones BDD 100% validadas.
 
