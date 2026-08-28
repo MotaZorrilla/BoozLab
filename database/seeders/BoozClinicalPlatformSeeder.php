@@ -17,7 +17,13 @@ class BoozClinicalPlatformSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Ensure Admin User exists
+        // 0. Ensure Roles and System Settings exist
+        $this->call([
+            RoleSeeder::class,
+            SystemSettingSeeder::class,
+        ]);
+
+        // 1. Ensure Admin User exists with super_admin role
         $admin = User::firstOrCreate(
             ['email' => 'admin@boozlaboratorio.com'],
             [
@@ -29,6 +35,7 @@ class BoozClinicalPlatformSeeder extends Seeder
         );
 
         $admin->update(['is_admin' => true]);
+        $admin->assignRole('super_admin');
 
         // 2. Seed Product Lines (4 Líneas Oficiales del Mockup)
         $linesData = [

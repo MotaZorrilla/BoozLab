@@ -11,6 +11,20 @@ use Illuminate\Support\Str;
 class AdminProductController extends Controller
 {
     /**
+     * Display the catalog management view.
+     */
+    public function index(): \Inertia\Response
+    {
+        $products = Product::with('productLine')->orderBy('product_line_id')->orderBy('name')->get();
+        $productLines = \App\Models\ProductLine::all();
+
+        return \Inertia\Inertia::render('admin/products', [
+            'products' => $products,
+            'productLines' => $productLines,
+        ]);
+    }
+
+    /**
      * Store a newly created product in storage.
      */
     public function store(Request $request): RedirectResponse

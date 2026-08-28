@@ -21,10 +21,12 @@ import Modal from '@/components/modal';
 import SearchModal from '@/components/search-modal';
 import StoreCartDrawer, { type CartItem } from '@/components/store-cart-drawer';
 import { useAppearance } from '@/hooks/use-appearance';
+import { useWhatsApp } from '@/hooks/use-whatsapp';
 import type { Product } from '@/types';
 
 export default function BoozLayout({ children }: { children: React.ReactNode }) {
     const { resolvedAppearance, updateAppearance } = useAppearance();
+    const { createWhatsAppUrl, phone } = useWhatsApp();
     const [isAIOpen, setIsAIOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isLegalOpen, setIsLegalOpen] = useState(false);
@@ -277,7 +279,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                 </Link>
 
                 <a 
-                    href="https://wa.me/584148873615?text=Hola%20Booz%20Laboratorio,%20deseo%20realizar%20una%20consulta" 
+                    href={createWhatsAppUrl("Hola Booz Laboratorio, deseo realizar una consulta")} 
                     target="_blank" 
                     rel="noreferrer"
                     className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-emerald-600 hover:text-emerald-500 transition-colors"
@@ -292,7 +294,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
             <div className="hidden md:flex fixed bottom-6 right-6 flex-col gap-3 z-40">
                 {/* WhatsApp Dedicated Button */}
                 <a 
-                    href="https://wa.me/584148873615?text=Hola%20Booz%20Laboratorio,%20deseo%20realizar%20una%20consulta%20sobre%20sus%20productos"
+                    href={createWhatsAppUrl("Hola Booz Laboratorio, deseo realizar una consulta sobre sus productos")}
                     target="_blank" 
                     rel="noreferrer"
                     className="flex h-13 w-13 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl hover:bg-emerald-400 hover:scale-110 transition-all group cursor-pointer"
@@ -433,7 +435,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                 </a>
                                 <div className="flex items-center gap-2 pt-2 text-slate-300">
                                     <Phone className="h-4 w-4 text-emerald-400" />
-                                    <span>+58 (414) 887-3615</span>
+                                    <span>+{phone}</span>
                                 </div>
                             </div>
                         </div>

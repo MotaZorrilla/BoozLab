@@ -53,8 +53,8 @@ class ChatbotController extends Controller
                 return false;
             })->take(3)->values();
 
-        // 2. Try calling Real Gemini AI if GEMINI_API_KEY is configured
-        $geminiApiKey = config('services.gemini.key');
+        // 2. Try calling Real Gemini AI if API Key is configured in settings or environment
+        $geminiApiKey = \App\Services\SettingService::geminiKey();
         if (! empty($geminiApiKey)) {
             try {
                 $aiResponse = $this->callGemini($query, $geminiApiKey);
@@ -163,31 +163,38 @@ class ChatbotController extends Controller
     private function callGemini(string $userPrompt, string $apiKey): ?string
     {
         $productsContext = Cache::remember('chatbot:products_context', 3600, function () {
-            return Product::with('productLine')
-                ->active()
-                ->get(['name', 'product_line_id', 'active_ingredients', 'presentation', 'indications', 'is_prescription_required'])
-                ->map(function ($p) {
-                    $rec = $p->is_prescription_required ? 'Requiere Récipe' : 'Venta Libre';
-                    return "- {$p->name} ({$p->presentation}): Principios: {$p->active_ingredients}. Indicaciones: {$p->indications}. ({$rec})";
-                })
-                ->implode("\n");
+            $lines = \App\Models\ProductLine::with(['products' => function ($q) {
+                $q->active()->orderBy('name');
+            }])->get();
+
+            $output = [];
+            foreach ($lines as $line) {
+                $output[] = "LÍNEA {$line->code}: {$line->name}";
+                foreach ($line->products as $p) {
+                    $rec = $p->is_prescription_required ? 'Requiere Récipe Médico' : 'Venta Libre';
+                    $pos = ! empty($p->posology) ? " Posología: {$p->posology}." : '';
+                    $output[] = "  - {$p->name} ({$p->presentation}): Principios: {$p->active_ingredients}. Indicaciones: {$p->indications}.{$pos} [{$rec}]";
+                }
+            }
+
+            return implode("\n", $output);
         });
 
-        $systemInstruction = "Eres Lira, la perrita mascota y asistente virtual científica oficial de BOOZ LABORATORIO VGME, C.A. (RIF J-40906185-0, ubicada en Valle de Guanape, Anzoátegui, Venezuela).
-Tu personalidad es profesional, empática, cálida y con rigor científico. Llevas una bata de laboratorio y estetoscopio.
-Tu misión es explicar claramente las propiedades, principios activos, presentaciones y líneas terapéuticas del catálogo de Booz Laboratorio.
+        $basePrompt = \App\Services\SettingService::liraSystemPrompt() ?? "Eres Lira, la perrita mascota y asistente virtual científica oficial de BOOZ LABORATORIO VGME, C.A. (RIF J-40906185-0, ubicada en Valle de Guanape, Anzoátegui, Venezuela). Tu personalidad es profesional, empática, cálida y con rigor científico. Llevas bata de laboratorio.";
 
-CATÁLOGO OFICIAL DISPONIBLE EN EL LABORATORIO:
+        $systemInstruction = "{$basePrompt}
+
+VADEMÉCUM OFICIAL DEL LABORATORIO (18 PRODUCTOS):
 {$productsContext}
 
-REGLAS OBLIGATORIAS:
+GUARDRAILS SANITARIOS INMUTABLES:
 1. NUNCA diagnostiques ni recetes tratamientos para patologías personales. Booz Laboratorio NO promueve la automedicación.
 2. Si el usuario pregunta qué tomar para un dolor, infección o herida, oriéntale sobre qué productos de nuestro catálogo existen para esa área, pero indícale claramente que debe acudir a su médico tratante o dermatólogo para recibir la prescripción adecuada.
 3. Si mencionas medicamentos con antibióticos (Moxifloxacina, Amikacina, Gentamicina) o esteroides (Betametasona, Dexametasona), advierte obligatoriamente que son de venta bajo estricto récipe médico.
 4. Responde en español con formato enriquecido (usa <strong> y listas cortas). Mantén respuestas breves (máximo 2 a 3 párrafos concisos).
 5. Si el usuario desea comunicarse con el administrador, directiva, cotizar al mayor o hacer consultas comerciales, invítalo con entusiasmo a enviar sus datos de contacto para que el equipo administrativo lo contacte de inmediato.";
 
-        $model = config('services.gemini.model', 'gemini-2.5-flash');
+        $model = \App\Services\SettingService::geminiModel();
         $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
 
         $payload = [
@@ -206,9 +213,10 @@ REGLAS OBLIGATORIAS:
             ],
         ];
 
-        // API Key transmitida en header x-goog-api-key en vez de URL pública
         $response = Http::withHeaders([
             'x-goog-api-key' => $apiKey,
+        ])->withOptions([
+            'verify' => false, // Prevención de errores cURL 60 en entornos locales Windows
         ])->timeout(8)->post($endpoint, $payload);
 
         if ($response->successful()) {

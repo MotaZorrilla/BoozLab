@@ -1,5 +1,6 @@
 import { ShoppingBag, X, Plus, Minus, Trash2, MessageCircle } from 'lucide-react';
 import React, { useState } from 'react';
+import { useWhatsApp } from '@/hooks/use-whatsapp';
 import type { Product } from '@/types';
 
 export interface CartItem {
@@ -24,6 +25,7 @@ export default function StoreCartDrawer({
     onRemoveItem,
     onClearCart,
 }: StoreCartDrawerProps) {
+    const { createWhatsAppUrl } = useWhatsApp();
     const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
 
     if (!isOpen) return null;
@@ -45,7 +47,7 @@ export default function StoreCartDrawer({
         });
 
         text += `_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega._`;
-        return `https://wa.me/584148873615?text=${encodeURIComponent(text)}`;
+        return createWhatsAppUrl(text);
     };
 
     const handleCheckout = async () => {

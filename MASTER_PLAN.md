@@ -163,3 +163,41 @@
 
 > [!IMPORTANT]
 > **Rotación manual pendiente:** la `GEMINI_API_KEY` real que sigue en `.env` debe rotarse por el propietario (el código ya la consume vía config y los tests no dependen de ella).
+
+## 🚀 FASE 18: Arquitectura Modular del Admin, RBAC, WhatsApp Dinámico, Seeders Idempotentes y Consola Lira AI (28 de Agosto de 2026)
+- [x] **Configuración Centralizada y WhatsApp Dinámico:**
+  - Creada tabla `system_settings` con invalidación automática de caché `system_settings_all` en eventos de guardado y eliminación.
+  - Implementado modelo `SystemSetting` con soporte de cifrado AES-256 para credenciales sensibles y servicio desacoplado `SettingService`.
+  - Compartición global reactiva mediante `HandleInertiaRequests` (`settings.whatsapp_sales_phone`, `settings.company_rif`, etc.).
+  - Creado hook de React `useWhatsApp()` consumido unificadamente en botón flotante, pie de página, PDP (`product-detail.tsx`), y carrito de cotizaciones (`store-cart-drawer.tsx`).
+- [x] **Control de Acceso Basado en Roles (RBAC) y Gestión de Usuarios:**
+  - Migración de tablas `roles` y pivote `role_user`.
+  - Definidos los 4 roles oficiales del laboratorio: `super_admin`, `director_tecnico`, `gestor_comercial` y `oficial_farmacovigilancia`.
+  - Implementados métodos en modelo `User`: `hasRole()`, `hasPermission()`, `assignRole()`, `syncRoles()`, `getAllPermissions()`.
+  - Registrados Gates de autorización en `AppServiceProvider` y middlewares `EnsureRole` y `EnsurePermission`.
+  - Creado controlador y vista `/admin/users` con altas de usuarios, asignación de roles y salvaguardas de seguridad (bloqueo de auto-eliminación y protección contra orfandad del último Super Admin).
+- [x] **Desacoplamiento Modular de Vistas Administrativas:**
+  - Rediseñado `app-sidebar.tsx` con 3 grupos semánticos (*Operaciones Clínicas*, *Gestión Comercial*, *Sistema & Control*), filtrado por rol y badges de alerta en tiempo real.
+  - Creadas páginas administrativas modulares independientes bajo `resources/js/pages/admin/`:
+    - `/admin/products`: Gestión integral del catálogo de 18 fármacos, filtros taxonómicos y modales CRUD.
+    - `/admin/reports`: Consola de revisión de Farmacovigilancia INH, emisión de actas y descarga CSV.
+    - `/admin/messages`: Bandeja de leads y consultas de contacto con respuesta directa en 1-clic vía WhatsApp.
+    - `/admin/quotes`: Trazabilidad de cotizaciones de la tienda y métricas de demanda por fármaco.
+    - `/admin/users`: Administración de colaboradores, asignación de roles y matriz de responsabilidades.
+    - `/admin/ai`: Consola de Inteligencia Artificial con clave de Gemini enmascarada y simulador/playground de pruebas en vivo.
+    - `/admin/settings`: Edición del WhatsApp oficial y datos legales de la planta de producción.
+  - Actualizado `/dashboard` con accesos rápidos a todos los módulos preservando el contrato de props para retrocompatibilidad total.
+- [x] **Arquitectura de Seeders Idempotente:**
+  - Implementados `RoleSeeder`, `SystemSettingSeeder` y `UserSeeder` utilizando `updateOrCreate` con claves naturales únicas.
+  - Integración orquestada en `BoozClinicalPlatformSeeder` y `DatabaseSeeder`.
+- [x] **Consola Lira AI & Inyección Dinámica del Vademécum:**
+  - `ChatbotController` y `callGemini` consumen la clave y modelo desde `SystemSetting` con fallback a `.env`.
+  - Contexto estructurado en tiempo real agrupando los 18 fármacos clasificados bajo sus 4 líneas terapéuticas.
+  - Blindaje inmutable de guardrails sanitarios (Cero automedicación, prescripción obligatoria y derivación administrativa).
+- [x] **OpenSpec y QA/TDD:**
+  - Incorporadas 3 nuevas especificaciones OpenSpec en Gherkin canónico (`system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`).
+  - **10/10 especificaciones OpenSpec validadas al 100%** (`npm run opsx -- validate --specs`).
+  - Nuevas pruebas Feature implementadas: `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`.
+  - Suite de pruebas de regresión: **113 tests pasados en verde (415 assertions)** en PHPUnit.
+  - Compilación Vite de producción verificada: **2.761 módulos transformados sin errores**.
+

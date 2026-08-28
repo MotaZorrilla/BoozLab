@@ -11,6 +11,18 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class AdminMessageController extends Controller
 {
     /**
+     * Display the messages and leads management view.
+     */
+    public function index(): \Inertia\Response
+    {
+        $messages = Message::orderByDesc('created_at')->get();
+
+        return \Inertia\Inertia::render('admin/messages', [
+            'messages' => $messages,
+        ]);
+    }
+
+    /**
      * Update the status and administrative follow-up notes for a message / Lira lead.
      */
     public function updateStatus(Request $request, Message $message): RedirectResponse

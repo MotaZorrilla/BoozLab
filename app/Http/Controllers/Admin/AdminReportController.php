@@ -12,6 +12,18 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class AdminReportController extends Controller
 {
     /**
+     * Display the pharmacovigilance reports management view.
+     */
+    public function index(): \Inertia\Response
+    {
+        $reports = PharmacovigilanceReport::orderByDesc('created_at')->get();
+
+        return \Inertia\Inertia::render('admin/reports', [
+            'reports' => $reports,
+        ]);
+    }
+
+    /**
      * Update the status and administrative notes for a pharmacovigilance report.
      */
     public function updateStatus(Request $request, PharmacovigilanceReport $report): RedirectResponse

@@ -1,9 +1,9 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { 
     Package, ShieldAlert, Plus, Edit2, Trash2, CheckCircle2, 
     XCircle, Eye, RefreshCw, Search, ArrowUpRight, Filter, AlertTriangle,
     MessageSquare, Phone, Mail, ExternalLink, MessageCircle,
-    Download, Printer, BarChart3, TrendingUp, ShoppingCart, Bot
+    Download, Printer, BarChart3, TrendingUp, ShoppingCart, Bot, Pill, Users
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import Modal from '@/components/modal';
@@ -315,6 +315,87 @@ export default function Dashboard({
                             <CheckCircle2 className="h-5 w-5" />
                         </div>
                     </div>
+                </div>
+
+                {/* Módulos Administrativos Dedicados (Acceso Rápido) */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <Link
+                        href="/admin/products"
+                        className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-500 dark:hover:border-cyan-500 hover:shadow-md transition-all group flex flex-col items-center text-center gap-2"
+                    >
+                        <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-cyan-400 group-hover:scale-110 transition-transform">
+                            <Pill className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-xs text-slate-900 dark:text-white">Catálogo</div>
+                            <div className="text-[10px] text-slate-400">18 Fármacos</div>
+                        </div>
+                    </Link>
+
+                    <Link
+                        href="/admin/reports"
+                        className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-amber-500 dark:hover:border-amber-500 hover:shadow-md transition-all group flex flex-col items-center text-center gap-2"
+                    >
+                        <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 group-hover:scale-110 transition-transform">
+                            <ShieldAlert className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-xs text-slate-900 dark:text-white">Farmacovigilancia</div>
+                            <div className="text-[10px] text-slate-400">Actas INH</div>
+                        </div>
+                    </Link>
+
+                    <Link
+                        href="/admin/messages"
+                        className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-rose-500 dark:hover:border-rose-500 hover:shadow-md transition-all group flex flex-col items-center text-center gap-2"
+                    >
+                        <div className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-400 group-hover:scale-110 transition-transform">
+                            <MessageSquare className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-xs text-slate-900 dark:text-white">Mensajes</div>
+                            <div className="text-[10px] text-slate-400">Leads & Lira</div>
+                        </div>
+                    </Link>
+
+                    <Link
+                        href="/admin/quotes"
+                        className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-md transition-all group flex flex-col items-center text-center gap-2"
+                    >
+                        <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                            <TrendingUp className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-xs text-slate-900 dark:text-white">Cotizaciones</div>
+                            <div className="text-[10px] text-slate-400">Demanda Tienda</div>
+                        </div>
+                    </Link>
+
+                    <Link
+                        href="/admin/users"
+                        className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-md transition-all group flex flex-col items-center text-center gap-2"
+                    >
+                        <div className="p-2 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-400 group-hover:scale-110 transition-transform">
+                            <Users className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-xs text-slate-900 dark:text-white">Usuarios & Roles</div>
+                            <div className="text-[10px] text-slate-400">Control RBAC</div>
+                        </div>
+                    </Link>
+
+                    <Link
+                        href="/admin/ai"
+                        className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-cyan-500 dark:hover:border-cyan-500 hover:shadow-md transition-all group flex flex-col items-center text-center gap-2"
+                    >
+                        <div className="p-2 rounded-xl bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-400 group-hover:scale-110 transition-transform">
+                            <Bot className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-xs text-slate-900 dark:text-white">Lira AI</div>
+                            <div className="text-[10px] text-slate-400">Consola & Gemini</div>
+                        </div>
+                    </Link>
                 </div>
 
                 {/* Tabs Navigation */}

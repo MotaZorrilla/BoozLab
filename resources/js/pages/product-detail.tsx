@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import React from 'react';
 import BoozLayout from '@/layouts/booz-layout';
+import { useWhatsApp } from '@/hooks/use-whatsapp';
 import type { Product } from '@/types';
 
 interface ProductDetailProps {
@@ -13,9 +14,10 @@ interface ProductDetailProps {
 }
 
 export default function ProductDetail({ product, relatedProducts = [] }: ProductDetailProps) {
-    const whatsappUrl = `https://wa.me/584148873615?text=${encodeURIComponent(
+    const { createWhatsAppUrl } = useWhatsApp();
+    const whatsappUrl = createWhatsAppUrl(
         `Hola Booz Laboratorio, estoy consultando la ficha médica de ${product.name} (${product.presentation}) y deseo recibir más información médica o disponibilidad.`
-    )}`;
+    );
 
     const handleShare = () => {
         if (navigator.share) {
