@@ -151,7 +151,7 @@ graph TD
   - Gates de Laravel y middlewares `EnsureRole` y `EnsurePermission`.
   - Vista `/admin/users` para alta de colaboradores, asignación de roles, matriz explicativa de responsabilidades y salvaguardas de seguridad (bloqueo de auto-eliminación y protección del último Super Admin).
 - **Desacoplamiento Modular de Vistas y Sidebar Dinámico:**
-  - Rediseño de `app-sidebar.tsx` organizado en 3 grupos semánticos (*Operaciones Clínicas*, *Gestión Comercial*, *Sistema & Control*) con filtrado de acceso según el rol activo y badges de alerta en tiempo real.
+  - Rediseño de `app-sidebar.tsx` unificando bajo el grupo **"Operaciones"** las 4 áreas principales del laboratorio: Gestión de Catálogo (`/admin/products`), Farmacovigilancia INH (`/admin/reports`), Bandeja de Mensajes (`/admin/messages`) y Analítica & Cotizaciones (`/admin/quotes`), con filtrado por rol y badges reactivos.
   - Vistas administrativas dedicadas e independientes bajo `resources/js/pages/admin/`:
     - `/admin/products`: Catálogo y vademécum de 18 productos con filtros por línea terapéutica y modales CRUD.
     - `/admin/reports`: Consola de farmacovigilancia INH, dictámenes técnicos y descarga en CSV.
@@ -160,7 +160,7 @@ graph TD
     - `/admin/users`: Gestión de personal y asignación de roles.
     - `/admin/ai`: Consola de Inteligencia Artificial con clave enmascarada y playground simulador en vivo.
     - `/admin/settings`: Configuración general de WhatsApp y datos legales.
-  - Consola ejecutiva `/dashboard` optimizada con tarjetas de acceso directo a todos los módulos.
+  - Consola ejecutiva `/dashboard` optimizada con KPIs superiores en tiempo real y 4 fichas destacadas de acceso rápido a las operaciones farmacéuticas, liberando la página de tablas pesadas de catálogo.
 - **Arquitectura de Seeders Idempotente y Generosa:**
   - `UserSeeder`: 5 usuarios con contraseñas seguras y asignación a los 4 roles oficiales del laboratorio.
   - `MessageSeeder`: 12 mensajes y leads de pacientes, farmacias aliadas, clínicas y doctores provenientes tanto de Lira AI como de la web.

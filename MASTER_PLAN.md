@@ -177,7 +177,7 @@
   - Registrados Gates de autorización en `AppServiceProvider` y middlewares `EnsureRole` y `EnsurePermission`.
   - Creado controlador y vista `/admin/users` con altas de usuarios, asignación de roles y salvaguardas de seguridad (bloqueo de auto-eliminación y protección contra orfandad del último Super Admin).
 - [x] **Desacoplamiento Modular de Vistas Administrativas:**
-  - Rediseñado `app-sidebar.tsx` con 3 grupos semánticos (*Operaciones Clínicas*, *Gestión Comercial*, *Sistema & Control*), filtrado por rol y badges de alerta en tiempo real.
+  - Rediseñado `app-sidebar.tsx` centralizando en el grupo **"Operaciones"** las 4 áreas clave: Gestión de Catálogo (`/admin/products`), Farmacovigilancia INH (`/admin/reports`), Bandeja de Mensajes (`/admin/messages`) y Analítica & Cotizaciones (`/admin/quotes`), con filtrado por rol y badges reactivos.
   - Creadas páginas administrativas modulares independientes bajo `resources/js/pages/admin/`:
     - `/admin/products`: Gestión integral del catálogo de 18 fármacos, filtros taxonómicos y modales CRUD.
     - `/admin/reports`: Consola de revisión de Farmacovigilancia INH, emisión de actas y descarga CSV.
@@ -186,7 +186,7 @@
     - `/admin/users`: Administración de colaboradores, asignación de roles y matriz de responsabilidades.
     - `/admin/ai`: Consola de Inteligencia Artificial con clave de Gemini enmascarada y simulador/playground de pruebas en vivo.
     - `/admin/settings`: Edición del WhatsApp oficial y datos legales de la planta de producción.
-  - Actualizado `/dashboard` con accesos rápidos a todos los módulos preservando el contrato de props para retrocompatibilidad total.
+  - Actualizado `/dashboard` transformado en una **Consola Ejecutiva de Administración Farmacéutica** con KPIs superiores en tiempo real y las 4 fichas interactivas de enlace, desincorporando la tabla monolítica del catálogo para máxima velocidad y claridad operativa.
 - [x] **Arquitectura de Seeders Idempotente y Generosa:**
   - Implementados `RoleSeeder`, `SystemSettingSeeder` y `UserSeeder` (5 usuarios oficiales con roles asignados).
   - Creados seeders operacionales ricos: `MessageSeeder` (12 mensajes y leads de Lira AI y web), `QuoteSeeder` (8 cotizaciones de farmacias, clínicas y pacientes con sincronización de demanda) y `PharmacovigilanceReportSeeder` (6 reportes oficiales con lotes y dictámenes técnicos INH).
