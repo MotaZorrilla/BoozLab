@@ -187,9 +187,10 @@
     - `/admin/ai`: Consola de Inteligencia Artificial con clave de Gemini enmascarada y simulador/playground de pruebas en vivo.
     - `/admin/settings`: Edición del WhatsApp oficial y datos legales de la planta de producción.
   - Actualizado `/dashboard` con accesos rápidos a todos los módulos preservando el contrato de props para retrocompatibilidad total.
-- [x] **Arquitectura de Seeders Idempotente:**
-  - Implementados `RoleSeeder`, `SystemSettingSeeder` y `UserSeeder` utilizando `updateOrCreate` con claves naturales únicas.
-  - Integración orquestada en `BoozClinicalPlatformSeeder` y `DatabaseSeeder`.
+- [x] **Arquitectura de Seeders Idempotente y Generosa:**
+  - Implementados `RoleSeeder`, `SystemSettingSeeder` y `UserSeeder` (5 usuarios oficiales con roles asignados).
+  - Creados seeders operacionales ricos: `MessageSeeder` (12 mensajes y leads de Lira AI y web), `QuoteSeeder` (8 cotizaciones de farmacias, clínicas y pacientes con sincronización de demanda) y `PharmacovigilanceReportSeeder` (6 reportes oficiales con lotes y dictámenes técnicos INH).
+  - Integración orquestada en `BoozClinicalPlatformSeeder` y `DatabaseSeeder` bajo `updateOrCreate`.
 - [x] **Consola Lira AI & Inyección Dinámica del Vademécum:**
   - `ChatbotController` y `callGemini` consumen la clave y modelo desde `SystemSetting` con fallback a `.env`.
   - Contexto estructurado en tiempo real agrupando los 18 fármacos clasificados bajo sus 4 líneas terapéuticas.

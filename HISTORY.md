@@ -161,9 +161,12 @@ graph TD
     - `/admin/ai`: Consola de Inteligencia Artificial con clave enmascarada y playground simulador en vivo.
     - `/admin/settings`: Configuración general de WhatsApp y datos legales.
   - Consola ejecutiva `/dashboard` optimizada con tarjetas de acceso directo a todos los módulos.
-- **Arquitectura de Seeders Idempotente:**
-  - Implementación de `RoleSeeder`, `SystemSettingSeeder` y `UserSeeder` con `updateOrCreate` bajo claves naturales únicas.
-  - Orquestación limpia en `DatabaseSeeder` y `BoozClinicalPlatformSeeder`.
+- **Arquitectura de Seeders Idempotente y Generosa:**
+  - `UserSeeder`: 5 usuarios con contraseñas seguras y asignación a los 4 roles oficiales del laboratorio.
+  - `MessageSeeder`: 12 mensajes y leads de pacientes, farmacias aliadas, clínicas y doctores provenientes tanto de Lira AI como de la web.
+  - `QuoteSeeder`: 8 cotizaciones completas con ítems del catálogo y sincronización atómica de métricas de demanda por producto.
+  - `PharmacovigilanceReportSeeder`: 6 reportes clínicos con lotes, fechas de caducidad, severidades y dictámenes técnicos INH.
+  - Orquestación limpia en `DatabaseSeeder` y `BoozClinicalPlatformSeeder` bajo `updateOrCreate`.
 - **Consola Lira AI & Inyección Dinámica del Vademécum:**
   - Integración dinámica en `ChatbotController` y `callGemini` consumiendo la API Key y modelo desde `SystemSetting`.
   - Inyección en tiempo real del contexto de los 18 fármacos estructurados por sus 4 líneas terapéuticas.
