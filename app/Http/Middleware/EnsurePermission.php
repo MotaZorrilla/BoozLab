@@ -20,7 +20,8 @@ class EnsurePermission
 
         $user = Auth::user();
 
-        if ($user->hasRole('super_admin') || $user->is_admin) {
+        // Super Admin has unrestricted access
+        if ($user->hasRole('super_admin')) {
             return $next($request);
         }
 

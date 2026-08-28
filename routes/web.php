@@ -48,40 +48,51 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // 1. Catalog Management
-    Route::get('/admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
-    Route::post('/admin/products', [AdminProductController::class, 'store'])->name('admin.products.store');
-    Route::put('/admin/products/{product}', [AdminProductController::class, 'update'])->name('admin.products.update');
-    Route::post('/admin/products/{product}/toggle', [AdminProductController::class, 'toggleActive'])->name('admin.products.toggle');
-    Route::delete('/admin/products/{product}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+    Route::middleware('permission:products.view')->group(function () {
+        Route::get('/admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
+        Route::post('/admin/products', [AdminProductController::class, 'store'])->name('admin.products.store');
+        Route::put('/admin/products/{product}', [AdminProductController::class, 'update'])->name('admin.products.update');
+        Route::post('/admin/products/{product}/toggle', [AdminProductController::class, 'toggleActive'])->name('admin.products.toggle');
+        Route::delete('/admin/products/{product}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+    });
 
     // 2. Pharmacovigilance & Quality Reports Management
-    Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports.index');
-    Route::get('/admin/reports/export-csv', [AdminReportController::class, 'exportCsv'])->name('admin.reports.exportCsv');
-    Route::get('/admin/reports/{report}/print', [AdminReportController::class, 'print'])->name('admin.reports.print');
-    Route::put('/admin/reports/{report}/status', [AdminReportController::class, 'updateStatus'])->name('admin.reports.updateStatus');
+    Route::middleware('permission:reports.view')->group(function () {
+        Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports.index');
+        Route::get('/admin/reports/export-csv', [AdminReportController::class, 'exportCsv'])->name('admin.reports.exportCsv');
+        Route::get('/admin/reports/{report}/print', [AdminReportController::class, 'print'])->name('admin.reports.print');
+        Route::put('/admin/reports/{report}/status', [AdminReportController::class, 'updateStatus'])->name('admin.reports.updateStatus');
+    });
 
     // 3. Contact & Lira AI Leads Management
-    Route::get('/admin/messages', [\App\Http\Controllers\Admin\AdminMessageController::class, 'index'])->name('admin.messages.index');
-    Route::get('/admin/messages/export-csv', [\App\Http\Controllers\Admin\AdminMessageController::class, 'exportCsv'])->name('admin.messages.exportCsv');
-    Route::put('/admin/messages/{message}/status', [\App\Http\Controllers\Admin\AdminMessageController::class, 'updateStatus'])->name('admin.messages.updateStatus');
+    Route::middleware('permission:messages.view')->group(function () {
+        Route::get('/admin/messages', [\App\Http\Controllers\Admin\AdminMessageController::class, 'index'])->name('admin.messages.index');
+        Route::get('/admin/messages/export-csv', [\App\Http\Controllers\Admin\AdminMessageController::class, 'exportCsv'])->name('admin.messages.exportCsv');
+        Route::put('/admin/messages/{message}/status', [\App\Http\Controllers\Admin\AdminMessageController::class, 'updateStatus'])->name('admin.messages.updateStatus');
+    });
 
     // 4. Quotes & Demand Analytics
-    Route::get('/admin/quotes', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'index'])->name('admin.quotes.index');
+    Route::middleware('permission:quotes.view')->group(function () {
+        Route::get('/admin/quotes', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'index'])->name('admin.quotes.index');
+    });
 
-    // 5. System Settings & WhatsApp
-    Route::get('/admin/settings', [\App\Http\Controllers\Admin\AdminSettingController::class, 'index'])->name('admin.settings.index');
-    Route::put('/admin/settings', [\App\Http\Controllers\Admin\AdminSettingController::class, 'update'])->name('admin.settings.update');
+    // 5. System Settings, Users & AI Console (Super Admin Only)
+    Route::middleware('role:super_admin')->group(function () {
+        // Settings & WhatsApp
+        Route::get('/admin/settings', [\App\Http\Controllers\Admin\AdminSettingController::class, 'index'])->name('admin.settings.index');
+        Route::put('/admin/settings', [\App\Http\Controllers\Admin\AdminSettingController::class, 'update'])->name('admin.settings.update');
 
-    // 6. User Management & RBAC
-    Route::get('/admin/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'index'])->name('admin.users.index');
-    Route::post('/admin/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'store'])->name('admin.users.store');
-    Route::put('/admin/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/admin/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy'])->name('admin.users.destroy');
+        // User Management & RBAC
+        Route::get('/admin/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'index'])->name('admin.users.index');
+        Route::post('/admin/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'store'])->name('admin.users.store');
+        Route::put('/admin/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'update'])->name('admin.users.update');
+        Route::delete('/admin/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy'])->name('admin.users.destroy');
 
-    // 7. Artificial Intelligence & Lira Console
-    Route::get('/admin/ai', [\App\Http\Controllers\Admin\AdminAiController::class, 'index'])->name('admin.ai.index');
-    Route::put('/admin/ai', [\App\Http\Controllers\Admin\AdminAiController::class, 'update'])->name('admin.ai.update');
-    Route::post('/admin/ai/test', [\App\Http\Controllers\Admin\AdminAiController::class, 'test'])->name('admin.ai.test');
+        // Artificial Intelligence & Lira Console
+        Route::get('/admin/ai', [\App\Http\Controllers\Admin\AdminAiController::class, 'index'])->name('admin.ai.index');
+        Route::put('/admin/ai', [\App\Http\Controllers\Admin\AdminAiController::class, 'update'])->name('admin.ai.update');
+        Route::post('/admin/ai/test', [\App\Http\Controllers\Admin\AdminAiController::class, 'test'])->name('admin.ai.test');
+    });
 });
 
 require __DIR__.'/settings.php';

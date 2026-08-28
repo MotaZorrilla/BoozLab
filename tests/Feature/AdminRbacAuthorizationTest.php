@@ -50,4 +50,29 @@ class AdminRbacAuthorizationTest extends TestCase
         $this->assertTrue($user->hasPermission('quotes.view'));
         $this->assertEquals('gestor_comercial', $user->primary_role);
     }
+
+    public function test_commercial_manager_cannot_access_settings_or_users(): void
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+        $user->assignRole('gestor_comercial');
+        $this->actingAs($user);
+
+        $this->get(route('admin.quotes.index'))->assertOk();
+        $this->get(route('admin.messages.index'))->assertOk();
+        $this->get(route('admin.settings.index'))->assertForbidden();
+        $this->get(route('admin.users.index'))->assertForbidden();
+        $this->get(route('admin.ai.index'))->assertForbidden();
+    }
+
+    public function test_pharmacovigilance_officer_is_restricted_to_reports(): void
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+        $user->assignRole('oficial_farmacovigilancia');
+        $this->actingAs($user);
+
+        $this->get(route('admin.reports.index'))->assertOk();
+        $this->get(route('admin.quotes.index'))->assertForbidden();
+        $this->get(route('admin.settings.index'))->assertForbidden();
+        $this->get(route('admin.users.index'))->assertForbidden();
+    }
 }
