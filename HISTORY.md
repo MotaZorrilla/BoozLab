@@ -159,7 +159,7 @@ graph TD
     - `/admin/quotes`: Administrador Integral de Tienda Virtual: CRUD de cotizaciones con filtros, creación de cotizaciones manuales, carga rápida de unidades disponibles/stock, comprobante oficial imprimible (`quote-voucher`), analítica de canales y exportación CSV.
     - `/admin/users`: Gestión de personal y asignación de roles.
     - `/admin/ai`: Consola de Inteligencia Artificial con clave enmascarada y playground simulador en vivo.
-    - `/admin/settings`: Configuración general de WhatsApp y datos legales.
+    - `/admin/settings`: Configuración general de WhatsApp, personalización de plantillas de mensajes para la bolsa de pedidos de la tienda, perfiles de clientes y datos legales.
   - Consola ejecutiva `/dashboard` optimizada con KPIs superiores en tiempo real y 4 fichas destacadas de acceso rápido a las operaciones farmacéuticas, liberando la página de tablas pesadas de catálogo.
 - **Arquitectura de Seeders Idempotente y Generosa:**
   - `UserSeeder`: 5 usuarios con contraseñas seguras y asignación a los 4 roles oficiales del laboratorio.

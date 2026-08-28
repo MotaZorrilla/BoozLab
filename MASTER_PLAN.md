@@ -191,7 +191,7 @@
       - Exportación de auditoría completa a CSV.
     - `/admin/users`: Administración de colaboradores, asignación de roles y matriz de responsabilidades.
     - `/admin/ai`: Consola de Inteligencia Artificial con clave de Gemini enmascarada y simulador/playground de pruebas en vivo.
-    - `/admin/settings`: Edición del WhatsApp oficial y datos legales de la planta de producción.
+    - `/admin/settings`: Edición del WhatsApp oficial, personalización completa de la plantilla de WhatsApp para la bolsa de pedidos (encabezado, cierre, simulador interactivo en tiempo real), perfiles de solicitante permitidos y datos legales de la planta.
   - Actualizado `/dashboard` transformado en una **Consola Ejecutiva de Administración Farmacéutica** con KPIs superiores en tiempo real y las 4 fichas interactivas de enlace, desincorporando la tabla monolítica del catálogo para máxima velocidad y claridad operativa.
 - [x] **Arquitectura de Seeders Idempotente y Generosa:**
   - Implementados `RoleSeeder`, `SystemSettingSeeder` y `UserSeeder` (5 usuarios oficiales con roles asignados).
