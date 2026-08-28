@@ -626,25 +626,32 @@ export default function Home({ productLines = [], products = [], testimonials = 
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-                        {testimonials.map((t) => (
-                            <div
-                                key={t.id}
-                                className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-slate-50 dark:bg-[#0D172E] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between shadow-sm transition-colors"
-                            >
-                                <p className="text-xs text-slate-600 dark:text-slate-300 italic mb-6 leading-relaxed">
-                                    "{t.comment}"
-                                </p>
-                                <div className="flex items-center gap-3 pt-4 border-t border-slate-200/60 dark:border-slate-800">
-                                    <div className="h-9 w-9 rounded-full bg-[#002072] text-white font-black text-xs flex items-center justify-center shadow-md">
-                                        {t.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
-                                    </div>
-                                    <div>
-                                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">{t.name}</h4>
-                                        <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.specialty} • {t.institution}</p>
+                        {testimonials.map((t) => {
+                            const authorName = t.author_name || (t as any).name || 'Especialista Médico';
+                            const quoteText = t.quote || (t as any).comment || '';
+                            const roleText = t.author_role || (t as any).specialty || 'Profesional de la Salud';
+                            const initials = authorName.split(' ').filter(Boolean).map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
+
+                            return (
+                                <div
+                                    key={t.id}
+                                    className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-slate-50 dark:bg-[#0D172E] border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between shadow-sm transition-colors"
+                                >
+                                    <p className="text-xs text-slate-600 dark:text-slate-300 italic mb-6 leading-relaxed">
+                                        "{quoteText}"
+                                    </p>
+                                    <div className="flex items-center gap-3 pt-4 border-t border-slate-200/60 dark:border-slate-800">
+                                        <div className="h-9 w-9 rounded-full bg-[#002072] text-white font-black text-xs flex items-center justify-center shadow-md flex-shrink-0">
+                                            {initials || 'BZ'}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xs font-bold text-slate-900 dark:text-white">{authorName}</h4>
+                                            <p className="text-[10px] text-slate-500 dark:text-slate-400">{roleText}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </section>
