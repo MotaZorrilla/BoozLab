@@ -100,12 +100,10 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                         
                         {/* Desktop Navigation Links */}
                         <div className="hidden lg:flex items-center space-x-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
-                            <Link href="/" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Inicio</Link>
                             <a href="/#lineas" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Líneas</a>
-                            <a href="/#productos" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Productos</a>
+                            <a href="/#productos" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Catálogo</a>
                             <Link href="/farmacovigilancia" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Farmacovigilancia</Link>
                             <Link href="/herramientas" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Calculadora Pediátrica</Link>
-                            <Link href="/glosario" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Glosario</Link>
                         </div>
 
                         {/* Actions */}
@@ -275,10 +273,10 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                 Líneas Terapéuticas
                             </h4>
                             <ul className="space-y-2 text-xs">
-                                <li><a href="/#lineas" className="hover:text-cyan-400 transition-colors">01. Cuidado de la Piel (Dermatología)</a></li>
-                                <li><a href="/#lineas" className="hover:text-cyan-400 transition-colors">02. Tratamiento Tópico (Antibióticos)</a></li>
-                                <li><a href="/#lineas" className="hover:text-cyan-400 transition-colors">03. Salud y Bienestar (Nutrición)</a></li>
-                                <li><a href="/#lineas" className="hover:text-cyan-400 transition-colors">04. Cuidado Especializado (Pie Diabético)</a></li>
+                                <li><a href="/#productos" className="hover:text-cyan-400 transition-colors">Cuidado de la Piel</a></li>
+                                <li><a href="/#productos" className="hover:text-cyan-400 transition-colors">Tratamiento Tópico</a></li>
+                                <li><a href="/#productos" className="hover:text-cyan-400 transition-colors">Salud y Bienestar</a></li>
+                                <li><a href="/#productos" className="hover:text-cyan-400 transition-colors">Cuidado Especializado</a></li>
                             </ul>
                         </div>
 
