@@ -268,15 +268,15 @@ export default function Home({ productLines = [], products = [], testimonials = 
                             )}
                         </div>
 
-                        {/* Columna 2: Hola, soy Booz / Lira - Tu asistente virtual */}
+                        {/* Columna 2: Hola, soy Lira - Tu asistente virtual */}
                         <div className="lg:col-span-5 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-950 p-8 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-center gap-6 relative overflow-hidden">
                             <div className="relative w-36 h-36 flex-shrink-0">
                                 <img
-                                    src="/assets/img/booz_mascot.png"
-                                    alt="Lira Asistente Booz"
+                                    src="/assets/img/lira_mascot_transparent.png"
+                                    alt="Lira Asistente Virtual"
                                     className="w-full h-full object-contain drop-shadow-2xl"
                                     onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/assets/img/Mascota_Lira_3D_Crema_Salicis_Fondo_Naranja.jpeg';
+                                        (e.target as HTMLImageElement).src = '/assets/img/lira_head_avatar.png';
                                     }}
                                 />
                             </div>
@@ -289,14 +289,18 @@ export default function Home({ productLines = [], products = [], testimonials = 
                                     <span className="text-blue-300 font-normal text-lg">Tu asistente virtual</span>
                                 </h3>
                                 <p className="text-xs text-slate-300 leading-relaxed">
-                                    Estoy aquí para ayudarte a encontrar información técnica sobre nuestros medicamentos, fórmulas y presentaciones.
+                                    Estoy aquí para orientarte sobre nuestros medicamentos, líneas terapéuticas y formulaciones oficiales de Booz Laboratorio.
                                 </p>
                                 <button
                                     onClick={() => setIsLiraOpen(true)}
                                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-blue-950 font-black text-xs hover:bg-blue-50 shadow-lg transition-all"
                                 >
-                                    <Bot className="h-4 w-4 text-blue-600" />
-                                    <span>Hablar con Booz</span>
+                                    <img
+                                        src="/assets/img/lira_head_avatar.png"
+                                        alt="Lira"
+                                        className="h-4 w-4 rounded-full object-cover"
+                                    />
+                                    <span>Hablar con Lira</span>
                                 </button>
                             </div>
                         </div>

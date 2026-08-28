@@ -43,33 +43,18 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
             `}} />
             <Head title="Booz Laboratorio | Innovación Clínica" />
             
-            {/* Top Announcement Bar */}
-            <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white text-xs py-2 px-4">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <span className="bg-blue-600/60 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Oficial</span>
-                        <span>BOOZ LABORATORIO VGME, C.A. — RIF J-40906185-0 • Valle de Guanape, Edo. Anzoátegui</span>
-                    </div>
-                    <div className="hidden md:flex items-center gap-4 text-[11px] text-blue-200">
-                        <Link href="/farmacovigilancia" className="hover:text-white underline transition-colors">
-                            Canal de Farmacovigilancia y Quejas
-                        </Link>
-                        <span>•</span>
-                        <a href="https://instagram.com/booz.laboratorio" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
-                            @booz.laboratorio
-                        </a>
-                    </div>
-                </div>
-            </div>
-
             {/* Navigation */}
             <nav className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-md">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-20 items-center justify-between">
-                        {/* Logo */}
+                        {/* Logo Oficial de Booz Laboratorio */}
                         <Link href="/" className="flex items-center gap-3 group">
-                            <div className="h-11 w-11 rounded-xl bg-gradient-to-tr from-blue-900 to-blue-600 flex items-center justify-center shadow-md shadow-blue-900/20 group-hover:scale-105 transition-transform">
-                                <span className="text-white font-black text-xl tracking-tighter">B</span>
+                            <div className="h-11 w-11 rounded-xl bg-blue-900/10 p-1 flex items-center justify-center border border-blue-100 group-hover:scale-105 transition-transform">
+                                <img
+                                    src="/assets/img/booz_symbol_icon.png"
+                                    alt="Booz Laboratorio"
+                                    className="h-full w-full object-contain"
+                                />
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xl font-black tracking-tight text-blue-950 uppercase leading-none">
@@ -103,13 +88,17 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                 <kbd className="text-[10px] bg-white px-1.5 py-0.5 rounded border border-slate-300">Ctrl K</kbd>
                             </button>
 
-                            {/* Habla con Booz Button */}
+                            {/* Habla con Lira Button */}
                             <button
                                 onClick={() => setIsAIOpen(true)}
                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-900 to-blue-700 text-white text-xs font-bold shadow-md shadow-blue-900/20 hover:from-blue-800 hover:to-blue-600 hover:shadow-lg transition-all"
                             >
-                                <span className="text-base">🐶</span>
-                                <span>Habla con Booz</span>
+                                <img
+                                    src="/assets/img/lira_head_avatar.png"
+                                    alt="Lira"
+                                    className="h-5 w-5 rounded-full object-cover ring-1 ring-white/60"
+                                />
+                                <span>Habla con Lira</span>
                             </button>
                         </div>
                     </div>
@@ -134,16 +123,20 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                     <MessageCircle className="h-7 w-7" />
                 </a>
 
-                {/* AI Assistant Floating Avatar */}
+                {/* AI Assistant Floating Avatar (Lira) */}
                 <button 
                     onClick={() => setIsAIOpen(true)}
-                    className="flex h-13 w-13 items-center justify-center rounded-full bg-blue-900 text-white shadow-xl hover:bg-blue-800 hover:scale-110 transition-all relative group border-2 border-white"
-                    title="Consultar con Lira (IA)"
+                    className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-950 text-white shadow-2xl hover:scale-110 transition-all relative group border-2 border-white overflow-hidden p-1"
+                    title="Consultar con Lira (Asistente Virtual)"
                 >
-                    <Bot className="h-6 w-6 text-blue-200" />
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                    <img
+                        src="/assets/img/lira_head_avatar.png"
+                        alt="Lira"
+                        className="h-full w-full object-cover rounded-full"
+                    />
+                    <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-4 w-4 bg-cyan-500 text-[9px] font-black items-center justify-center text-slate-900">AI</span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 bg-cyan-500 text-[8px] font-black items-center justify-center text-slate-900">AI</span>
                     </span>
                 </button>
 

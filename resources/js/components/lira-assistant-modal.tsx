@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '@/components/modal';
-import { Send, Bot, Sparkles, ShieldAlert, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Send, Sparkles, ShieldAlert, ArrowRight } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
 interface ChatMessage {
@@ -25,7 +25,7 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             sender: 'lira',
-            text: '¡Hola! Soy Lira, tu asistente de Booz Laboratorio 🐾. ¿En qué puedo orientarte hoy sobre nuestras 4 líneas terapéuticas o catálogo de medicamentos?',
+            text: '¡Hola! 🐾 Soy <strong>Lira</strong>, la asistente virtual oficial de <strong>Booz Laboratorio</strong>. Estoy aquí para orientarte sobre nuestro vademécum, principios activos, posología y las 4 líneas terapéuticas registradas. ¿Qué producto o área de salud deseas consultar hoy?',
         },
     ]);
     const [isLoading, setIsLoading] = useState(false);
@@ -93,36 +93,35 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
     };
 
     const quickChips = [
-        'Tratamiento Pie Diabético',
+        'Pie Diabético (Bactrocis)',
         'Fórmula de Bacumer',
-        'Líneas de productos',
-        'Reportar evento adverso',
-        'Sede Valle de Guanape',
+        '4 Líneas de productos',
+        'Farmacovigilancia INH',
     ];
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Asistente Virtual Lira | Booz Laboratorio">
+        <Modal isOpen={isOpen} onClose={onClose} title="Lira | Asistente Virtual Booz Laboratorio">
             <div className="bg-slate-900 -m-6 p-6 h-[560px] flex flex-col rounded-b-2xl">
-                {/* Lira Header Banner */}
-                <div className="flex items-center gap-4 pb-4 border-b border-slate-800">
-                    <div className="relative h-14 w-14 rounded-2xl bg-blue-600/30 border border-blue-500/40 p-1 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                {/* Lira Header Banner with Transparent Avatar */}
+                <div className="flex items-center gap-3.5 pb-4 border-b border-slate-800">
+                    <div className="relative h-13 w-13 rounded-2xl bg-blue-950/80 border border-blue-500/40 p-1 flex-shrink-0 flex items-center justify-center overflow-hidden shadow-inner">
                         <img 
-                            src="/assets/img/booz_mascot.png" 
-                            alt="Lira" 
-                            className="h-full w-full object-contain"
+                            src="/assets/img/lira_head_avatar.png" 
+                            alt="Lira Asistente Virtual" 
+                            className="h-full w-full object-cover rounded-xl"
                             onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/assets/img/Mascota_Lira_3D_Crema_Salicis_Fondo_Naranja.jpeg';
+                                (e.target as HTMLImageElement).src = '/assets/img/lira_mascot_transparent.png';
                             }}
                         />
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
                             <h3 className="text-white font-bold text-base">Lira</h3>
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                                <Sparkles className="h-2.5 w-2.5" /> IA Clínica
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                <Sparkles className="h-2.5 w-2.5" /> Asistente Inteligente
                             </span>
                         </div>
-                        <p className="text-xs text-slate-400">Guía de catálogo y orientación farmacéutica ética</p>
+                        <p className="text-xs text-slate-400">Booz Laboratorio VGME, C.A. • Orientación Farmacéutica</p>
                     </div>
                 </div>
 
@@ -134,8 +133,12 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
                             className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                             {msg.sender === 'lira' && (
-                                <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-blue-500/20">
-                                    <Bot className="h-4 w-4" />
+                                <div className="h-8 w-8 rounded-full overflow-hidden flex-shrink-0 border border-blue-400/50 shadow-md bg-blue-950">
+                                    <img 
+                                        src="/assets/img/lira_head_avatar.png" 
+                                        alt="Lira" 
+                                        className="h-full w-full object-cover"
+                                    />
                                 </div>
                             )}
 
@@ -153,7 +156,7 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
                                 {msg.suggestedProducts && msg.suggestedProducts.length > 0 && (
                                     <div className="mt-2 space-y-1.5 pl-1">
                                         <p className="text-[11px] font-bold uppercase tracking-wider text-blue-400">
-                                            Productos relacionados en catálogo:
+                                            Productos en catálogo oficial:
                                         </p>
                                         <div className="flex flex-wrap gap-2">
                                             {msg.suggestedProducts.map((p) => (
@@ -161,7 +164,7 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
                                                     key={p.id}
                                                     href={`/producto/${p.slug}`}
                                                     onClick={onClose}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-blue-900/60 border border-blue-500/30 text-xs text-blue-300 transition-colors"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-blue-900/60 border border-blue-500/30 text-xs text-blue-300 transition-colors"
                                                 >
                                                     <span>{p.name}</span>
                                                     <ArrowRight className="h-3 w-3" />
@@ -184,23 +187,27 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
 
                     {isLoading && (
                         <div className="flex gap-3 items-center text-xs text-slate-400 italic">
-                            <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white flex-shrink-0 animate-pulse">
-                                <Bot className="h-4 w-4" />
+                            <div className="h-8 w-8 rounded-full overflow-hidden flex-shrink-0 border border-blue-400/50 animate-pulse bg-blue-950">
+                                <img 
+                                    src="/assets/img/lira_head_avatar.png" 
+                                    alt="Lira" 
+                                    className="h-full w-full object-cover"
+                                />
                             </div>
-                            <span className="animate-pulse">Lira está consultando el vademécum...</span>
+                            <span className="animate-pulse">Lira está consultando el vademécum de Booz Laboratorio...</span>
                         </div>
                     )}
                     <div ref={messagesEndRef} />
                 </div>
 
-                {/* Quick Chips */}
-                <div className="pt-2 pb-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                {/* Quick Chips (Contained without overflowing) */}
+                <div className="pt-2 pb-2 flex flex-wrap gap-1.5">
                     {quickChips.map((chip, idx) => (
                         <button
                             key={idx}
                             type="button"
                             onClick={() => handleSend(chip)}
-                            className="whitespace-nowrap px-2.5 py-1 rounded-full text-[11px] bg-slate-800 hover:bg-blue-900/40 text-slate-300 border border-slate-700 hover:border-blue-500/40 transition-all flex-shrink-0"
+                            className="px-2.5 py-1 rounded-lg text-[11px] bg-slate-800 hover:bg-blue-900/50 text-slate-300 border border-slate-700 hover:border-blue-400/40 transition-colors cursor-pointer"
                         >
                             {chip}
                         </button>
@@ -219,7 +226,7 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Escribe tu consulta sobre productos o fórmulas..."
+                        placeholder="Pregúntale a Lira sobre medicamentos, fórmulas o dosis..."
                         className="w-full rounded-2xl border-slate-700 bg-slate-800/90 pl-4 pr-12 py-3 text-sm text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all outline-none"
                     />
                     <button

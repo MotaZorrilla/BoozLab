@@ -55,3 +55,12 @@ En el sector farmacéutico y clínico, la integridad de los datos, la precisión
     ```
 3.  **Compilación Frontend:** Asegurar que los componentes de TypeScript/React compilen sin errores con `npm run build`.
 4.  **Integridad de Datos Farmacéuticos:** No inventar principios activos ni indicaciones. Utilizar siempre los datos oficiales del documento maestro `A.docx` y de los estuches registrados.
+
+---
+
+## 🎙️ 4. Protocolo de Procesamiento de Prompts Largos y Dictados por Voz ($P)
+
+Cuando el usuario envíe una solicitud extensa (>100 palabras) o que evidencie signos de dictado por voz (repeticiones, oraciones fragmentadas, muletillas fonéticas):
+1. **Limpieza Inmediata:** Eliminar muletillas y corregir puntuación y términos técnicos.
+2. **Reorganización y Síntesis:** Estructurar el requerimiento en un formato ejecutivo de alta claridad (Objetivo Principal, Instrucciones Clave y Restricciones).
+3. **Devolución Concisa:** Entregar al usuario la versión optimizada y sintetizada para asegurar que la intención fue comprendida a la perfección antes de la ejecución.
