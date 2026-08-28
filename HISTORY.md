@@ -156,7 +156,7 @@ graph TD
     - `/admin/products`: Catálogo farmacéutico con filtros por nombres reales de líneas terapéuticas (*Cuidado de la piel*, *Tratamiento tópico*, *Salud y bienestar*, *Cuidado especializado*), columnas dedicadas e independientes de **Producto** y **Presentación**, miniaturas fotográficas y nueva pestaña/sección de **Editor Integral de Landing Page & Ficha Médica** (fotografías, posología, indicaciones, precauciones y vista previa en vivo).
     - `/admin/reports`: Consola de farmacovigilancia INH, dictámenes técnicos y descarga en CSV.
     - `/admin/messages`: Bandeja de leads y consultas de contacto con respuesta en 1-clic por WhatsApp.
-    - `/admin/quotes`: Administrador Integral de Tienda Virtual: CRUD de cotizaciones con filtros, creación de cotizaciones manuales, carga rápida de unidades disponibles/stock, comprobante oficial imprimible (`quote-voucher`), analítica de canales y exportación CSV.
+    - `/admin/quotes`: Administrador Integral de Tienda Virtual: CRUD de cotizaciones con filtros, creación de cotizaciones manuales, carga rápida de unidades disponibles/stock, comprobante oficial imprimible (`quote-voucher`), analítica de canales, exportación CSV y resiliencia de modales con soporte unificado de `isOpen` y `show`.
     - `/admin/users`: Gestión de personal y asignación de roles.
     - `/admin/ai`: Consola de Inteligencia Artificial con clave enmascarada y playground simulador en vivo.
     - `/admin/settings`: Configuración general de WhatsApp, personalización de plantillas de mensajes para la bolsa de pedidos de la tienda, perfiles de clientes y datos legales.
