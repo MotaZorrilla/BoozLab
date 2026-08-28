@@ -104,6 +104,22 @@ graph TD
   - Añadidas suites: `AdminSecurityEnforcementTest`, `UnifiedContactFormTest`, `ChatbotResilienceTest`, `CatalogIntegrityTest` y `QuoteSubmissionTest`.
   - Total suite: **89 tests en verde (331 assertions)**.
 
+### Fase 16: Derivación Lira a Administración, Notificaciones & Limpieza Sidebar (28 de Agosto de 2026)
+- **Depuración de Sidebar Administrativo:** Eliminación de enlaces externos del starter kit Laravel (`Repository` y `Documentation`) y sustitución por accesos útiles: Portal Web (`/`), Farmacovigilancia INH (`/farmacovigilancia`) y Vademécum & Fórmulas (`/herramientas`).
+- **Asistencia de Lira con Derivación a Administración:**
+  - Mensaje inicial de Lira ofreciendo enlace directo con la directiva.
+  - Chip rápido *"💬 Contactar al Administrador"* y captura automática con formulario embebido en el chat para nombre, teléfono/WhatsApp, email y consulta.
+  - Envío a `POST /api/messages` con `source: 'lira_chatbot'` y `type: 'lira'`.
+- **Bandeja de Mensajes y Alertas en Dashboard:**
+  - Migración para añadir `source` y `admin_notes` en la tabla `messages`.
+  - Tarjeta métrica KPI con alerta animada de mensajes pendientes de respuesta.
+  - Pestaña **Bandeja de Mensajes** con buscador en tiempo real, badge de origen (*Lira AI* vs *Web*), enlaces a WhatsApp y correo.
+  - Modal de gestión para actualizar estado (*Pendiente*, *En Gestión*, *Contactado*, *Resuelto*), agregar notas internas y botón para abrir WhatsApp en un clic.
+- **Pruebas y Validación:**
+  - Nuevos tests `LiraAdminHandoffTest` y `AdminMessageManagementTest`.
+  - **94 tests pasados en verde (342 assertions)**.
+  - 6 especificaciones OpenSpec validadas al 100%.
+
 ---
 
 ## 📊 4. Métricas de Datos Clínicos y Portafolio Oficial
@@ -113,5 +129,5 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 89 tests pasados (331 assertions) 100% en verde con PHPUnit 11.
+- **Suite de Pruebas Automatizadas:** 94 tests pasados (342 assertions) 100% en verde con PHPUnit 11.
 - **Especificaciones OpenSpec:** 6 especificaciones BDD 100% validadas.

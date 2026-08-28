@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { LayoutGrid, Globe, ShieldAlert, FileText } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -18,7 +18,7 @@ import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Consola Principal',
         href: dashboard(),
         icon: LayoutGrid,
     },
@@ -26,14 +26,19 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
+        title: 'Portal Web Público',
+        href: '/',
+        icon: Globe,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Farmacovigilancia INH',
+        href: '/farmacovigilancia',
+        icon: ShieldAlert,
+    },
+    {
+        title: 'Vademécum & Fórmulas',
+        href: '/herramientas',
+        icon: FileText,
     },
 ];
 

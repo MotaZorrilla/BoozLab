@@ -124,5 +124,23 @@
   - Incorporadas 4 nuevas clases de pruebas Feature: `AdminSecurityEnforcementTest`, `UnifiedContactFormTest`, `ChatbotResilienceTest`, `CatalogIntegrityTest` y `QuoteSubmissionTest`.
   - Total: **89 tests pasados en verde (331 assertions)**.
 
+## 🐾 FASE 16: Derivación Lira a Administración, Notificaciones & Limpieza Sidebar (28 de Agosto de 2026)
+- [x] **Limpieza de Enlaces Externos en Sidebar Administrativo:** Eliminados de `app-sidebar.tsx` los accesos de plantilla ajenos (repositorio externo y docs de Laravel) e incorporados enlaces clínicos oficiales: Portal Web (`/`), Farmacovigilancia INH (`/farmacovigilancia`) y Vademécum & Fórmulas (`/herramientas`).
+- [x] **Captura de Leads y Derivación Asistida por Lira:**
+  - Mensaje de bienvenida de Lira con ofrecimiento proactivo de contacto con administración.
+  - Chip rápido *"💬 Contactar al Administrador"* y detección automática de intención de contacto (`contactar`, `administrador`, etc.).
+  - Formulario de contacto interactivo embebido en el flujo de chat (`lira-assistant-modal.tsx`) para capturar nombre, teléfono/WhatsApp, correo y consulta.
+  - Almacenamiento seguro en backend vía `POST /api/messages` con `source: 'lira_chatbot'` y `type: 'lira'`.
+- [x] **Bandeja de Mensajes y Sistema de Alertas en Dashboard:**
+  - Migración `add_admin_notes_and_source_to_messages_table` incorporando columnas `source` y `admin_notes`.
+  - Tarjeta KPI de Mensajes & Leads en `/dashboard` con indicador animado de alertas (`🔴 X por responder`).
+  - Tercer tab en consola: **Bandeja de Mensajes** con buscador en tiempo real, badge de origen (*Lira AI* vs *Web*), enlaces a WhatsApp y correo.
+  - Modal de gestión de mensajes con respuesta directa por WhatsApp en 1 clic, conmutación de estado (*Pendiente*, *En Gestión*, *Contactado*, *Resuelto*) y registro de notas internas.
+  - Controlador `AdminMessageController` y endpoint `PUT /admin/messages/{message}/status`.
+- [x] **OpenSpec y Pruebas Automatizadas:**
+  - Especificación actualizada en `openspec/specs/lira-ai-assistant/spec.md`.
+  - Nuevas pruebas Feature: `LiraAdminHandoffTest` y `AdminMessageManagementTest`.
+  - Suite completa: **94 tests pasados en verde (342 assertions)**.
+
 > [!IMPORTANT]
 > **Rotación manual pendiente:** la `GEMINI_API_KEY` real que sigue en `.env` debe rotarse por el propietario (el código ya la consume vía config y los tests no dependen de ella).

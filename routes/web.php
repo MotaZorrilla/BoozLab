@@ -55,6 +55,9 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 
     // Pharmacovigilance & Quality Reports Management
     Route::put('/admin/reports/{report}/status', [AdminReportController::class, 'updateStatus'])->name('admin.reports.updateStatus');
+
+    // Contact & Lira AI Leads Management
+    Route::put('/admin/messages/{message}/status', [\App\Http\Controllers\Admin\AdminMessageController::class, 'updateStatus'])->name('admin.messages.updateStatus');
 });
 
 require __DIR__.'/settings.php';

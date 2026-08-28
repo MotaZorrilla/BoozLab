@@ -75,8 +75,17 @@ class ChatbotController extends Controller
         // 3. Fallback Deterministic Knowledge Engine con sanitización XSS
         if (preg_match('/^(hola|buenos d[ií]as|buenas tardes|buenas noches|saludos|quien eres)/i', $q)) {
             return response()->json([
-                'reply' => '¡Hola! Soy Lira, la asistente virtual y mascota científica de Booz Laboratorio 🐾. Estoy aquí para orientarte sobre nuestros medicamentos, fórmulas activas, líneas terapéuticas y posología oficial. ¿Qué deseas consultar hoy?',
+                'reply' => '¡Hola! Soy Lira, la asistente virtual y mascota científica de Booz Laboratorio 🐾. Estoy aquí para orientarte sobre nuestros medicamentos, fórmulas activas, líneas terapéuticas y posología oficial. También puedo comunicarte directamente con nuestro equipo administrativo si lo deseas. ¿Qué te gustaría consultar hoy?',
                 'suggestedProducts' => [],
+                'disclaimer' => null,
+            ]);
+        }
+
+        if (preg_match('/(contactar|administra|hablar con|dejar mensaje|comprar al mayor|distribui|representante|due[ñn]o|gerente|comunicar)/i', $q)) {
+            return response()->json([
+                'reply' => '¡Con mucho gusto! 🐾 En Booz Laboratorio nuestra directiva y equipo administrativo están siempre atentos para atenderte. Puedes <strong>dejar tus datos en el formulario de contacto</strong> aquí mismo y nuestro equipo te contactará de inmediato.',
+                'suggestedProducts' => [],
+                'action' => 'show_contact_form',
                 'disclaimer' => null,
             ]);
         }
@@ -168,7 +177,8 @@ REGLAS OBLIGATORIAS:
 1. NUNCA diagnostiques ni recetes tratamientos para patologías personales. Booz Laboratorio NO promueve la automedicación.
 2. Si el usuario pregunta qué tomar para un dolor, infección o herida, oriéntale sobre qué productos de nuestro catálogo existen para esa área, pero indícale claramente que debe acudir a su médico tratante o dermatólogo para recibir la prescripción adecuada.
 3. Si mencionas medicamentos con antibióticos (Moxifloxacina, Amikacina, Gentamicina) o esteroides (Betametasona, Dexametasona), advierte obligatoriamente que son de venta bajo estricto récipe médico.
-4. Responde en español con formato enriquecido (usa <strong> y listas cortas). Mantén respuestas breves (máximo 2 a 3 párrafos concisos).";
+4. Responde en español con formato enriquecido (usa <strong> y listas cortas). Mantén respuestas breves (máximo 2 a 3 párrafos concisos).
+5. Si el usuario desea comunicarse con el administrador, directiva, cotizar al mayor o hacer consultas comerciales, invítalo con entusiasmo a enviar sus datos de contacto para que el equipo administrativo lo contacte de inmediato.";
 
         $model = config('services.gemini.model', 'gemini-2.5-flash');
         $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";

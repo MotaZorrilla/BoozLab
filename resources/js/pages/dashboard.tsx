@@ -1,12 +1,27 @@
 import { Head, router } from '@inertiajs/react';
 import { 
     Package, ShieldAlert, Plus, Edit2, Trash2, CheckCircle2, 
-    XCircle, Eye, RefreshCw, Search, ArrowUpRight, Filter, AlertTriangle 
+    XCircle, Eye, RefreshCw, Search, ArrowUpRight, Filter, AlertTriangle,
+    MessageSquare, Phone, Mail, ExternalLink, MessageCircle
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import Modal from '@/components/modal';
 import AppLayout from '@/layouts/app-layout';
 import type { Product, ProductLine, PharmacovigilanceReport, Faq, Testimonial } from '@/types';
+
+export interface MessageItem {
+    id: number;
+    type: string;
+    source?: string;
+    name: string;
+    email: string;
+    phone?: string | null;
+    subject?: string | null;
+    message: string;
+    status: 'Pendiente' | 'En Gestión' | 'Contactado' | 'Resuelto';
+    admin_notes?: string | null;
+    created_at: string;
+}
 
 interface DashboardProps {
     stats: {
@@ -14,26 +29,31 @@ interface DashboardProps {
         active_products: number;
         pending_reports: number;
         total_reports: number;
+        pending_messages?: number;
+        total_messages?: number;
         total_lines: number;
     };
     products: Product[];
     productLines: ProductLine[];
     reports: PharmacovigilanceReport[];
+    messages?: MessageItem[];
     faqs: Faq[];
     testimonials: Testimonial[];
 }
 
 export default function Dashboard({
-    stats = { total_products: 0, active_products: 0, pending_reports: 0, total_reports: 0, total_lines: 0 },
+    stats = { total_products: 0, active_products: 0, pending_reports: 0, total_reports: 0, pending_messages: 0, total_messages: 0, total_lines: 0 },
     products = [],
     productLines = [],
     reports = [],
+    messages = [],
     faqs = [],
     testimonials = [],
 }: DashboardProps) {
-    const [activeTab, setActiveTab] = useState<'products' | 'reports' | 'faqs'>('products');
+    const [activeTab, setActiveTab] = useState<'products' | 'reports' | 'messages'>('products');
     const [searchFilter, setSearchFilter] = useState('');
     const [selectedLineFilter, setSelectedLineFilter] = useState<number | null>(null);
+    const [messageSearchFilter, setMessageSearchFilter] = useState('');
 
     // Modal state for Product Create / Edit
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -59,6 +79,11 @@ export default function Dashboard({
     const [selectedReport, setSelectedReport] = useState<PharmacovigilanceReport | null>(null);
     const [reportStatus, setReportStatus] = useState<'Pendiente' | 'En Revisión' | 'Resuelto'>('Pendiente');
     const [adminNotes, setAdminNotes] = useState('');
+
+    // Modal state for Message / Lira Lead Inspection
+    const [selectedMessage, setSelectedMessage] = useState<MessageItem | null>(null);
+    const [msgStatus, setMsgStatus] = useState<'Pendiente' | 'En Gestión' | 'Contactado' | 'Resuelto'>('Pendiente');
+    const [msgNotes, setMsgNotes] = useState('');
 
     const openCreateModal = () => {
         setEditingProduct(null);
@@ -147,6 +172,31 @@ export default function Dashboard({
         });
     }, [products, searchFilter, selectedLineFilter]);
 
+    const filteredMessages = useMemo(() => {
+        return messages.filter((m) => {
+            const q = messageSearchFilter.toLowerCase();
+            return !q ||
+                m.name.toLowerCase().includes(q) ||
+                m.email.toLowerCase().includes(q) ||
+                (m.phone && m.phone.toLowerCase().includes(q)) ||
+                (m.message && m.message.toLowerCase().includes(q)) ||
+                (m.source && m.source.toLowerCase().includes(q)) ||
+                (m.type && m.type.toLowerCase().includes(q));
+        });
+    }, [messages, messageSearchFilter]);
+
+    const handleUpdateMessageStatus = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedMessage) return;
+
+        router.put(`/admin/messages/${selectedMessage.id}/status`, {
+            status: msgStatus,
+            admin_notes: msgNotes,
+        }, {
+            onSuccess: () => setSelectedMessage(null),
+        });
+    };
+
     return (
         <AppLayout breadcrumbs={[{ title: 'Panel Administrativo Booz', href: '/dashboard' }]}>
             <Head title="Panel Administrativo | Booz Laboratorio" />
@@ -159,7 +209,7 @@ export default function Dashboard({
                             Consola de Administración Farmacéutica
                         </h1>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Gestión integral de catálogo, vademécum en tiempo real y recepción de farmacovigilancia INH.
+                            Gestión integral de catálogo, vademécum en tiempo real, farmacovigilancia INH y bandeja de mensajes.
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -181,58 +231,75 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* KPI Metrics Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
+                {/* KPI Metrics Cards (5 Columnas Adaptativas) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div className="bg-white dark:bg-[#0D172E] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
                         <div>
-                            <span className="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Productos</span>
-                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.total_products}</h3>
-                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">{stats.active_products} activos en web</span>
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Productos</span>
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{stats.total_products}</h3>
+                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">{stats.active_products} activos</span>
                         </div>
-                        <div className="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#002072] dark:text-cyan-400 flex items-center justify-center">
-                            <Package className="h-6 w-6" />
+                        <div className="h-11 w-11 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#002072] dark:text-cyan-400 flex items-center justify-center">
+                            <Package className="h-5 w-5" />
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
+                    <div className="bg-white dark:bg-[#0D172E] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
                         <div>
-                            <span className="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Líneas Oficiales</span>
-                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.total_lines}</h3>
-                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Clasificación terapéutica</span>
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Líneas Oficiales</span>
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{stats.total_lines}</h3>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Clasificación</span>
                         </div>
-                        <div className="h-12 w-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-900 dark:text-indigo-300 flex items-center justify-center">
-                            <Filter className="h-6 w-6" />
+                        <div className="h-11 w-11 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-900 dark:text-indigo-300 flex items-center justify-center">
+                            <Filter className="h-5 w-5" />
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-amber-200 dark:border-amber-900/60 shadow-sm flex items-center justify-between bg-gradient-to-r from-white dark:from-[#0D172E] to-amber-50/20 dark:to-amber-950/30 transition-colors">
+                    <div className="bg-white dark:bg-[#0D172E] p-4 sm:p-5 rounded-2xl border border-amber-200 dark:border-amber-900/60 shadow-sm flex items-center justify-between bg-gradient-to-r from-white dark:from-[#0D172E] to-amber-50/20 dark:to-amber-950/30 transition-colors">
                         <div>
-                            <span className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">Farmacovigilancia</span>
-                            <h3 className="text-2xl font-black text-amber-900 dark:text-amber-200 mt-1">{stats.pending_reports}</h3>
-                            <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold">Reportes pendientes INH</span>
+                            <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">Farmacovigilancia</span>
+                            <h3 className="text-2xl font-black text-amber-900 dark:text-amber-200 mt-0.5">{stats.pending_reports}</h3>
+                            <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold">Reportes INH</span>
                         </div>
-                        <div className="h-12 w-12 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 flex items-center justify-center">
-                            <ShieldAlert className="h-6 w-6" />
+                        <div className="h-11 w-11 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 flex items-center justify-center">
+                            <ShieldAlert className="h-5 w-5" />
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
+                    <div className="bg-white dark:bg-[#0D172E] p-4 sm:p-5 rounded-2xl border border-blue-200 dark:border-blue-900/60 shadow-sm flex items-center justify-between bg-gradient-to-r from-white dark:from-[#0D172E] to-blue-50/20 dark:to-blue-950/30 transition-colors">
                         <div>
-                            <span className="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Notificaciones</span>
-                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.total_reports}</h3>
-                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Histórico acumulado</span>
+                            <span className="text-[11px] font-bold text-blue-900 dark:text-cyan-300 uppercase tracking-wider">Bandeja Mensajes</span>
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{stats.total_messages ?? messages.length}</h3>
+                            {(stats.pending_messages ?? 0) > 0 ? (
+                                <span className="text-[10px] text-rose-600 dark:text-rose-400 font-black animate-pulse">
+                                    🔴 {stats.pending_messages} por responder
+                                </span>
+                            ) : (
+                                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">✓ Al día</span>
+                            )}
                         </div>
-                        <div className="h-12 w-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center">
-                            <CheckCircle2 className="h-6 w-6" />
+                        <div className="h-11 w-11 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-[#002072] dark:text-cyan-400 flex items-center justify-center">
+                            <MessageSquare className="h-5 w-5" />
+                        </div>
+                    </div>
+
+                    <div className="bg-white dark:bg-[#0D172E] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
+                        <div>
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Notif.</span>
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{stats.total_reports}</h3>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Histórico</span>
+                        </div>
+                        <div className="h-11 w-11 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center">
+                            <CheckCircle2 className="h-5 w-5" />
                         </div>
                     </div>
                 </div>
 
                 {/* Tabs Navigation */}
-                <div className="flex border-b border-slate-200 dark:border-slate-800 text-sm font-bold">
+                <div className="flex border-b border-slate-200 dark:border-slate-800 text-sm font-bold overflow-x-auto no-scrollbar">
                     <button
                         onClick={() => setActiveTab('products')}
-                        className={`pb-3 px-4 border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+                        className={`pb-3 px-4 border-b-2 transition-all flex items-center gap-2 cursor-pointer flex-shrink-0 ${
                             activeTab === 'products'
                                 ? 'border-[#002072] dark:border-cyan-400 text-[#002072] dark:text-cyan-400'
                                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -244,14 +311,36 @@ export default function Dashboard({
 
                     <button
                         onClick={() => setActiveTab('reports')}
-                        className={`pb-3 px-4 border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+                        className={`pb-3 px-4 border-b-2 transition-all flex items-center gap-2 cursor-pointer flex-shrink-0 ${
                             activeTab === 'reports'
                                 ? 'border-[#002072] dark:border-cyan-400 text-[#002072] dark:text-cyan-400'
                                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                         }`}
                     >
                         <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                        <span>Bandeja de Farmacovigilancia ({reports.length})</span>
+                        <span>Farmacovigilancia INH ({reports.length})</span>
+                        {stats.pending_reports > 0 && (
+                            <span className="px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-bold">
+                                {stats.pending_reports}
+                            </span>
+                        )}
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab('messages')}
+                        className={`pb-3 px-4 border-b-2 transition-all flex items-center gap-2 cursor-pointer flex-shrink-0 ${
+                            activeTab === 'messages'
+                                ? 'border-[#002072] dark:border-cyan-400 text-[#002072] dark:text-cyan-400'
+                                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                        }`}
+                    >
+                        <MessageSquare className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
+                        <span>Bandeja de Mensajes ({messages.length})</span>
+                        {(stats.pending_messages ?? 0) > 0 && (
+                            <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
+                                {stats.pending_messages} nuevos
+                            </span>
+                        )}
                     </button>
                 </div>
 
@@ -449,6 +538,147 @@ export default function Dashboard({
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                )}
+
+                {/* TAB 3: BANDEJA DE MENSAJES & LEADS (CONTACTOS / ASISTENTE LIRA) */}
+                {activeTab === 'messages' && (
+                    <div className="space-y-4">
+                        {/* Filters Bar */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#0D172E] p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+                            <div className="relative w-full sm:w-80">
+                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
+                                <input
+                                    type="text"
+                                    value={messageSearchFilter}
+                                    onChange={(e) => setMessageSearchFilter(e.target.value)}
+                                    placeholder="Buscar por nombre, correo, teléfono o mensaje..."
+                                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-xs focus:ring-2 focus:ring-blue-600 outline-none transition-colors"
+                                />
+                            </div>
+
+                            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                Mostrando <strong className="text-slate-900 dark:text-white">{filteredMessages.length}</strong> mensaje(s) recibidos
+                            </div>
+                        </div>
+
+                        {/* Messages Table */}
+                        <div className="bg-white dark:bg-[#0D172E] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-xs min-w-[720px]">
+                                    <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold border-b border-slate-200 dark:border-slate-800">
+                                        <tr>
+                                            <th className="py-3 px-4">Fecha / Hora</th>
+                                            <th className="py-3 px-4">Origen</th>
+                                            <th className="py-3 px-4">Remitente</th>
+                                            <th className="py-3 px-4">Contacto Directo</th>
+                                            <th className="py-3 px-4">Mensaje / Consulta</th>
+                                            <th className="py-3 px-4">Estado</th>
+                                            <th className="py-3 px-4 text-right">Gestión</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                        {filteredMessages.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={7} className="text-center py-8 text-slate-400 dark:text-slate-500">
+                                                    No se encontraron mensajes en la bandeja.
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            filteredMessages.map((msg) => {
+                                                const isLira = msg.source === 'lira_chatbot' || msg.type === 'lira';
+                                                const cleanPhone = msg.phone ? msg.phone.replace(/[^0-9]/g, '') : null;
+                                                return (
+                                                    <tr key={msg.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                                        <td className="py-3 px-4 whitespace-nowrap text-slate-500 dark:text-slate-400 font-mono">
+                                                            {new Date(msg.created_at).toLocaleDateString('es-VE', {
+                                                                day: '2-digit',
+                                                                month: 'short',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                            })}
+                                                        </td>
+                                                        <td className="py-3 px-4">
+                                                            {isLira ? (
+                                                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-blue-950/80 text-[#002072] dark:text-cyan-300 border border-blue-200 dark:border-blue-800">
+                                                                    🐾 Lira Asistente
+                                                                </span>
+                                                            ) : (
+                                                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                                                    🌐 Formulario Web
+                                                                </span>
+                                                            )}
+                                                        </td>
+                                                        <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">
+                                                            {msg.name}
+                                                        </td>
+                                                        <td className="py-3 px-4 space-y-1">
+                                                            {msg.phone && (
+                                                                <a
+                                                                    href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hola ${msg.name}, te escribimos de Booz Laboratorio respecto a tu mensaje.`)}`}
+                                                                    target="_blank"
+                                                                    rel="noreferrer"
+                                                                    className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold hover:underline"
+                                                                    title="Contactar directamente por WhatsApp"
+                                                                >
+                                                                    <Phone className="h-3 w-3" />
+                                                                    <span>{msg.phone}</span>
+                                                                </a>
+                                                            )}
+                                                            <a
+                                                                href={`mailto:${msg.email}`}
+                                                                className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400"
+                                                                title="Enviar correo"
+                                                            >
+                                                                <Mail className="h-3 w-3" />
+                                                                <span>{msg.email}</span>
+                                                            </a>
+                                                        </td>
+                                                        <td className="py-3 px-4 max-w-xs">
+                                                            {msg.subject && (
+                                                                <span className="block font-semibold text-slate-700 dark:text-slate-200 truncate">
+                                                                    {msg.subject}
+                                                                </span>
+                                                            )}
+                                                            <p className="text-slate-600 dark:text-slate-300 truncate">
+                                                                {msg.message}
+                                                            </p>
+                                                        </td>
+                                                        <td className="py-3 px-4">
+                                                            <span
+                                                                className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                                                                    msg.status === 'Pendiente'
+                                                                        ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300'
+                                                                        : msg.status === 'En Gestión'
+                                                                        ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300'
+                                                                        : msg.status === 'Contactado'
+                                                                        ? 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300'
+                                                                        : 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300'
+                                                                }`}
+                                                            >
+                                                                {msg.status}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-3 px-4 text-right">
+                                                            <button
+                                                                onClick={() => {
+                                                                    setSelectedMessage(msg);
+                                                                    setMsgStatus(msg.status);
+                                                                    setMsgNotes(msg.admin_notes || '');
+                                                                }}
+                                                                className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/80 text-[#002072] dark:text-cyan-300 font-bold hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer"
+                                                            >
+                                                                Gestionar
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -691,6 +921,115 @@ export default function Dashboard({
                                 className="px-6 py-2 rounded-xl bg-[#002072] dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-500 text-white text-xs font-bold shadow-md cursor-pointer transition-all"
                             >
                                 Actualizar Estado
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+            )}
+
+            {/* ========================================================
+                MODAL DE GESTIÓN Y RESPUESTA DE MENSAJE / LEAD LIRA
+            ======================================================== */}
+            {selectedMessage && (
+                <Modal
+                    isOpen={!!selectedMessage}
+                    onClose={() => setSelectedMessage(null)}
+                    title={`Gestión de Mensaje: ${selectedMessage.name}`}
+                >
+                    <form onSubmit={handleUpdateMessageStatus} className="space-y-4">
+                        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-xs space-y-2.5 transition-colors">
+                            <div className="flex justify-between font-bold text-slate-900 dark:text-white">
+                                <span>Remitente: {selectedMessage.name}</span>
+                                <span className="text-slate-400 dark:text-slate-500 font-mono">
+                                    {new Date(selectedMessage.created_at).toLocaleString('es-VE')}
+                                </span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-4 pt-1">
+                                <div>
+                                    <span className="text-slate-400 dark:text-slate-500">Origen:</span>{' '}
+                                    <span className="font-semibold text-slate-800 dark:text-slate-200">
+                                        {selectedMessage.source === 'lira_chatbot' || selectedMessage.type === 'lira' ? '🐾 Lira Asistente Virtual' : '🌐 Portal Web'}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 dark:text-slate-500">Email:</span>{' '}
+                                    <a href={`mailto:${selectedMessage.email}`} className="text-blue-600 dark:text-cyan-400 hover:underline font-semibold">
+                                        {selectedMessage.email}
+                                    </a>
+                                </div>
+                                {selectedMessage.phone && (
+                                    <div>
+                                        <span className="text-slate-400 dark:text-slate-500">Teléfono:</span>{' '}
+                                        <strong className="text-slate-800 dark:text-slate-200">{selectedMessage.phone}</strong>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Botón de Respuesta Rápida por WhatsApp */}
+                            {selectedMessage.phone && (
+                                <div className="pt-2">
+                                    <a
+                                        href={`https://wa.me/${selectedMessage.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hola ${selectedMessage.name}, te saludamos de la Dirección de Booz Laboratorio. Recibimos tu consulta y con gusto te asistimos:`)}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+                                    >
+                                        <MessageCircle className="h-4 w-4" />
+                                        <span>Abrir Chat de WhatsApp con {selectedMessage.name}</span>
+                                    </a>
+                                </div>
+                            )}
+
+                            <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
+                                <span className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Contenido del Mensaje / Consulta:</span>
+                                <p className="text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 leading-relaxed whitespace-pre-wrap">
+                                    {selectedMessage.message}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3 pt-2">
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">Cambiar Estado de Atención:</label>
+                            <div className="flex flex-wrap gap-2">
+                                {(['Pendiente', 'En Gestión', 'Contactado', 'Resuelto'] as const).map((st) => (
+                                    <button
+                                        key={st}
+                                        type="button"
+                                        onClick={() => setMsgStatus(st)}
+                                        className={`py-2 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                                            msgStatus === st
+                                                ? 'bg-[#002072] dark:bg-blue-600 text-white border-[#002072] dark:border-blue-600 shadow-md'
+                                                : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+                                        }`}
+                                    >
+                                        {st}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 pt-2">Notas Administrativas / Seguimiento Interno:</label>
+                            <textarea
+                                rows={3}
+                                value={msgNotes}
+                                onChange={(e) => setMsgNotes(e.target.value)}
+                                placeholder="Registrar acuerdos con el cliente, precios cotizados, fecha de contacto..."
+                                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-xs p-3 focus:ring-2 focus:ring-blue-600 outline-none transition-colors"
+                            />
+                        </div>
+
+                        <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                            <button
+                                type="button"
+                                onClick={() => setSelectedMessage(null)}
+                                className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold cursor-pointer transition-colors"
+                            >
+                                Cerrar
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-6 py-2 rounded-xl bg-[#002072] dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-500 text-white text-xs font-bold shadow-md cursor-pointer transition-all"
+                            >
+                                Guardar Seguimiento
                             </button>
                         </div>
                     </form>
