@@ -48,7 +48,7 @@ export function AppSidebar() {
 
     const navigationGroups = useMemo(() => [
         {
-            label: 'Operaciones Clínicas',
+            label: 'Consola Central',
             items: [
                 {
                     title: 'Consola Principal',
@@ -56,8 +56,13 @@ export function AppSidebar() {
                     icon: LayoutDashboard,
                     roles: ['super_admin', 'director_tecnico', 'gestor_comercial', 'oficial_farmacovigilancia'],
                 },
+            ],
+        },
+        {
+            label: 'Operaciones',
+            items: [
                 {
-                    title: 'Catálogo Farmacéutico',
+                    title: 'Gestión de Catálogo',
                     href: '/admin/products',
                     icon: Pill,
                     roles: ['super_admin', 'director_tecnico', 'gestor_comercial'],
@@ -70,13 +75,8 @@ export function AppSidebar() {
                     badgeVariant: 'amber' as const,
                     roles: ['super_admin', 'director_tecnico', 'oficial_farmacovigilancia'],
                 },
-            ],
-        },
-        {
-            label: 'Gestión Comercial',
-            items: [
                 {
-                    title: 'Mensajes & Leads',
+                    title: 'Bandeja de Mensajes',
                     href: '/admin/messages',
                     icon: MessageSquare,
                     badge: pendingMessages > 0 ? pendingMessages : undefined,
@@ -84,7 +84,7 @@ export function AppSidebar() {
                     roles: ['super_admin', 'gestor_comercial'],
                 },
                 {
-                    title: 'Cotizaciones & Demanda',
+                    title: 'Analítica & Cotizaciones',
                     href: '/admin/quotes',
                     icon: TrendingUp,
                     roles: ['super_admin', 'gestor_comercial'],
