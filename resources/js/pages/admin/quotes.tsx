@@ -182,7 +182,7 @@ export default function AdminQuotes({ quotes, stats, topProducts }: QuotesPagePr
                                             </div>
                                             <div>
                                                 <div className="font-bold text-xs text-slate-900 dark:text-white">{p.name}</div>
-                                                <div className="text-[10px] text-slate-400 font-mono">${p.price.toFixed(2)} USD</div>
+                                                <div className="text-[10px] text-slate-400 font-mono">${Number(p.price || 0).toFixed(2)} USD</div>
                                             </div>
                                         </div>
 

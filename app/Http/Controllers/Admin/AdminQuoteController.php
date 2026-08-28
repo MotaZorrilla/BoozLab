@@ -60,7 +60,14 @@ class AdminQuoteController extends Controller
 
         $topQuotedProducts = Product::orderByDesc('quote_inquiries_count')
             ->take(10)
-            ->get(['id', 'name', 'slug', 'quote_inquiries_count', 'price']);
+            ->get(['id', 'name', 'slug', 'quote_inquiries_count', 'price'])
+            ->map(fn ($p) => [
+                'id' => $p->id,
+                'name' => $p->name,
+                'slug' => $p->slug,
+                'quote_inquiries_count' => (int) $p->quote_inquiries_count,
+                'price' => (float) $p->price,
+            ]);
 
         return Inertia::render('admin/quotes', [
             'quotes' => $quotesPaginated,
