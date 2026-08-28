@@ -179,7 +179,7 @@
 - [x] **Desacoplamiento Modular de Vistas Administrativas:**
   - Rediseñado `app-sidebar.tsx` centralizando en el grupo **"Operaciones"** las 4 áreas clave: Gestión de Catálogo (`/admin/products`), Farmacovigilancia INH (`/admin/reports`), Bandeja de Mensajes (`/admin/messages`) y Analítica & Cotizaciones (`/admin/quotes`), con filtrado por rol y badges reactivos.
   - Creadas páginas administrativas modulares independientes bajo `resources/js/pages/admin/`:
-    - `/admin/products`: Gestión integral del catálogo de 18 fármacos, filtros taxonómicos y modales CRUD.
+    - `/admin/products`: Gestión integral del catálogo de 18 fármacos con nombres reales de líneas terapéuticas (*Cuidado de la piel*, *Tratamiento tópico*, *Salud y bienestar*, *Cuidado especializado*), tabla con columnas independientes de **Producto** y **Presentación**, miniaturas fotográficas, y **Editor Integral de Fichas Médicas & Landing Page** con selector de fotografías, textos clínicos, posología, indicaciones y advertencias.
     - `/admin/reports`: Consola de revisión de Farmacovigilancia INH, emisión de actas y descarga CSV.
     - `/admin/messages`: Bandeja de leads y consultas de contacto con respuesta directa en 1-clic vía WhatsApp.
     - `/admin/quotes`: **Administrador Integral de Tienda Virtual y Demanda Comercial**:

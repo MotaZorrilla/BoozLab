@@ -153,7 +153,7 @@ graph TD
 - **Desacoplamiento Modular de Vistas y Sidebar Dinámico:**
   - Rediseño de `app-sidebar.tsx` unificando bajo el grupo **"Operaciones"** las 4 áreas principales del laboratorio: Gestión de Catálogo (`/admin/products`), Farmacovigilancia INH (`/admin/reports`), Bandeja de Mensajes (`/admin/messages`) y Analítica & Cotizaciones (`/admin/quotes`), con filtrado por rol y badges reactivos.
   - Vistas administrativas dedicadas e independientes bajo `resources/js/pages/admin/`:
-    - `/admin/products`: Catálogo y vademécum de 18 productos con filtros por línea terapéutica y modales CRUD.
+    - `/admin/products`: Catálogo farmacéutico con filtros por nombres reales de líneas terapéuticas (*Cuidado de la piel*, *Tratamiento tópico*, *Salud y bienestar*, *Cuidado especializado*), columnas dedicadas e independientes de **Producto** y **Presentación**, miniaturas fotográficas y nueva pestaña/sección de **Editor Integral de Landing Page & Ficha Médica** (fotografías, posología, indicaciones, precauciones y vista previa en vivo).
     - `/admin/reports`: Consola de farmacovigilancia INH, dictámenes técnicos y descarga en CSV.
     - `/admin/messages`: Bandeja de leads y consultas de contacto con respuesta en 1-clic por WhatsApp.
     - `/admin/quotes`: Administrador Integral de Tienda Virtual: CRUD de cotizaciones con filtros, creación de cotizaciones manuales, carga rápida de unidades disponibles/stock, comprobante oficial imprimible (`quote-voucher`), analítica de canales y exportación CSV.
