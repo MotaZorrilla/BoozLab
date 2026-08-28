@@ -77,6 +77,15 @@
 - [ ] **Gestión de Testimonios y FAQs:** Control editorial de contenidos.
 
 ## 🧪 FASE 12: Aseguramiento de Calidad y Pruebas Automatizadas (PHPUnit 11)
-- [ ] **Feature Tests:** Catálogo, PDP por slug, envío de reportes de farmacovigilancia y autenticación admin.
-- [ ] **Unit Tests:** Fórmulas de dosificación pediátrica (Clark y Young).
-- [ ] **Guardrail Tests:** Validación de política de Cero Automedicación en el Asistente IA.
+- [x] **Feature Tests:** Catálogo, PDP por slug, envío de reportes de farmacovigilancia y autenticación admin.
+- [x] **Unit Tests:** Fórmulas de dosificación pediátrica (Clark y Young).
+- [x] **Guardrail Tests:** Validación de política de Cero Automedicación en el Asistente IA.
+
+## 📐 FASE 13: Marco Formal de Desarrollo Dirigido por Especificaciones (OpenSpec SDD)
+- [x] **Instalación y Configuración de OpenSpec:** Integración del paquete oficial `@fission-ai/openspec` en scripts de `package.json` (`npm run opsx`).
+- [x] **Integración Multi-Herramienta de IA:** Generación de skills y comandos nativos para Antigravity, Cursor, Claude Code y Gemini CLI (`.gemini/`, `.cursor/`, `.agents/`).
+- [x] **Especificaciones del Sistema Formalizadas (Gherkin BDD - WHEN/THEN):**
+  - [`openspec/specs/catalog-and-pdp/spec.md`](file:///C:/xampp/htdocs/BoozLab/openspec/specs/catalog-and-pdp/spec.md): Catálogo de 18 productos, 4 líneas, PDP dinámicos y WhatsApp.
+  - [`openspec/specs/pharmacovigilance/spec.md`](file:///C:/xampp/htdocs/BoozLab/openspec/specs/pharmacovigilance/spec.md): Canal INH, tickets correlativos `BOOZ-FV-YYYY-XXXX` y bandeja administrativa.
+  - [`openspec/specs/lira-ai-assistant/spec.md`](file:///C:/xampp/htdocs/BoozLab/openspec/specs/lira-ai-assistant/spec.md): Asistente Lira, Gemini 2.5 Flash, avatar transparente y guardrail anti-automedicación.
+- [x] **Validación y Monitoreo Continuo:** Validación exitosa de todas las especificaciones con `npm run opsx -- validate --specs`.
