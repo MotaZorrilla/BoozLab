@@ -847,7 +847,7 @@ export default function AdminQuotes({
                 )}
 
                 {/* MODAL: DETALLE Y EDICIÓN DE ESTADO */}
-                <Modal show={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} maxWidth="2xl">
+                <Modal isOpen={isEditModalOpen} show={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} maxWidth="2xl">
                     {selectedQuote && (
                         <div className="p-6 space-y-6">
                             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
@@ -967,7 +967,7 @@ export default function AdminQuotes({
                 </Modal>
 
                 {/* MODAL: NUEVA COTIZACIÓN MANUAL */}
-                <Modal show={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} maxWidth="2xl">
+                <Modal isOpen={isCreateModalOpen} show={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} maxWidth="2xl">
                     <form onSubmit={handleCreateManualQuote} className="p-6 space-y-5">
                         <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
                             <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
