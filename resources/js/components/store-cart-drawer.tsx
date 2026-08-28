@@ -1,12 +1,7 @@
-import { ShoppingBag, X, Plus, Minus, Trash2, MessageCircle } from 'lucide-react';
 import React, { useState } from 'react';
+import { ShoppingBag, X, Trash2, Plus, Minus, MessageCircle, Building, User, Hospital, Truck } from 'lucide-react';
+import type { CartItem } from '@/types';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
-import type { Product } from '@/types';
-
-export interface CartItem {
-    product: Product;
-    quantity: number;
-}
 
 interface StoreCartDrawerProps {
     isOpen: boolean;
@@ -17,6 +12,8 @@ interface StoreCartDrawerProps {
     onClearCart: () => void;
 }
 
+type CustomerType = 'Paciente' | 'Farmacia' | 'Clínica' | 'Distribuidor';
+
 export default function StoreCartDrawer({
     isOpen,
     onClose,
@@ -25,8 +22,11 @@ export default function StoreCartDrawer({
     onRemoveItem,
     onClearCart,
 }: StoreCartDrawerProps) {
-    const { createWhatsAppUrl } = useWhatsApp();
     const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
+    const [customerType, setCustomerType] = useState<CustomerType>('Paciente');
+    const [customerName, setCustomerName] = useState('');
+    const [customerContact, setCustomerContact] = useState('');
+    const { createWhatsAppUrl } = useWhatsApp();
 
     if (!isOpen) return null;
 
@@ -34,19 +34,27 @@ export default function StoreCartDrawer({
 
     const generateWhatsAppOrderUrl = () => {
         let text = `*HOLA BOOZ LABORATORIO* 🔬\n`;
-        text += `Deseo consultar disponibilidad y cotización para el siguiente pedido:\n\n`;
+        text += `Deseo solicitar cotización y disponibilidad para el siguiente pedido:\n\n`;
+        text += `🏛️ *Tipo de Solicitante:* ${customerType}\n`;
+        if (customerName.trim()) {
+            text += `👤 *Nombre / Razón Social:* ${customerName.trim()}\n`;
+        }
+        if (customerContact.trim()) {
+            text += `📞 *Teléfono:* ${customerContact.trim()}\n`;
+        }
+        text += `\n📦 *Detalle de Fármacos Seleccionados:*\n`;
 
         items.forEach((item, index) => {
             text += `${index + 1}. *${item.product.name}* (${item.product.presentation})\n`;
             text += `   - Cantidad: *${item.quantity} unidades*\n`;
             text += `   - Principio: ${item.product.active_ingredients}\n`;
             if (item.product.is_prescription_required) {
-                text += `   - [Nota: Bajo Récipe Médico]\n`;
+                text += `   - [Nota Sanitaria: Venta bajo Récipe Médico]\n`;
             }
             text += `\n`;
         });
 
-        text += `_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega._`;
+        text += `_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega oficial._`;
         return createWhatsAppUrl(text);
     };
 
@@ -62,7 +70,10 @@ export default function StoreCartDrawer({
                     'Accept': 'application/json',
                 },
                 body: JSON.stringify({
-                    customer_type: 'Paciente',
+                    customer_type: customerType,
+                    customer_name: customerName.trim() || undefined,
+                    customer_contact: customerContact.trim() || undefined,
+                    channel: 'whatsapp',
                     items: items.map((item) => ({
                         product_id: item.product.id,
                         quantity: item.quantity,
@@ -118,42 +129,33 @@ export default function StoreCartDrawer({
                                     <ShoppingBag className="h-8 w-8" />
                                 </div>
                                 <h4 className="font-bold text-slate-700 dark:text-slate-200 text-sm mb-1">
-                                    Tu bolsa de pedidos está vacía
+                                    Tu bolsa está vacía
                                 </h4>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mb-6">
-                                    Explora nuestro catálogo oficial y añade los productos que deseas cotizar o solicitar.
+                                <p className="text-xs max-w-xs text-slate-400">
+                                    Explora el vademécum de Booz Laboratorio y añade formulaciones a tu cotización directa.
                                 </p>
-                                <button
-                                    onClick={onClose}
-                                    className="px-5 py-2.5 rounded-xl bg-[#002072] text-white text-xs font-bold hover:bg-blue-800 transition-colors cursor-pointer min-h-[40px]"
-                                >
-                                    Ver Catálogo Farmacéutico
-                                </button>
                             </div>
                         ) : (
                             items.map(({ product, quantity }) => (
                                 <div
                                     key={product.id}
-                                    className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#0D172E] border border-slate-200/80 dark:border-slate-800 flex items-center gap-3.5 transition-colors"
+                                    className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/80 flex items-start gap-3 relative group transition-all hover:border-slate-200 dark:hover:border-slate-700"
                                 >
                                     <img
-                                        src={product.image_path}
+                                        src={product.image_path || '/assets/img/product_1.png'}
                                         alt={product.name}
-                                        className="h-16 w-16 object-contain rounded-xl bg-white dark:bg-slate-800 p-1 flex-shrink-0 border border-slate-100 dark:border-slate-700"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).src = '/assets/img/product_1.png';
-                                        }}
+                                        className="h-14 w-14 rounded-xl object-contain bg-white dark:bg-slate-800 p-1 border border-slate-200/60 dark:border-slate-700 flex-shrink-0"
                                     />
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-start justify-between gap-2">
                                             <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate">
                                                 {product.name}
                                             </h4>
                                             <button
                                                 onClick={() => onRemoveItem(product.id)}
-                                                className="text-slate-400 hover:text-red-500 transition-colors p-1.5 min-h-[32px] min-w-[32px] flex items-center justify-center"
+                                                className="text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer"
                                                 title="Eliminar de la bolsa"
-                                                aria-label={`Eliminar ${product.name} de la bolsa`}
+                                                aria-label={`Eliminar ${product.name}`}
                                             >
                                                 <Trash2 className="h-3.5 w-3.5" />
                                             </button>
@@ -195,24 +197,75 @@ export default function StoreCartDrawer({
                         )}
                     </div>
 
-                    {/* Drawer Footer: Actions */}
+                    {/* Drawer Footer: Formulario de Tipo de Cliente y Checkout */}
                     {items.length > 0 && (
-                        <div className="p-4 sm:p-6 bg-slate-50 dark:bg-[#0D172E] border-t border-slate-200 dark:border-slate-800 space-y-3 pb-safe">
-                            <div className="flex items-center justify-between text-xs">
-                                <span className="text-slate-500 dark:text-slate-400">Total de productos:</span>
-                                <span className="font-bold text-slate-900 dark:text-white">{items.length} ({totalUnits} unidades)</span>
+                        <div className="p-4 sm:p-5 bg-slate-50 dark:bg-[#0D172E] border-t border-slate-200 dark:border-slate-800 space-y-3.5 pb-safe">
+                            {/* Selector de Tipo de Cliente */}
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block">
+                                    ¿Cómo solicitas esta cotización?
+                                </label>
+                                <div className="grid grid-cols-2 gap-1.5">
+                                    {[
+                                        { id: 'Paciente', label: 'Paciente', icon: User },
+                                        { id: 'Farmacia', label: 'Farmacia', icon: Building },
+                                        { id: 'Clínica', label: 'Clínica / Méd.', icon: Hospital },
+                                        { id: 'Distribuidor', label: 'Distribuidor', icon: Truck },
+                                    ].map((t) => {
+                                        const Icon = t.icon;
+                                        const isSelected = customerType === t.id;
+                                        return (
+                                            <button
+                                                key={t.id}
+                                                type="button"
+                                                onClick={() => setCustomerType(t.id as CustomerType)}
+                                                className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 border transition-all cursor-pointer ${
+                                                    isSelected
+                                                        ? 'bg-[#002072] text-white border-[#002072] dark:bg-blue-600 dark:border-blue-500 shadow-xs'
+                                                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60'
+                                                }`}
+                                            >
+                                                <Icon className="h-3 w-3" />
+                                                <span>{t.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Datos de contacto rápidos (opcionales) */}
+                            <div className="grid grid-cols-2 gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Tu Nombre / Entidad (Opcional)"
+                                    value={customerName}
+                                    onChange={(e) => setCustomerName(e.target.value)}
+                                    className="w-full px-2.5 py-1.5 text-[11px] rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-blue-500"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Teléfono / WhatsApp (Opcional)"
+                                    value={customerContact}
+                                    onChange={(e) => setCustomerContact(e.target.value)}
+                                    className="w-full px-2.5 py-1.5 text-[11px] rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/60 dark:border-slate-800">
+                                <span className="text-slate-500 dark:text-slate-400">Total en bolsa:</span>
+                                <span className="font-bold text-slate-900 dark:text-white">{items.length} fármacos ({totalUnits} uds)</span>
                             </div>
 
                             <button
                                 onClick={handleCheckout}
                                 disabled={isSubmittingQuote}
-                                className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer min-h-[44px]"
+                                className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer min-h-[44px]"
                             >
                                 <MessageCircle className="h-4 w-4" />
                                 <span>{isSubmittingQuote ? 'Registrando cotización...' : 'Solicitar Pedido por WhatsApp'}</span>
                             </button>
 
-                            <div className="flex items-center justify-between pt-1">
+                            <div className="flex items-center justify-between pt-0.5">
                                 <button
                                     onClick={onClearCart}
                                     className="text-[11px] text-slate-400 hover:text-red-500 transition-colors p-1"

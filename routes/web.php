@@ -71,9 +71,15 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::put('/admin/messages/{message}/status', [\App\Http\Controllers\Admin\AdminMessageController::class, 'updateStatus'])->name('admin.messages.updateStatus');
     });
 
-    // 4. Quotes & Demand Analytics
+    // 4. Quotes & Demand Analytics (Administrador de Tienda Virtual)
     Route::middleware('permission:quotes.view')->group(function () {
         Route::get('/admin/quotes', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'index'])->name('admin.quotes.index');
+        Route::post('/admin/quotes', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'store'])->name('admin.quotes.store');
+        Route::put('/admin/quotes/{quote}', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'update'])->name('admin.quotes.update');
+        Route::delete('/admin/quotes/{quote}', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'destroy'])->name('admin.quotes.destroy');
+        Route::get('/admin/quotes/export-csv', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'exportCsv'])->name('admin.quotes.exportCsv');
+        Route::get('/admin/quotes/{quote}/print', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'print'])->name('admin.quotes.print');
+        Route::post('/admin/quotes/update-stock', [\App\Http\Controllers\Admin\AdminQuoteController::class, 'updateStock'])->name('admin.quotes.updateStock');
     });
 
     // 5. System Settings, Users & AI Console (Super Admin Only)
