@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AskChatbotRequest;
+use App\Models\AiGuardrail;
+use App\Models\AiKnowledgeDocument;
 use App\Models\Product;
+use App\Models\ProductLine;
+use App\Services\SettingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -54,7 +58,7 @@ class ChatbotController extends Controller
             })->take(3)->values();
 
         // 2. Try calling Real Gemini AI if API Key is configured in settings or environment
-        $geminiApiKey = \App\Services\SettingService::geminiKey();
+        $geminiApiKey = SettingService::geminiKey();
         if (! empty($geminiApiKey)) {
             try {
                 $aiResponse = $this->callGemini($query, $geminiApiKey);
@@ -72,10 +76,26 @@ class ChatbotController extends Controller
             }
         }
 
-        // 3. Fallback Deterministic Knowledge Engine con sanitización XSS
+        // 3. Fallback Deterministic Knowledge Engine con sanitización XSS y entrenamiento documental
         if (preg_match('/^(hola|buenos d[ií]as|buenas tardes|buenas noches|saludos|quien eres)/i', $q)) {
             return response()->json([
                 'reply' => '¡Hola! Soy Lira, la asistente virtual y mascota científica de Booz Laboratorio 🐾. Estoy aquí para orientarte sobre nuestros medicamentos, fórmulas activas, líneas terapéuticas y posología oficial. También puedo comunicarte directamente con nuestro equipo administrativo si lo deseas. ¿Qué te gustaría consultar hoy?',
+                'suggestedProducts' => [],
+                'disclaimer' => null,
+            ]);
+        }
+
+        if (preg_match('/(farmacovigilancia|reacci[oó]n adversa|ram|efecto secundario|lote defectuoso)/i', $q)) {
+            return response()->json([
+                'reply' => 'En Booz Laboratorio contamos con un <strong>Protocolo Operativo de Farmacovigilancia</strong> conforme a las normativas del INH Rafael Rangel. Si sospechas de una reacción adversa a alguno de nuestros 18 medicamentos, por favor indícanos el nombre del fármaco, número de lote, fecha de vencimiento y sintomatología en nuestro <a href="/farmacovigilancia" class="text-blue-600 font-bold underline">formulario oficial de Farmacovigilancia</a>. Si los síntomas son severos, busca atención médica de emergencia inmediatamente.',
+                'suggestedProducts' => [],
+                'disclaimer' => self::DISCLAIMER,
+            ]);
+        }
+
+        if (preg_match('/(como cotizar|c[oó]mo pedir|hacer pedido|cotizaci[oó]n|cu[aá]nto cuesta|precios|despacho)/i', $q)) {
+            return response()->json([
+                'reply' => 'Puedes cotizar cualquiera de nuestros 18 fármacos de dos maneras muy sencillas:<br>1. <strong>Bolsa de Pedidos Web:</strong> Agrega los productos a tu carrito en nuestra tienda virtual, selecciona tu tipo de cliente (Paciente, Farmacia o Clínica) y presiona "Solicitar Pedido por WhatsApp".<br>2. <strong>Contacto Directo por WhatsApp:</strong> Comunícate al <strong>+58 414 8873615</strong>. Despachamos a toda Venezuela directamente desde nuestra planta en Valle de Guanape.',
                 'suggestedProducts' => [],
                 'disclaimer' => null,
             ]);
@@ -162,8 +182,8 @@ class ChatbotController extends Controller
      */
     private function callGemini(string $userPrompt, string $apiKey): ?string
     {
-        $productsContext = Cache::remember('chatbot:products_context', 3600, function () {
-            $lines = \App\Models\ProductLine::with(['products' => function ($q) {
+        $productsContext = Cache::remember('chatbot:products_context', 1800, function () {
+            $lines = ProductLine::with(['products' => function ($q) {
                 $q->active()->orderBy('name');
             }])->get();
 
@@ -180,21 +200,58 @@ class ChatbotController extends Controller
             return implode("\n", $output);
         });
 
-        $basePrompt = \App\Services\SettingService::liraSystemPrompt() ?? "Eres Lira, la perrita mascota y asistente virtual científica oficial de BOOZ LABORATORIO VGME, C.A. (RIF J-40906185-0, ubicada en Valle de Guanape, Anzoátegui, Venezuela). Tu personalidad es profesional, empática, cálida y con rigor científico. Llevas bata de laboratorio.";
+        $knowledgeContext = Cache::remember('chatbot:ai_knowledge_context', 1800, function () {
+            $docs = AiKnowledgeDocument::active()->orderBy('order')->get();
+            if ($docs->isEmpty()) {
+                return '';
+            }
+
+            $blocks = [];
+            foreach ($docs as $doc) {
+                $blocks[] = "=== DOCUMENTO ENTRENADO: {$doc->title} [Categoría: {$doc->category}] ===\n{$doc->content}";
+            }
+
+            return implode("\n\n", $blocks);
+        });
+
+        $guardrailsContext = Cache::remember('chatbot:ai_guardrails_context', 1800, function () {
+            $guardrails = AiGuardrail::active()->orderBy('order')->get();
+            if ($guardrails->isEmpty()) {
+                return '';
+            }
+
+            $rules = [];
+            $i = 1;
+            foreach ($guardrails as $g) {
+                $typeTag = strtoupper(str_replace('_', ' ', $g->type));
+                $rules[] = "{$i}. [{$typeTag}] {$g->name}: {$g->rule_instruction}";
+                $i++;
+            }
+
+            return implode("\n", $rules);
+        });
+
+        $basePrompt = SettingService::liraSystemPrompt() ?? "Eres Lira, la perrita mascota y asistente virtual científica oficial de BOOZ LABORATORIO VGME, C.A. (RIF J-40906185-0, ubicada en Valle de Guanape, Anzoátegui, Venezuela). Tu personalidad es profesional, empática, cálida y con rigor científico. Llevas bata de laboratorio.";
 
         $systemInstruction = "{$basePrompt}
 
-VADEMÉCUM OFICIAL DEL LABORATORIO (18 PRODUCTOS):
+================================================================================
+BASE DE CONOCIMIENTO Y ENTRENAMIENTO DOCUMENTAL DEL LABORATORIO:
+{$knowledgeContext}
+================================================================================
+
+VADEMÉCUM CLÍNICO ACTIVO (18 FÁRMACOS):
 {$productsContext}
 
-GUARDRAILS SANITARIOS INMUTABLES:
-1. NUNCA diagnostiques ni recetes tratamientos para patologías personales. Booz Laboratorio NO promueve la automedicación.
-2. Si el usuario pregunta qué tomar para un dolor, infección o herida, oriéntale sobre qué productos de nuestro catálogo existen para esa área, pero indícale claramente que debe acudir a su médico tratante o dermatólogo para recibir la prescripción adecuada.
-3. Si mencionas medicamentos con antibióticos (Moxifloxacina, Amikacina, Gentamicina) o esteroides (Betametasona, Dexametasona), advierte obligatoriamente que son de venta bajo estricto récipe médico.
-4. Responde en español con formato enriquecido (usa <strong> y listas cortas). Mantén respuestas breves (máximo 2 a 3 párrafos concisos).
-5. Si el usuario desea comunicarse con el administrador, directiva, cotizar al mayor o hacer consultas comerciales, invítalo con entusiasmo a enviar sus datos de contacto para que el equipo administrativo lo contacte de inmediato.";
+GUARDRAILS SANITARIOS Y REGLAS DE CONTENCIÓN OBLIGATORIAS:
+{$guardrailsContext}
+- NUNCA diagnostiques ni recetes tratamientos para patologías personales. Booz Laboratorio NO promueve la automedicación.
+- Si el usuario pregunta qué tomar para un dolor, infección o herida, oriéntale sobre qué productos de nuestro catálogo existen para esa área, pero indícale claramente que debe acudir a su médico tratante o dermatólogo para recibir la prescripción adecuada.
+- Si mencionas medicamentos con antibióticos (Moxifloxacina, Amikacina, Gentamicina) o esteroides (Betametasona, Dexametasona), advierte obligatoriamente que son de venta bajo estricto récipe médico.
+- Responde en español con formato enriquecido (usa <strong> y listas con viñetas). Mantén respuestas breves (máximo 2 a 3 párrafos concisos).
+- Si el usuario desea comunicarse con el administrador, directiva, cotizar al mayor o hacer consultas comerciales, invítalo con entusiasmo a enviar sus datos de contacto para que el equipo administrativo lo contacte de inmediato.";
 
-        $model = \App\Services\SettingService::geminiModel();
+        $model = SettingService::geminiModel();
         $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
 
         $payload = [
@@ -209,7 +266,7 @@ GUARDRAILS SANITARIOS INMUTABLES:
             ],
             'generationConfig' => [
                 'temperature' => 0.3,
-                'maxOutputTokens' => 500,
+                'maxOutputTokens' => 600,
             ],
         ];
 

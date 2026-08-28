@@ -98,6 +98,18 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::get('/admin/ai', [\App\Http\Controllers\Admin\AdminAiController::class, 'index'])->name('admin.ai.index');
         Route::put('/admin/ai', [\App\Http\Controllers\Admin\AdminAiController::class, 'update'])->name('admin.ai.update');
         Route::post('/admin/ai/test', [\App\Http\Controllers\Admin\AdminAiController::class, 'test'])->name('admin.ai.test');
+
+        // Base de Conocimiento Documental de Lira AI
+        Route::post('/admin/ai/documents', [\App\Http\Controllers\Admin\AdminAiController::class, 'storeDocument'])->name('admin.ai.documents.store');
+        Route::put('/admin/ai/documents/{document}', [\App\Http\Controllers\Admin\AdminAiController::class, 'updateDocument'])->name('admin.ai.documents.update');
+        Route::post('/admin/ai/documents/{document}/toggle', [\App\Http\Controllers\Admin\AdminAiController::class, 'toggleDocument'])->name('admin.ai.documents.toggle');
+        Route::delete('/admin/ai/documents/{document}', [\App\Http\Controllers\Admin\AdminAiController::class, 'destroyDocument'])->name('admin.ai.documents.destroy');
+
+        // Guardrails Sanitarios y Reglas de Contención
+        Route::post('/admin/ai/guardrails', [\App\Http\Controllers\Admin\AdminAiController::class, 'storeGuardrail'])->name('admin.ai.guardrails.store');
+        Route::put('/admin/ai/guardrails/{guardrail}', [\App\Http\Controllers\Admin\AdminAiController::class, 'updateGuardrail'])->name('admin.ai.guardrails.update');
+        Route::post('/admin/ai/guardrails/{guardrail}/toggle', [\App\Http\Controllers\Admin\AdminAiController::class, 'toggleGuardrail'])->name('admin.ai.guardrails.toggle');
+        Route::delete('/admin/ai/guardrails/{guardrail}', [\App\Http\Controllers\Admin\AdminAiController::class, 'destroyGuardrail'])->name('admin.ai.guardrails.destroy');
     });
 });
 

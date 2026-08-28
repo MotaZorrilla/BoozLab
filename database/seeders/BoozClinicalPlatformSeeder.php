@@ -17,11 +17,12 @@ class BoozClinicalPlatformSeeder extends Seeder
      */
     public function run(): void
     {
-        // 0. Ensure Roles, System Settings and Users exist
+        // 0. Ensure Roles, System Settings, Users, AI Knowledge Base and Guardrails exist
         $this->call([
             RoleSeeder::class,
             SystemSettingSeeder::class,
             UserSeeder::class,
+            AiKnowledgeAndGuardrailSeeder::class,
         ]);
 
         // 1. Seed Product Lines (4 Líneas Oficiales del Mockup)
