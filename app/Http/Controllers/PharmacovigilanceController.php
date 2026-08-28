@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePharmacovigilanceRequest;
 use App\Models\PharmacovigilanceReport;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,7 +18,7 @@ class PharmacovigilanceController extends Controller
      */
     public function create(): Response
     {
-        $products = Product::where('is_active', true)->select('id', 'name', 'presentation')->get();
+        $products = Product::active()->select('id', 'name', 'presentation')->get();
 
         return Inertia::render('farmacovigilancia', [
             'products' => $products,
@@ -27,35 +28,29 @@ class PharmacovigilanceController extends Controller
     /**
      * Store a newly created pharmacovigilance / quality report in storage.
      */
-    public function store(Request $request): JsonResponse|RedirectResponse
+    public function store(StorePharmacovigilanceRequest $request): JsonResponse|RedirectResponse
     {
-        $validated = $request->validate([
-            'product_id' => 'nullable|exists:products,id',
-            'product_name' => 'required|string|max:150',
-            'batch_number' => 'nullable|string|max:50',
-            'expiry_date' => 'nullable|date',
-            'reporter_name' => 'required|string|max:120',
-            'reporter_type' => 'required|in:Paciente,Médico,Farmacéutico,Distribuidor',
-            'reporter_contact' => 'required|string|max:150',
-            'adverse_reaction' => 'required|string|min:10',
-            'severity' => 'required|in:Leve,Moderada,Grave',
-        ]);
+        $validated = $request->validated();
 
-        $ticketNumber = PharmacovigilanceReport::generateTicketNumber();
+        $report = retry(5, function () use ($validated) {
+            return DB::transaction(function () use ($validated) {
+                $ticketNumber = PharmacovigilanceReport::generateTicketNumber();
 
-        $report = PharmacovigilanceReport::create([
-            'ticket_number' => $ticketNumber,
-            'product_id' => $validated['product_id'] ?? null,
-            'product_name' => $validated['product_name'],
-            'batch_number' => $validated['batch_number'] ?? null,
-            'expiry_date' => $validated['expiry_date'] ?? null,
-            'reporter_name' => $validated['reporter_name'],
-            'reporter_type' => $validated['reporter_type'],
-            'reporter_contact' => $validated['reporter_contact'],
-            'adverse_reaction' => $validated['adverse_reaction'],
-            'severity' => $validated['severity'],
-            'status' => 'Pendiente',
-        ]);
+                return PharmacovigilanceReport::create([
+                    'ticket_number' => $ticketNumber,
+                    'product_id' => $validated['product_id'] ?? null,
+                    'product_name' => $validated['product_name'],
+                    'batch_number' => $validated['batch_number'] ?? null,
+                    'expiry_date' => $validated['expiry_date'] ?? null,
+                    'reporter_name' => $validated['reporter_name'],
+                    'reporter_type' => $validated['reporter_type'],
+                    'reporter_contact' => $validated['reporter_contact'],
+                    'adverse_reaction' => $validated['adverse_reaction'],
+                    'severity' => $validated['severity'],
+                    'status' => 'Pendiente',
+                ]);
+            });
+        }, 50);
 
         if ($request->wantsJson()) {
             return response()->json([

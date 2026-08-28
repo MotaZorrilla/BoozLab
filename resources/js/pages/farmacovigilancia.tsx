@@ -1,7 +1,7 @@
-import BoozLayout from '@/layouts/booz-layout';
 import { Head, Link } from '@inertiajs/react';
 import { ShieldAlert, CheckCircle2, AlertTriangle, FileText, ArrowLeft, Phone, Mail, HelpCircle } from 'lucide-react';
 import React, { useState } from 'react';
+import BoozLayout from '@/layouts/booz-layout';
 
 interface ProductOption {
     id: number;

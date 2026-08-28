@@ -1,6 +1,6 @@
-import BoozLayout from '@/layouts/booz-layout';
 import { Head, Link } from '@inertiajs/react';
 import { Clock, ArrowRight } from 'lucide-react';
+import BoozLayout from '@/layouts/booz-layout';
 
 const MOCK_POSTS = [
     {

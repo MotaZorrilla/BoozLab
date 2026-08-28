@@ -17,6 +17,16 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
 
+    /* PALETA OFICIAL BOOZ LABORATORIO */
+    --color-booz-navy: #002072;          /* PANTONE 2747 C */
+    --color-booz-navy-dark: #00154D;
+    --color-booz-navy-light: #0A369D;
+    --color-booz-burgundy: #842D44;      /* PANTONE 506 C */
+    --color-booz-burgundy-dark: #581827;
+    --color-booz-burgundy-light: #A73856;
+    --color-booz-cyan: #06B6D4;
+    --color-booz-cyan-glow: #22D3EE;
+
     --color-background: var(--background);
     --color-foreground: var(--foreground);
 
@@ -143,5 +153,20 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+}
+
+@layer utilities {
+    /* Soporte de safe area para navegadores móviles modernos */
+    .pb-safe {
+        padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    /* Ocultar barra de scroll en chips táctiles */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 }

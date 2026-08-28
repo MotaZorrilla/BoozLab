@@ -38,13 +38,24 @@ class PharmacovigilanceReport extends Model
     }
 
     /**
-     * Generate correlative ticket number BOOZ-FV-YYYY-XXXX
+     * Generate correlative ticket number BOOZ-FV-YYYY-XXXX.
+     *
+     * The next correlative is derived from the last persisted ticket of the
+     * current year under a pessimistic row lock, so concurrent reports cannot
+     * collide even if older records are deleted.
      */
     public static function generateTicketNumber(): string
     {
         $year = date('Y');
-        $count = static::whereYear('created_at', $year)->count() + 1;
 
-        return sprintf('BOOZ-FV-%s-%04d', $year, $count);
+        $last = static::query()
+            ->lockForUpdate()
+            ->whereYear('created_at', $year)
+            ->orderByDesc('ticket_number')
+            ->value('ticket_number');
+
+        $next = $last ? ((int) substr($last, strrpos($last, '-') + 1)) + 1 : 1;
+
+        return sprintf('BOOZ-FV-%s-%04d', $year, $next);
     }
 }

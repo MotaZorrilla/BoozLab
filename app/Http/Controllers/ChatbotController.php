@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AskChatbotRequest;
 use App\Models\Product;
-use App\Models\ProductLine;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ChatbotController extends Controller
 {
+    private const DISCLAIMER = '⚠️ Aviso Ético y Sanitario: Booz Laboratorio no promueve la automedicación. Esta respuesta tiene fines estrictamente informativos y educativos. Consulta siempre a tu médico o farmacéutico tratante antes de iniciar cualquier tratamiento farmacológico.';
+
     /**
      * Handle query sent to Lira Assistant using real Gemini AI + Booz Catalog context.
      */
-    public function query(Request $request): JsonResponse
+    public function query(AskChatbotRequest $request): JsonResponse
     {
-        $query = trim($request->input('message', ''));
+        $query = trim((string) $request->input('message', ''));
 
         if (empty($query)) {
             return response()->json([
@@ -27,40 +29,50 @@ class ChatbotController extends Controller
         }
 
         $q = mb_strtolower($query, 'UTF-8');
-        $disclaimer = '⚠️ Aviso Ético y Sanitario: Booz Laboratorio no promueve la automedicación. Esta respuesta tiene fines estrictamente informativos y educativos. Consulta siempre a tu médico o farmacéutico tratante antes de iniciar cualquier tratamiento farmacológico.';
 
-        // 1. Find potential matching products from DB for structured chips
+        // 1. Encontrar productos que coincidan por marca (primer término), nombre completo o principios activos
         $matchedProducts = Product::with('productLine')
-            ->where('is_active', true)
-            ->where(function ($builder) use ($q) {
-                $builder->whereRaw('LOWER(name) LIKE ?', ["%{$q}%"])
-                    ->orWhereRaw('LOWER(active_ingredients) LIKE ?', ["%{$q}%"])
-                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$q}%"])
-                    ->orWhereRaw('LOWER(indications) LIKE ?', ["%{$q}%"]);
-            })
-            ->limit(3)
-            ->get();
+            ->active()
+            ->get()
+            ->filter(function ($product) use ($q) {
+                $name = mb_strtolower($product->name, 'UTF-8');
+                $brandName = mb_strtolower(explode(' ', $product->name)[0], 'UTF-8');
+                $act = mb_strtolower($product->active_ingredients, 'UTF-8');
+
+                if (str_contains($q, $brandName) || str_contains($q, $name) || str_contains($name, $q)) {
+                    return true;
+                }
+
+                $actWords = preg_split('/[\s\+\,\-]+/', $act, -1, PREG_SPLIT_NO_EMPTY);
+                foreach ($actWords as $w) {
+                    if (mb_strlen($w) > 4 && str_contains($q, $w)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            })->take(3)->values();
 
         // 2. Try calling Real Gemini AI if GEMINI_API_KEY is configured
-        $geminiApiKey = env('GEMINI_API_KEY');
-        if (!empty($geminiApiKey)) {
+        $geminiApiKey = config('services.gemini.key');
+        if (! empty($geminiApiKey)) {
             try {
                 $aiResponse = $this->callGemini($query, $geminiApiKey);
-                if (!empty($aiResponse)) {
+                if (! empty($aiResponse)) {
                     $isClinical = preg_match('/(dosis|dolor|infecci|herida|tomar|aplicar|tratamiento|receta|récipe|s[ií]ntoma|medicamento|pie diab[eé]tico)/i', $query);
 
                     return response()->json([
                         'reply' => $aiResponse,
                         'suggestedProducts' => $matchedProducts,
-                        'disclaimer' => $isClinical ? $disclaimer : null,
+                        'disclaimer' => $isClinical ? self::DISCLAIMER : null,
                     ]);
                 }
             } catch (\Throwable $e) {
-                Log::warning('Gemini AI fallback in BoozLab: ' . $e->getMessage());
+                Log::warning('Gemini AI fallback en BoozLab: '.$e->getMessage());
             }
         }
 
-        // 3. Fallback Deterministic Knowledge Engine
+        // 3. Fallback Deterministic Knowledge Engine con sanitización XSS
         if (preg_match('/^(hola|buenos d[ií]as|buenas tardes|buenas noches|saludos|quien eres)/i', $q)) {
             return response()->json([
                 'reply' => '¡Hola! Soy Lira, la asistente virtual y mascota científica de Booz Laboratorio 🐾. Estoy aquí para orientarte sobre nuestros medicamentos, fórmulas activas, líneas terapéuticas y posología oficial. ¿Qué deseas consultar hoy?',
@@ -69,72 +81,81 @@ class ChatbotController extends Controller
             ]);
         }
 
+        if (str_contains($q, 'donde') || str_contains($q, 'dónde') || str_contains($q, 'contacto') || str_contains($q, 'valle de guanape') || str_contains($q, 'ubicad') || str_contains($q, 'puerto ordaz')) {
+            return response()->json([
+                'reply' => '<strong>BOOZ LABORATORIO VGME, C.A.</strong> (RIF J-40906185-0)<br>Planta Principal: Av. Hospital cruce con Troncal 11, Valle de Guanape, Edo. Anzoátegui.<br>Oficinas Comerciales: Puerto Ordaz, Edo. Bolívar.<br>Instagram: <strong>@booz.laboratorio</strong> • WhatsApp: +58 414 8873615.',
+                'suggestedProducts' => [],
+                'disclaimer' => null,
+            ]);
+        }
+
         if ($matchedProducts->isNotEmpty()) {
             $first = $matchedProducts->first();
-            $reply = "En nuestro catálogo oficial contamos con <strong>{$first->name}</strong> ({$first->presentation}). " .
-                     "Formulado con <strong>{$first->active_ingredients}</strong> para la línea de <em>{$first->productLine->name}</em>.<br>" .
-                     "<strong>Indicaciones principales:</strong> {$first->indications}.";
+            $safeName = e($first->name);
+            $safePres = e($first->presentation);
+            $safeAct = e($first->active_ingredients);
+            $safeLine = e($first->productLine?->name ?? 'Línea Booz');
+            $safeInd = e($first->indications);
+
+            $reply = "En nuestro catálogo oficial contamos con <strong>{$safeName}</strong> ({$safePres}). ".
+                     "Formulado con <strong>{$safeAct}</strong> para la línea de <em>{$safeLine}</em>.<br>".
+                     "<strong>Indicaciones principales:</strong> {$safeInd}.";
 
             if ($first->is_prescription_required) {
-                $reply .= "<br><span class='text-amber-400 font-bold'>Nota médica: Este producto requiere récipe médico para su dispensación formal.</span>";
+                $reply .= "<br><span class='text-amber-500 font-bold'>Nota médica: Este producto requiere récipe médico para su dispensación formal.</span>";
             }
 
             return response()->json([
                 'reply' => $reply,
                 'suggestedProducts' => $matchedProducts,
-                'disclaimer' => $disclaimer,
+                'disclaimer' => self::DISCLAIMER,
             ]);
         }
 
         if (str_contains($q, 'linea') || str_contains($q, 'línea')) {
             return response()->json([
-                'reply' => "En Booz Laboratorio contamos con <strong>4 Líneas Terapéuticas Oficiales</strong>:<br>" .
-                    "1. <strong>Cuidado de la Piel:</strong> Calamicis, Beducis, Hidramer, Centellacis.<br>" .
-                    "2. <strong>Tratamiento Tópico:</strong> Bacumer, Amikacis, Gentamicis, Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer.<br>" .
-                    "3. <strong>Salud y Bienestar:</strong> Albemer suspensión oral, Cevitmer Vitamina C, Booz Sport.<br>" .
-                    "4. <strong>Cuidado Especializado:</strong> Bactrocis (Moxifloxacina con Biofilm para Pie Diabético) y Salicis antiacné.",
+                'reply' => 'En Booz Laboratorio contamos con <strong>4 Líneas Terapéuticas Oficiales</strong>:<br>'.
+                    '1. <strong>Cuidado de la Piel:</strong> Calamicis, Beducis, Hidramer, Centellacis.<br>'.
+                    '2. <strong>Tratamiento Tópico:</strong> Bacumer, Amikacis, Gentamicis, Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer.<br>'.
+                    '3. <strong>Salud y Bienestar:</strong> Albemer suspensión oral, Cevitmer Vitamina C, Booz Sport.<br>'.
+                    '4. <strong>Cuidado Especializado:</strong> Bactrocis (Moxifloxacina con Biofilm para Pie Diabético) y Salicis antiacné.',
                 'suggestedProducts' => [],
                 'disclaimer' => null,
             ]);
         }
 
         if (str_contains($q, 'pie') || str_contains($q, 'diabetico') || str_contains($q, 'diabético') || str_contains($q, 'bactrocis') || str_contains($q, 'moxifloxacina')) {
-            $bactrocis = Product::where('slug', 'like', '%bactrocis%')->first();
-            return response()->json([
-                'reply' => "Para el manejo especializado de heridas complejas en Pie Diabético, Booz Laboratorio ha desarrollado <strong>Bactrocis Crema (Moxifloxacina 0.5%)</strong>. Es una innovación médica que genera un biofilm bioprotector que acelera la granulación dérmica y previene el riesgo de amputación.",
-                'suggestedProducts' => $bactrocis ? [$bactrocis] : [],
-                'disclaimer' => $disclaimer,
-            ]);
-        }
+            $bactrocis = Product::active()->where('slug', 'like', '%bactrocis%')->first();
 
-        if (str_contains($q, 'donde') || str_contains($q, 'dónde') || str_contains($q, 'contacto') || str_contains($q, 'valle de guanape') || str_contains($q, 'puerto ordaz')) {
             return response()->json([
-                'reply' => "<strong>BOOZ LABORATORIO VGME, C.A.</strong> (RIF J-40906185-0)<br>Planta Principal: Av. Hospital cruce con Troncal 11, Valle de Guanape, Edo. Anzoátegui.<br>Oficinas Comerciales: Puerto Ordaz, Edo. Bolívar.<br>Instagram: <strong>@booz.laboratorio</strong> • WhatsApp: +58 414 8873615.",
-                'suggestedProducts' => [],
-                'disclaimer' => null,
+                'reply' => 'Para el manejo especializado de heridas complejas en Pie Diabético, Booz Laboratorio ha desarrollado <strong>Bactrocis Crema (Moxifloxacina 0.5%)</strong>. Es una innovación médica que genera un biofilm bioprotector que acelera la granulación dérmica y previene el riesgo de amputación. <br><span class="text-amber-500 font-bold">Nota médica: Requiere récipe médico para su adquisición.</span>',
+                'suggestedProducts' => $bactrocis ? [$bactrocis] : [],
+                'disclaimer' => self::DISCLAIMER,
             ]);
         }
 
         return response()->json([
-            'reply' => "Como asistente farmacéutica de Booz Laboratorio, puedo orientarte sobre las características y presentaciones de nuestros 18 productos registrados (como <strong>Bactrocis, Bacumer, Albemer, Amikacis, Betamer, Calamicis</strong>) o sobre nuestras 4 líneas terapéuticas. Si presentas malestar o infección, por favor acude a una evaluación médica profesional.",
+            'reply' => 'Como asistente farmacéutica de Booz Laboratorio, puedo orientarte sobre las características y presentaciones de nuestros 18 productos registrados o sobre nuestras 4 líneas terapéuticas. Si presentas malestar o infección, por favor acude a una evaluación médica profesional.',
             'suggestedProducts' => [],
-            'disclaimer' => $disclaimer,
+            'disclaimer' => self::DISCLAIMER,
         ]);
     }
 
     /**
-     * Call Google Gemini API with strict pharmaceutical prompt and catalog knowledge.
+     * Invoke Gemini API with structured prompt and safe headers.
      */
     private function callGemini(string $userPrompt, string $apiKey): ?string
     {
-        $productsContext = Product::with('productLine')
-            ->where('is_active', true)
-            ->get(['name', 'product_line_id', 'active_ingredients', 'presentation', 'indications', 'is_prescription_required'])
-            ->map(function ($p) {
-                $rec = $p->is_prescription_required ? 'Requiere Récipe' : 'Venta Libre';
-                return "- {$p->name} ({$p->presentation}): Principios: {$p->active_ingredients}. Indicaciones: {$p->indications}. ({$rec})";
-            })
-            ->implode("\n");
+        $productsContext = Cache::remember('chatbot:products_context', 3600, function () {
+            return Product::with('productLine')
+                ->active()
+                ->get(['name', 'product_line_id', 'active_ingredients', 'presentation', 'indications', 'is_prescription_required'])
+                ->map(function ($p) {
+                    $rec = $p->is_prescription_required ? 'Requiere Récipe' : 'Venta Libre';
+                    return "- {$p->name} ({$p->presentation}): Principios: {$p->active_ingredients}. Indicaciones: {$p->indications}. ({$rec})";
+                })
+                ->implode("\n");
+        });
 
         $systemInstruction = "Eres Lira, la perrita mascota y asistente virtual científica oficial de BOOZ LABORATORIO VGME, C.A. (RIF J-40906185-0, ubicada en Valle de Guanape, Anzoátegui, Venezuela).
 Tu personalidad es profesional, empática, cálida y con rigor científico. Llevas una bata de laboratorio y estetoscopio.
@@ -146,42 +167,40 @@ CATÁLOGO OFICIAL DISPONIBLE EN EL LABORATORIO:
 REGLAS OBLIGATORIAS:
 1. NUNCA diagnostiques ni recetes tratamientos para patologías personales. Booz Laboratorio NO promueve la automedicación.
 2. Si el usuario pregunta qué tomar para un dolor, infección o herida, oriéntale sobre qué productos de nuestro catálogo existen para esa área, pero indícale claramente que debe acudir a su médico tratante o dermatólogo para recibir la prescripción adecuada.
-3. Si mencionas medicamentos con antibióticos (Moxifloxacina, Amikacina, Gentamicina) o esteroides (Betametasona, Dexametasona), advierte que son de venta bajo estricto récipe médico.
+3. Si mencionas medicamentos con antibióticos (Moxifloxacina, Amikacina, Gentamicina) o esteroides (Betametasona, Dexametasona), advierte obligatoriamente que son de venta bajo estricto récipe médico.
 4. Responde en español con formato enriquecido (usa <strong> y listas cortas). Mantén respuestas breves (máximo 2 a 3 párrafos concisos).";
 
-        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}";
+        $model = config('services.gemini.model', 'gemini-2.5-flash');
+        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
 
         $payload = [
             'system_instruction' => [
-                'parts' => [
-                    ['text' => $systemInstruction],
-                ],
+                'parts' => [['text' => $systemInstruction]],
             ],
             'contents' => [
                 [
                     'role' => 'user',
-                    'parts' => [
-                        ['text' => $userPrompt],
-                    ],
+                    'parts' => [['text' => $userPrompt]],
                 ],
             ],
             'generationConfig' => [
-                'temperature' => 0.4,
+                'temperature' => 0.3,
                 'maxOutputTokens' => 500,
             ],
         ];
 
-        $response = Http::timeout(10)->post($endpoint, $payload);
+        // API Key transmitida en header x-goog-api-key en vez de URL pública
+        $response = Http::withHeaders([
+            'x-goog-api-key' => $apiKey,
+        ])->timeout(8)->post($endpoint, $payload);
 
         if ($response->successful()) {
             $data = $response->json();
             $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-            if (!empty($text)) {
-                // Convert simple markdown formatting to HTML tags
+            if (! empty($text)) {
                 $formatted = nl2br(e($text));
                 $formatted = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $formatted);
-                $formatted = preg_replace('/\* (.*?)(<br \/>|\n|$)/', '• $1$2', $formatted);
-                return $formatted;
+                return preg_replace('/\* (.*?)(<br \/>|\n|$)/', '• $1$2', $formatted);
             }
         }
 

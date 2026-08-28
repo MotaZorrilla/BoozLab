@@ -1,6 +1,6 @@
-import BoozLayout from '@/layouts/booz-layout';
 import { Head, Link } from '@inertiajs/react';
 import { Clock, ArrowLeft, Share2, Printer } from 'lucide-react';
+import BoozLayout from '@/layouts/booz-layout';
 
 export default function BlogPost({ slug }: { slug: string }) {
     // Mock data based on slug (in a real app, this would come from the backend)

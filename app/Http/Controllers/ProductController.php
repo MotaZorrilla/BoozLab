@@ -19,15 +19,16 @@ class ProductController extends Controller
     public function home(): Response
     {
         $productLines = ProductLine::with(['products' => function ($q) {
-            $q->where('is_active', true);
+            $q->active();
         }])->get();
 
         $products = Product::with('productLine')
-            ->where('is_active', true)
+            ->active()
+            ->orderBy('name')
             ->get();
 
-        $testimonials = Testimonial::where('is_active', true)->get();
-        $faqs = Faq::where('is_active', true)->orderBy('order')->get();
+        $testimonials = Testimonial::active()->get();
+        $faqs = Faq::active()->orderBy('order')->get();
 
         return Inertia::render('home', [
             'productLines' => $productLines,
@@ -42,14 +43,16 @@ class ProductController extends Controller
      */
     public function show(string $slug): Response
     {
+        // SEGURIDAD SANITARIA: Solo productos activos son accesibles públicamente
         $product = Product::with('productLine')
             ->where('slug', $slug)
+            ->active()
             ->firstOrFail();
 
         $relatedProducts = Product::with('productLine')
             ->where('product_line_id', $product->product_line_id)
             ->where('id', '!=', $product->id)
-            ->where('is_active', true)
+            ->active()
             ->limit(3)
             ->get();
 
@@ -64,21 +67,23 @@ class ProductController extends Controller
      */
     public function search(Request $request): JsonResponse
     {
-        $query = $request->input('q', '');
+        $query = trim((string) $request->input('q', ''));
 
         if (empty($query)) {
-            $products = Product::with('productLine')->where('is_active', true)->limit(10)->get();
+            $products = Product::with('productLine')->active()->limit(10)->get();
 
             return response()->json($products);
         }
 
+        $safeTerm = addcslashes($query, '%_');
+
         $products = Product::with('productLine')
-            ->where('is_active', true)
-            ->where(function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                    ->orWhere('active_ingredients', 'like', "%{$query}%")
-                    ->orWhere('description', 'like', "%{$query}%")
-                    ->orWhere('indications', 'like', "%{$query}%");
+            ->active()
+            ->where(function ($q) use ($safeTerm) {
+                $q->where('name', 'like', "%{$safeTerm}%")
+                    ->orWhere('active_ingredients', 'like', "%{$safeTerm}%")
+                    ->orWhere('description', 'like', "%{$safeTerm}%")
+                    ->orWhere('indications', 'like', "%{$safeTerm}%");
             })
             ->limit(15)
             ->get();

@@ -42,6 +42,15 @@ class AdminProductCrudTest extends TestCase
         );
     }
 
+    public function test_non_admin_users_cannot_access_dashboard(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertForbidden();
+    }
+
     public function test_admin_can_create_new_product(): void
     {
         $admin = User::first();

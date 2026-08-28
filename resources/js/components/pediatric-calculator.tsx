@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { Calculator, AlertCircle, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
 export default function PediatricCalculator() {
     const [weight, setWeight] = useState<string>('');

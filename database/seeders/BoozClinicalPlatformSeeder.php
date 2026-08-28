@@ -24,8 +24,11 @@ class BoozClinicalPlatformSeeder extends Seeder
                 'name' => 'Director Técnico Booz',
                 'password' => Hash::make('admin1234'),
                 'email_verified_at' => now(),
+                'is_admin' => true,
             ]
         );
+
+        $admin->update(['is_admin' => true]);
 
         // 2. Seed Product Lines (4 Líneas Oficiales del Mockup)
         $linesData = [

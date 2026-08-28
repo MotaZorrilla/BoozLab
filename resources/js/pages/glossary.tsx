@@ -1,7 +1,7 @@
-import BoozLayout from '@/layouts/booz-layout';
 import { Head } from '@inertiajs/react';
-import { useState, useMemo } from 'react';
 import { Search, BookOpen, ChevronRight } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import BoozLayout from '@/layouts/booz-layout';
 
 const MOCK_GLOSSARY = [
     { term: 'Biodisponibilidad', definition: 'Fracción de la dosis administrada de un fármaco que llega a la circulación sistémica de forma inalterada.' },

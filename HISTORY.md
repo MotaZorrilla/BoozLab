@@ -73,6 +73,36 @@ graph TD
 ### Fase 12: Aseguramiento de Calidad y Pruebas Automatizadas (PHPUnit 11)
 - Suite completa de Feature y Unit tests ejecutada con 100% de éxito en verde.
 
+### Fase 14: Saneamiento de Seguridad, Integridad Clínica y Protocolo IA Equipo (Agosto 2026)
+- **RBAC Administrativo:** Nueva columna `is_admin` (default false) en `users`, middleware `EnsureAdmin` que responde HTTP 403 y alias `admin` en `bootstrap/app.php`. Las rutas administrativas ahora exigen `['auth','verified','admin']`. Tests que verifican acceso admin (200), denegado no-admin (403) e invitado (redirect).
+- **Hardening de la Superficie de Ataque:** Se eliminó la excepción CSRF global de `api/*` (el frontend envía `X-CSRF-TOKEN`) y se añadieron límites `throttle` por ruta pública.
+- **Gestión de Secretos:** `Gemini` se consume vía `config('services.gemini.key')`; `.env.example` documenta la variable vacía. El código ya no lee `env()` directamente.
+- **Formularios Públicos Reales:** El bloque "Estamos para escucharte" del Home ahora persiste reportes de farmacovigilancia y mensajes (consultas/comerciales); nuevo controlador `MessageController@store` detrás de `throttle:10,1`.
+- **Tickets Atómicos de Farmacovigilancia:** El corre de tickets se calcula del último ticket del año dentro de una transacción con reintentos ante colisión del índice único. Elimina la dependencia de `count()+1`.
+- **QA Determinista:** `GEMINI_API_KEY=""` en `phpunit.xml` aísla los tests del asistente del tráfico externo. Al cierre: **70 tests en verde** con PHPUnit 11.
+- **OpenSpec:** Changes `admin-access-control` y `report-channel-integrity` creados, validados y archivados; specs principales generados en `openspec/specs/`.
+
+### Fase 15: Teamwork Multidisciplinario & Auditoría Integral (28 de Agosto de 2026)
+- **Skill Formal de Equipo (`teamwork-review-engine`):** Estructurada en `.agents/skills/teamwork-review-engine/SKILL.md` para orquestar revisiones continuas desde los 4 frentes: Backend Architect, Frontend UI/UX Specialist, OpenSpec SDD Lead y QA/TDD Engineer.
+- **Backend & Trazabilidad Comercial:**
+  - Persistencia de pedidos de la tienda: migración y modelo `Quote` con generación correlativa `BOOZ-COT-YYYY-XXXX` y endpoint `POST /api/quotes`.
+  - FormRequests dedicados: `AskChatbotRequest` (prevención DoS por memoria) y `StorePharmacovigilanceRequest`.
+  - Fórmulas de catálogo protegidas: `ProductController::show` y `search` filtran exclusivamente productos activos (`scopeActive`).
+  - Envío seguro de API Key de Gemini en cabecera `x-goog-api-key`.
+- **Frontend UI/UX & Fidelidad Cromática Oficial:**
+  - Integración de tokens en `resources/css/app.css`: **Pantone 2747 C (`#002072`)** y **Pantone 506 C (`#842D44` - Borgoña/Vinotinto Booz)**, utilidades `.pb-safe` y `.no-scrollbar`.
+  - Ficha médica PDP (`product-detail.tsx`) adaptada 100% a Modo Oscuro nativo y badge temático según la línea terapéutica.
+  - Ergonomía táctil en móvil: Botones en tarjeta de catálogo adaptados con touch targets ≥ 36px y selector de líneas con scroll horizontal táctil.
+  - Animación 3D del Hero con scroll throttled mediante `requestAnimationFrame`.
+  - Descongestión de navbar superior en móviles y adaptación safe-area en la barra de navegación inferior (`md:hidden`).
+  - Modal de Lira con altura responsiva en móviles (`h-[78dvh] sm:h-[540px]`) y atributos de accesibilidad ARIA live.
+- **OpenSpec (Gherkin BDD):**
+  - Creadas 3 nuevas especificaciones: `whatsapp-order-bag`, `theme-mode-dynamic` y `mobile-bottom-nav`.
+  - Validación automatizada: `npm run opsx -- validate --specs` -> 6 specs pasadas, 0 fallos.
+- **QA y TDD (PHPUnit 11):**
+  - Añadidas suites: `AdminSecurityEnforcementTest`, `UnifiedContactFormTest`, `ChatbotResilienceTest`, `CatalogIntegrityTest` y `QuoteSubmissionTest`.
+  - Total suite: **89 tests en verde (331 assertions)**.
+
 ---
 
 ## 📊 4. Métricas de Datos Clínicos y Portafolio Oficial
@@ -82,4 +112,5 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 100% en verde con PHPUnit 11.
+- **Suite de Pruebas Automatizadas:** 89 tests pasados (331 assertions) 100% en verde con PHPUnit 11.
+- **Especificaciones OpenSpec:** 6 especificaciones BDD 100% validadas.

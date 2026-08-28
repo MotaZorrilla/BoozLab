@@ -1,10 +1,4 @@
 import { Head, Link } from '@inertiajs/react';
-import React, { useState, useEffect } from 'react';
-import Modal from '@/components/modal';
-import SearchModal from '@/components/search-modal';
-import LiraAssistantModal from '@/components/lira-assistant-modal';
-import StoreCartDrawer, { type CartItem } from '@/components/store-cart-drawer';
-import type { Product } from '@/types';
 import { 
     ShieldAlert, 
     FileText, 
@@ -21,6 +15,12 @@ import {
     ShoppingBag,
     Sparkles
 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import LiraAssistantModal from '@/components/lira-assistant-modal';
+import Modal from '@/components/modal';
+import SearchModal from '@/components/search-modal';
+import StoreCartDrawer, { type CartItem } from '@/components/store-cart-drawer';
+import type { Product } from '@/types';
 
 export default function BoozLayout({ children }: { children: React.ReactNode }) {
     const [isAIOpen, setIsAIOpen] = useState(false);
@@ -180,7 +180,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                             {/* Theme Toggle (Light / Dark) */}
                             <button
                                 onClick={toggleTheme}
-                                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer min-h-[42px] min-w-[42px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-blue-600"
                                 title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
                                 aria-label="Cambiar tema de color"
                             >
@@ -190,22 +190,24 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                             {/* Search Button */}
                             <button 
                                 onClick={() => setIsSearchOpen(true)}
-                                className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
+                                className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer min-h-[42px]"
                                 title="Buscar en vademécum (Ctrl+K)"
+                                aria-label="Buscar medicamento en el vademécum"
                             >
                                 <Search className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
                                 <span>Buscar...</span>
                                 <kbd className="text-[10px] bg-white dark:bg-slate-900 dark:text-slate-300 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">Ctrl K</kbd>
                             </button>
 
-                            {/* Tienda & Bolsa de Pedidos */}
+                            {/* Tienda & Bolsa de Pedidos (Oculto en móvil pequeño para evitar overflow, disponible en bottom nav) */}
                             <button
                                 onClick={() => setIsCartOpen(true)}
-                                className="relative inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-[#002072] dark:text-cyan-300 hover:bg-blue-100 dark:hover:bg-slate-700 text-xs font-bold border border-blue-200/80 dark:border-slate-700 transition-all cursor-pointer"
+                                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-[#002072] dark:text-cyan-300 hover:bg-blue-100 dark:hover:bg-slate-700 text-xs font-bold border border-blue-200/80 dark:border-slate-700 transition-all cursor-pointer min-h-[42px]"
                                 title="Ver Bolsa de Pedidos / Tienda Booz"
+                                aria-label="Ver bolsa de pedidos"
                             >
                                 <ShoppingBag className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
-                                <span className="hidden sm:inline">Tienda</span>
+                                <span>Tienda</span>
                                 {totalCartUnits > 0 && (
                                     <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-white animate-pulse">
                                         {totalCartUnits}
@@ -213,20 +215,22 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                 )}
                             </button>
 
-                            {/* Direct Admin Dashboard Button (Always Visible) */}
+                            {/* Direct Admin Dashboard Button (Desktop) */}
                             <Link
                                 href="/dashboard"
-                                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+                                className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold border border-slate-200 dark:border-slate-700 transition-all cursor-pointer min-h-[42px]"
                                 title="Acceso al Panel de Administración y Auditoría"
+                                aria-label="Ir al panel de administración"
                             >
                                 <LayoutDashboard className="h-3.5 w-3.5 text-[#002072] dark:text-cyan-400" />
-                                <span className="hidden md:inline">Admin</span>
+                                <span>Admin</span>
                             </Link>
 
                             {/* Habla con Lira Button */}
                             <button
                                 onClick={() => setIsAIOpen(true)}
-                                className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-[#002072] via-blue-800 to-blue-700 dark:from-blue-600 dark:to-cyan-600 text-white text-xs font-bold shadow-md shadow-blue-900/20 hover:shadow-lg transition-all cursor-pointer"
+                                className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-[#002072] via-blue-800 to-blue-700 dark:from-blue-600 dark:to-cyan-600 text-white text-xs font-bold shadow-md shadow-blue-900/20 hover:shadow-lg transition-all cursor-pointer min-h-[42px]"
+                                aria-label="Consultar con Lira Asistente Virtual"
                             >
                                 <img
                                     src="/assets/img/lira_head_avatar.png"
@@ -234,23 +238,26 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                     className="h-5 w-5 rounded-full object-cover ring-1 ring-white/60"
                                 />
                                 <span className="hidden sm:inline">Habla con Lira</span>
-                                <span className="sm:hidden">Lira</span>
+                                <span className="sm:hidden text-xs">Lira IA</span>
                             </button>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            {/* Main Content */}
-            <main>
+            {/* Main Content con padding inferior para no solapar la barra móvil */}
+            <main className="pb-24 md:pb-0">
                 {children}
             </main>
 
-            {/* Mobile Bottom Navigation Bar (Compact App Experience) */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0A1124]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center justify-around shadow-2xl">
+            {/* Mobile Bottom Navigation Bar (Compact App Experience con pb-safe) */}
+            <nav 
+                aria-label="Navegación móvil inferior"
+                className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0A1124]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-3 pt-2 pb-safe flex items-center justify-around shadow-2xl"
+            >
                 <a 
                     href="/#lineas" 
-                    className="flex flex-col items-center gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400"
+                    className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
                 >
                     <Sparkles className="h-4 w-4" />
                     <span>Líneas</span>
@@ -258,23 +265,25 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                 
                 <button 
                     onClick={() => setIsCartOpen(true)}
-                    className="relative flex flex-col items-center gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 cursor-pointer"
+                    className="relative flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 cursor-pointer transition-colors"
+                    aria-label={`Tienda y pedidos: ${totalCartUnits} unidades`}
                 >
                     <ShoppingBag className="h-4 w-4" />
                     <span>Tienda</span>
                     {totalCartUnits > 0 && (
-                        <span className="absolute -top-1.5 right-1 flex h-3.5 min-w-3.5 px-0.5 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-black text-white">
+                        <span className="absolute top-1 right-3 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-white">
                             {totalCartUnits}
                         </span>
                     )}
                 </button>
 
-                {/* Central AI Trigger */}
+                {/* Central AI Trigger Floating */}
                 <button 
                     onClick={() => setIsAIOpen(true)}
-                    className="flex flex-col items-center gap-0.5 text-[10px] font-bold text-blue-600 dark:text-cyan-400 cursor-pointer -mt-3"
+                    className="flex flex-col items-center justify-center min-w-[60px] min-h-[48px] gap-0.5 text-[10px] font-bold text-blue-600 dark:text-cyan-400 cursor-pointer -mt-4 transition-transform active:scale-95"
+                    aria-label="Asistente virtual Lira IA"
                 >
-                    <div className="h-11 w-11 rounded-full bg-[#002072] text-white p-0.5 shadow-lg border-2 border-white dark:border-slate-800 overflow-hidden">
+                    <div className="h-12 w-12 rounded-full bg-[#002072] text-white p-0.5 shadow-lg border-2 border-white dark:border-slate-800 overflow-hidden flex items-center justify-center ring-2 ring-cyan-400/40">
                         <img src="/assets/img/lira_head_avatar.png" alt="Lira" className="h-full w-full object-cover rounded-full" />
                     </div>
                     <span>Lira IA</span>
@@ -282,7 +291,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
 
                 <Link 
                     href="/dashboard" 
-                    className="flex flex-col items-center gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400"
+                    className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
                 >
                     <LayoutDashboard className="h-4 w-4" />
                     <span>Admin</span>
@@ -292,12 +301,13 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                     href="https://wa.me/584148873615?text=Hola%20Booz%20Laboratorio,%20deseo%20realizar%20una%20consulta" 
                     target="_blank" 
                     rel="noreferrer"
-                    className="flex flex-col items-center gap-0.5 text-[10px] font-bold text-emerald-600 hover:text-emerald-500"
+                    className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-emerald-600 hover:text-emerald-500 transition-colors"
+                    aria-label="Consultar por WhatsApp oficial"
                 >
                     <MessageCircle className="h-4 w-4" />
                     <span>WhatsApp</span>
                 </a>
-            </div>
+            </nav>
 
             {/* Desktop Floating Action Buttons */}
             <div className="hidden md:flex fixed bottom-6 right-6 flex-col gap-3 z-40">

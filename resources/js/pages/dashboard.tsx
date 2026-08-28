@@ -1,12 +1,12 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import type { Product, ProductLine, PharmacovigilanceReport, Faq, Testimonial } from '@/types';
 import { 
     Package, ShieldAlert, Plus, Edit2, Trash2, CheckCircle2, 
     XCircle, Eye, RefreshCw, Search, ArrowUpRight, Filter, AlertTriangle 
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import Modal from '@/components/modal';
+import AppLayout from '@/layouts/app-layout';
+import type { Product, ProductLine, PharmacovigilanceReport, Faq, Testimonial } from '@/types';
 
 interface DashboardProps {
     stats: {
@@ -287,9 +287,10 @@ export default function Dashboard({
                             </div>
                         </div>
 
-                        {/* Products Table */}
+                        {/* Products Table con Scroll Horizontal Móvil */}
                         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                            <table className="w-full text-left text-xs">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-xs min-w-[640px]">
                                 <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-bold border-b border-slate-200">
                                     <tr>
                                         <th className="py-3 px-4">Producto</th>
@@ -369,6 +370,7 @@ export default function Dashboard({
                                     ))}
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -376,78 +378,80 @@ export default function Dashboard({
                 {/* TAB 2: BANDEJA DE FARMACOVIGILANCIA (EXIGENCIA SANITARIA INH) */}
                 {activeTab === 'reports' && (
                     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <table className="w-full text-left text-xs">
-                            <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-bold border-b border-slate-200">
-                                <tr>
-                                    <th className="py-3 px-4">Ticket</th>
-                                    <th className="py-3 px-4">Producto</th>
-                                    <th className="py-3 px-4">Lote</th>
-                                    <th className="py-3 px-4">Severidad</th>
-                                    <th className="py-3 px-4">Reportante</th>
-                                    <th className="py-3 px-4">Estado</th>
-                                    <th className="py-3 px-4 text-right">Gestión</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {reports.length === 0 ? (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs min-w-[640px]">
+                                <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-bold border-b border-slate-200">
                                     <tr>
-                                        <td colSpan={7} className="text-center py-8 text-slate-400">
-                                            No hay reportes de farmacovigilancia pendientes.
-                                        </td>
+                                        <th className="py-3 px-4">Ticket</th>
+                                        <th className="py-3 px-4">Producto</th>
+                                        <th className="py-3 px-4">Lote</th>
+                                        <th className="py-3 px-4">Severidad</th>
+                                        <th className="py-3 px-4">Reportante</th>
+                                        <th className="py-3 px-4">Estado</th>
+                                        <th className="py-3 px-4 text-right">Gestión</th>
                                     </tr>
-                                ) : (
-                                    reports.map((rep) => (
-                                        <tr key={rep.id} className="hover:bg-slate-50/80 transition-colors">
-                                            <td className="py-3 px-4 font-mono font-bold text-blue-900">{rep.ticket_number}</td>
-                                            <td className="py-3 px-4 font-bold text-slate-900">{rep.product_name}</td>
-                                            <td className="py-3 px-4 text-slate-500">{rep.batch_number || 'N/A'}</td>
-                                            <td className="py-3 px-4">
-                                                <span
-                                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                                        rep.severity === 'Grave'
-                                                            ? 'bg-red-100 text-red-700'
-                                                            : rep.severity === 'Moderada'
-                                                            ? 'bg-amber-100 text-amber-700'
-                                                            : 'bg-emerald-100 text-emerald-700'
-                                                    }`}
-                                                >
-                                                    {rep.severity}
-                                                </span>
-                                            </td>
-                                            <td className="py-3 px-4 text-slate-600">
-                                                <span className="font-semibold block">{rep.reporter_name}</span>
-                                                <span className="text-[10px] text-slate-400">{rep.reporter_type} • {rep.reporter_contact}</span>
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <span
-                                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                                        rep.status === 'Pendiente'
-                                                            ? 'bg-amber-100 text-amber-800'
-                                                            : rep.status === 'En Revisión'
-                                                            ? 'bg-blue-100 text-blue-800'
-                                                            : 'bg-emerald-100 text-emerald-800'
-                                                    }`}
-                                                >
-                                                    {rep.status}
-                                                </span>
-                                            </td>
-                                            <td className="py-3 px-4 text-right">
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedReport(rep);
-                                                        setReportStatus(rep.status);
-                                                        setAdminNotes(rep.admin_notes || '');
-                                                    }}
-                                                    className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-900 font-bold hover:bg-blue-100 transition-colors"
-                                                >
-                                                    Revisar
-                                                </button>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {reports.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={7} className="text-center py-8 text-slate-400">
+                                                No hay reportes de farmacovigilancia pendientes.
                                             </td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
+                                    ) : (
+                                        reports.map((rep) => (
+                                            <tr key={rep.id} className="hover:bg-slate-50/80 transition-colors">
+                                                <td className="py-3 px-4 font-mono font-bold text-blue-900">{rep.ticket_number}</td>
+                                                <td className="py-3 px-4 font-bold text-slate-900">{rep.product_name}</td>
+                                                <td className="py-3 px-4 text-slate-500">{rep.batch_number || 'N/A'}</td>
+                                                <td className="py-3 px-4">
+                                                    <span
+                                                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                                            rep.severity === 'Grave'
+                                                                ? 'bg-red-100 text-red-700'
+                                                                : rep.severity === 'Moderada'
+                                                                ? 'bg-amber-100 text-amber-700'
+                                                                : 'bg-emerald-100 text-emerald-700'
+                                                        }`}
+                                                    >
+                                                        {rep.severity}
+                                                    </span>
+                                                </td>
+                                                <td className="py-3 px-4 text-slate-600">
+                                                    <span className="font-semibold block">{rep.reporter_name}</span>
+                                                    <span className="text-[10px] text-slate-400">{rep.reporter_type} • {rep.reporter_contact}</span>
+                                                </td>
+                                                <td className="py-3 px-4">
+                                                    <span
+                                                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                                            rep.status === 'Pendiente'
+                                                                ? 'bg-amber-100 text-amber-800'
+                                                                : rep.status === 'En Revisión'
+                                                                ? 'bg-blue-100 text-blue-800'
+                                                                : 'bg-emerald-100 text-emerald-800'
+                                                        }`}
+                                                    >
+                                                        {rep.status}
+                                                    </span>
+                                                </td>
+                                                <td className="py-3 px-4 text-right">
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedReport(rep);
+                                                            setReportStatus(rep.status);
+                                                            setAdminNotes(rep.admin_notes || '');
+                                                        }}
+                                                        className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-900 font-bold hover:bg-blue-100 transition-colors"
+                                                    >
+                                                        Revisar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
             </div>

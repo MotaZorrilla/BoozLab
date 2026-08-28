@@ -1,6 +1,6 @@
-import BoozLayout from '@/layouts/booz-layout';
 import { Head } from '@inertiajs/react';
 import { Microscope, ClipboardCheck, ArrowRight } from 'lucide-react';
+import BoozLayout from '@/layouts/booz-layout';
 
 const MOCK_CASES = [
     { 

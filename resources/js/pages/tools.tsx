@@ -1,7 +1,7 @@
-import BoozLayout from '@/layouts/booz-layout';
 import { Head } from '@inertiajs/react';
-import PediatricCalculator from '@/components/pediatric-calculator';
 import { Stethoscope, BrainCircuit, Activity } from 'lucide-react';
+import PediatricCalculator from '@/components/pediatric-calculator';
+import BoozLayout from '@/layouts/booz-layout';
 
 export default function Tools() {
     return (
