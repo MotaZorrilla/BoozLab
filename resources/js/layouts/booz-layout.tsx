@@ -3,18 +3,42 @@ import React, { useState, useEffect } from 'react';
 import Modal from '@/components/modal';
 import SearchModal from '@/components/search-modal';
 import LiraAssistantModal from '@/components/lira-assistant-modal';
-import { ShieldAlert, FileText, Info, Bot, Send, Sparkles, Search, Instagram, Facebook, Phone, MessageCircle, ArrowUp } from 'lucide-react';
+import { 
+    ShieldAlert, 
+    FileText, 
+    Info, 
+    Search, 
+    Instagram, 
+    Facebook, 
+    Phone, 
+    MessageCircle, 
+    ArrowUp, 
+    Sun, 
+    Moon, 
+    LayoutDashboard 
+} from 'lucide-react';
 
 export default function BoozLayout({ children }: { children: React.ReactNode }) {
     const [isAIOpen, setIsAIOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isLegalOpen, setIsLegalOpen] = useState(false);
     const [showScrollUp, setShowScrollUp] = useState(false);
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
     useEffect(() => {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.style.colorScheme = 'light';
-        
+        const savedTheme = localStorage.getItem('booz_theme') as 'light' | 'dark' | null;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initial = savedTheme || (prefersDark ? 'dark' : 'light');
+        setTheme(initial);
+
+        if (initial === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+        }
+
         const handleScroll = () => {
             setShowScrollUp(window.scrollY > 300);
         };
@@ -34,22 +58,30 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
         };
     }, []);
 
+    const toggleTheme = () => {
+        const next = theme === 'light' ? 'dark' : 'light';
+        setTheme(next);
+        localStorage.setItem('booz_theme', next);
+        if (next === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-blue-100">
-            <style dangerouslySetInnerHTML={{ __html: `
-                :root { color-scheme: light !important; }
-                html { background-color: #f8fafc !important; }
-                body { background-color: #f8fafc !important; color: #0f172a !important; }
-            `}} />
+        <div className="min-h-screen bg-slate-50 dark:bg-[#070C18] font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-100 dark:selection:bg-blue-900 transition-colors duration-300">
             <Head title="Booz Laboratorio | Innovación Clínica" />
             
-            {/* Navigation */}
-            <nav className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-md">
+            {/* Navigation Bar */}
+            <nav className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800/90 bg-white/90 dark:bg-[#0A1124]/90 backdrop-blur-md transition-colors duration-300">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-20 items-center justify-between">
                         {/* Logo Oficial de Booz Laboratorio */}
                         <Link href="/" className="flex items-center gap-3 group">
-                            <div className="h-11 w-11 rounded-xl bg-blue-900/10 p-1 flex items-center justify-center border border-blue-100 group-hover:scale-105 transition-transform">
+                            <div className="h-11 w-11 rounded-xl bg-blue-900/10 dark:bg-white/10 p-1 flex items-center justify-center border border-blue-100 dark:border-blue-900/40 group-hover:scale-105 transition-transform">
                                 <img
                                     src="/assets/img/booz_symbol_icon.png"
                                     alt="Booz Laboratorio"
@@ -57,41 +89,62 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-xl font-black tracking-tight text-blue-950 uppercase leading-none">
-                                    BOOZ <span className="text-blue-600 font-light">LABORATORIO</span>
+                                <span className="text-xl font-black tracking-tight text-[#002072] dark:text-white uppercase leading-none">
+                                    BOOZ <span className="text-blue-600 dark:text-cyan-400 font-light">LABORATORIO</span>
                                 </span>
-                                <span className="text-[10px] tracking-widest text-slate-500 font-bold uppercase mt-1">
+                                <span className="text-[10px] tracking-widest text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">
                                     Ciencia que transforma el cuidado
                                 </span>
                             </div>
                         </Link>
                         
                         {/* Desktop Navigation Links */}
-                        <div className="hidden lg:flex items-center space-x-6 text-sm font-semibold text-slate-600">
-                            <Link href="/" className="hover:text-blue-600 transition-colors">Inicio</Link>
-                            <a href="/#lineas" className="hover:text-blue-600 transition-colors">Líneas</a>
-                            <a href="/#productos" className="hover:text-blue-600 transition-colors">Productos</a>
-                            <Link href="/farmacovigilancia" className="hover:text-blue-600 transition-colors">Farmacovigilancia</Link>
-                            <Link href="/herramientas" className="hover:text-blue-600 transition-colors">Calculadora Pediátrica</Link>
-                            <Link href="/glosario" className="hover:text-blue-600 transition-colors">Glosario</Link>
+                        <div className="hidden lg:flex items-center space-x-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                            <Link href="/" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Inicio</Link>
+                            <a href="/#lineas" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Líneas</a>
+                            <a href="/#productos" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Productos</a>
+                            <Link href="/farmacovigilancia" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Farmacovigilancia</Link>
+                            <Link href="/herramientas" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Calculadora Pediátrica</Link>
+                            <Link href="/glosario" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Glosario</Link>
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                            {/* Theme Toggle (Light / Dark) */}
+                            <button
+                                onClick={toggleTheme}
+                                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                                title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+                                aria-label="Cambiar tema de color"
+                            >
+                                {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                            </button>
+
+                            {/* Search Button */}
                             <button 
                                 onClick={() => setIsSearchOpen(true)}
-                                className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 text-slate-500 text-xs hover:bg-slate-200 transition-colors border border-slate-200"
+                                className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
                                 title="Buscar en vademécum (Ctrl+K)"
                             >
-                                <Search className="h-4 w-4" />
+                                <Search className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
                                 <span>Buscar producto...</span>
-                                <kbd className="text-[10px] bg-white px-1.5 py-0.5 rounded border border-slate-300">Ctrl K</kbd>
+                                <kbd className="text-[10px] bg-white dark:bg-slate-900 dark:text-slate-300 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">Ctrl K</kbd>
                             </button>
+
+                            {/* Direct Admin Dashboard Button */}
+                            <Link
+                                href="/dashboard"
+                                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-xs font-bold border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+                                title="Acceso al Panel de Administración"
+                            >
+                                <LayoutDashboard className="h-3.5 w-3.5 text-[#002072] dark:text-cyan-400" />
+                                <span className="hidden md:inline">Panel Admin</span>
+                            </Link>
 
                             {/* Habla con Lira Button */}
                             <button
                                 onClick={() => setIsAIOpen(true)}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-900 to-blue-700 text-white text-xs font-bold shadow-md shadow-blue-900/20 hover:from-blue-800 hover:to-blue-600 hover:shadow-lg transition-all"
+                                className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-gradient-to-r from-[#002072] via-blue-800 to-blue-700 dark:from-blue-600 dark:to-cyan-600 text-white text-xs font-bold shadow-md shadow-blue-900/20 hover:shadow-lg transition-all cursor-pointer"
                             >
                                 <img
                                     src="/assets/img/lira_head_avatar.png"
@@ -117,7 +170,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                     href="https://wa.me/584148873615?text=Hola%20Booz%20Laboratorio,%20deseo%20realizar%20una%20consulta%20sobre%20sus%20productos"
                     target="_blank" 
                     rel="noreferrer"
-                    className="flex h-13 w-13 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl hover:bg-emerald-400 hover:scale-110 transition-all group"
+                    className="flex h-13 w-13 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl hover:bg-emerald-400 hover:scale-110 transition-all group cursor-pointer"
                     title="Contacto directo por WhatsApp"
                 >
                     <MessageCircle className="h-7 w-7" />
@@ -126,7 +179,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                 {/* AI Assistant Floating Avatar (Lira) */}
                 <button 
                     onClick={() => setIsAIOpen(true)}
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-950 text-white shadow-2xl hover:scale-110 transition-all relative group border-2 border-white overflow-hidden p-1"
+                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[#002072] dark:bg-blue-600 text-white shadow-2xl hover:scale-110 transition-all relative group border-2 border-white dark:border-slate-800 overflow-hidden p-1 cursor-pointer"
                     title="Consultar con Lira (Asistente Virtual)"
                 >
                     <img
@@ -144,7 +197,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                 {showScrollUp && (
                     <button 
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800/90 text-white shadow-lg hover:bg-slate-900 hover:scale-105 transition-all self-end"
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800/90 dark:bg-slate-700/90 text-white shadow-lg hover:bg-slate-900 hover:scale-105 transition-all self-end cursor-pointer"
                         title="Volver arriba"
                     >
                         <ArrowUp className="h-4 w-4" />
@@ -156,137 +209,138 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
             <footer className="bg-slate-950 text-slate-400 py-16 border-t border-slate-900">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-                        {/* Column 1: Brand & Regulatory Data */}
+                        {/* Col 1: Identity & Authorization */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="h-9 w-9 rounded-xl bg-blue-600 flex items-center justify-center">
-                                    <span className="text-white font-black text-lg">B</span>
+                                <div className="h-10 w-10 rounded-xl bg-white/10 p-1 flex items-center justify-center">
+                                    <img
+                                        src="/assets/img/booz_symbol_icon.png"
+                                        alt="Booz Laboratorio"
+                                        className="h-full w-full object-contain"
+                                    />
                                 </div>
-                                <span className="text-xl font-bold tracking-tight text-white uppercase">
-                                    BOOZ <span className="text-blue-500 font-light">LABORATORIO</span>
+                                <span className="text-lg font-black text-white uppercase tracking-tight">
+                                    BOOZ <span className="text-cyan-400 font-light">LAB</span>
                                 </span>
                             </div>
                             <p className="text-xs leading-relaxed text-slate-400">
                                 <strong>BOOZ LABORATORIO VGME, C.A.</strong><br />
-                                <strong>RIF:</strong> J-40906185-0<br />
-                                <strong>Farmacéutica Patrocinante:</strong> Farm. Merbry Pérez Malavé.<br />
-                                Planta y Domicilio: Av. Hospital, cruce con Troncal 11, Local N° 2, Sector El Placer, Valle de Guanape, Edo. Anzoátegui, Zona Postal 6032.
+                                RIF: <span className="text-white font-mono">J-40906185-0</span><br />
+                                Planta de Fabricación: Av. Hospital cruce con Troncal 11, Valle de Guanape, Edo. Anzoátegui, Venezuela.
                             </p>
-                            <div className="flex gap-3 pt-2">
+                            <div className="pt-2 text-[11px] text-slate-400">
+                                <span className="text-cyan-400 font-bold">Oficina Comercial:</span> Puerto Ordaz, Edo. Bolívar.
+                            </div>
+                        </div>
+
+                        {/* Col 2: Regulatory & Pharmacovigilance */}
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-white">
+                                Canal Regulatorio
+                            </h4>
+                            <ul className="space-y-2 text-xs">
+                                <li>
+                                    <Link href="/farmacovigilancia" className="hover:text-cyan-400 transition-colors flex items-center gap-2">
+                                        <ShieldAlert className="h-3.5 w-3.5 text-cyan-400" />
+                                        <span>Farmacovigilancia y Quejas</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <button 
+                                        onClick={() => setIsLegalOpen(true)}
+                                        className="hover:text-cyan-400 transition-colors flex items-center gap-2 text-left cursor-pointer"
+                                    >
+                                        <FileText className="h-3.5 w-3.5 text-cyan-400" />
+                                        <span>Política de Calidad y Buenas Prácticas</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <Link href="/glosario" className="hover:text-cyan-400 transition-colors flex items-center gap-2">
+                                        <Info className="h-3.5 w-3.5 text-cyan-400" />
+                                        <span>Glosario Médico y Principios Activos</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/dashboard" className="text-blue-400 hover:text-cyan-300 font-bold transition-colors flex items-center gap-2 pt-1">
+                                        <LayoutDashboard className="h-3.5 w-3.5 text-cyan-400" />
+                                        <span>Consola Administrativa</span>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Col 3: Medical Lines */}
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-white">
+                                Líneas Terapéuticas
+                            </h4>
+                            <ul className="space-y-2 text-xs">
+                                <li><a href="/#lineas" className="hover:text-cyan-400 transition-colors">01. Cuidado de la Piel (Dermatología)</a></li>
+                                <li><a href="/#lineas" className="hover:text-cyan-400 transition-colors">02. Tratamiento Tópico (Antibióticos)</a></li>
+                                <li><a href="/#lineas" className="hover:text-cyan-400 transition-colors">03. Salud y Bienestar (Nutrición)</a></li>
+                                <li><a href="/#lineas" className="hover:text-cyan-400 transition-colors">04. Cuidado Especializado (Pie Diabético)</a></li>
+                            </ul>
+                        </div>
+
+                        {/* Col 4: Official Contact & Social */}
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-white">
+                                Contacto Oficial
+                            </h4>
+                            <div className="space-y-2 text-xs">
                                 <a 
                                     href="https://instagram.com/booz.laboratorio" 
                                     target="_blank" 
                                     rel="noreferrer"
-                                    className="h-9 w-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-slate-400"
+                                    className="flex items-center gap-2 hover:text-pink-400 transition-colors"
                                 >
-                                    <Instagram className="h-4 w-4" />
+                                    <Instagram className="h-4 w-4 text-pink-400" />
+                                    <span>@booz.laboratorio</span>
                                 </a>
                                 <a 
                                     href="https://facebook.com" 
                                     target="_blank" 
                                     rel="noreferrer"
-                                    className="h-9 w-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-slate-400"
+                                    className="flex items-center gap-2 hover:text-blue-400 transition-colors"
                                 >
-                                    <Facebook className="h-4 w-4" />
+                                    <Facebook className="h-4 w-4 text-blue-400" />
+                                    <span>Booz Laboratorio Oficial</span>
                                 </a>
+                                <div className="flex items-center gap-2 pt-2 text-slate-300">
+                                    <Phone className="h-4 w-4 text-emerald-400" />
+                                    <span>+58 (414) 887-3615</span>
+                                </div>
                             </div>
                         </div>
-
-                        {/* Column 2: 4 Líneas Terapéuticas */}
-                        <div>
-                            <h3 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Líneas de Producto</h3>
-                            <ul className="space-y-2.5 text-xs">
-                                <li><a href="/#lineas" className="hover:text-blue-400 transition-colors">01 Cuidado de la Piel (Calamicis, Beducis)</a></li>
-                                <li><a href="/#lineas" className="hover:text-blue-400 transition-colors">02 Tratamiento Tópico (Bacumer, Amikacis)</a></li>
-                                <li><a href="/#lineas" className="hover:text-blue-400 transition-colors">03 Salud y Bienestar (Albemer, Cevitmer)</a></li>
-                                <li><a href="/#lineas" className="hover:text-blue-400 transition-colors">04 Cuidado Especializado (Bactrocis Pie Diabético)</a></li>
-                            </ul>
-                        </div>
-
-                        {/* Column 3: Regulación y Soporte Sanitario */}
-                        <div>
-                            <h3 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Canal Sanitario (INH)</h3>
-                            <ul className="space-y-2.5 text-xs">
-                                <li>
-                                    <Link href="/farmacovigilancia" className="text-amber-400 font-semibold hover:underline flex items-center gap-1.5">
-                                        <ShieldAlert className="h-3.5 w-3.5" /> Reportar Evento Adverso / Lote
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/herramientas" className="hover:text-blue-400 transition-colors">
-                                        Calculadora de Dosificación Pediátrica
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/glosario" className="hover:text-blue-400 transition-colors">
-                                        Glosario Farmacéutico
-                                    </Link>
-                                </li>
-                                <li>
-                                    <button onClick={() => setIsLegalOpen(true)} className="hover:text-blue-400 transition-colors text-left">
-                                        Política de No-Automedicación y Aviso Legal
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Column 4: Sedes y Contacto */}
-                        <div>
-                            <h3 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Atención y Sedes</h3>
-                            <ul className="space-y-3 text-xs">
-                                <li>
-                                    <span className="text-slate-500 font-medium">Sede Operativa:</span><br />
-                                    Valle de Guanape, Edo. Anzoátegui.
-                                </li>
-                                <li>
-                                    <span className="text-slate-500 font-medium">Oficinas Comerciales:</span><br />
-                                    Puerto Ordaz, Edo. Bolívar.
-                                </li>
-                                <li>
-                                    <span className="text-slate-500 font-medium">Línea WhatsApp / Distribución:</span><br />
-                                    <a href="https://wa.me/584148873615" className="text-white font-semibold hover:text-emerald-400 transition-colors">
-                                        +58 414 887-3615
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
-                    
-                    <div className="mt-12 pt-6 border-t border-slate-900 flex flex-col md:flex-row items-center justify-between text-[11px] text-slate-500 gap-4">
-                        <p>© 2026 BOOZ LABORATORIO VGME, C.A. Todos los derechos reservados. Registrado ante las autoridades sanitarias venezolanas.</p>
-                        <p>Desarrollado con excelencia por NeoBranding</p>
+
+                    <div className="mt-12 pt-8 border-t border-slate-900 flex flex-col md:flex-row items-center justify-between text-xs gap-4 text-slate-400">
+                        <p>© {new Date().getFullYear()} BOOZ LABORATORIO VGME, C.A. Todos los derechos reservados.</p>
+                        <p className="text-[11px] text-slate-400 max-w-xl text-center md:text-right">
+                            Los productos farmacéuticos aquí descritos cumplen con las especificaciones técnicas del Instituto Nacional de Higiene "Rafael Rangel" (INH). Prohibida la venta de medicamentos bajo récipe sin la correspondiente prescripción médica.
+                        </p>
                     </div>
                 </div>
             </footer>
 
-            {/* Modals */}
-            <SearchModal 
-                isOpen={isSearchOpen} 
-                onClose={() => setIsSearchOpen(false)} 
-            />
+            {/* Global Modals */}
+            <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+            <LiraAssistantModal isOpen={isAIOpen} onClose={() => setIsAIOpen(false)} />
 
-            <LiraAssistantModal 
-                isOpen={isAIOpen}
-                onClose={() => setIsAIOpen(false)}
-            />
-
-            <Modal 
-                isOpen={isLegalOpen} 
-                onClose={() => setIsLegalOpen(false)} 
-                title="Aviso Sanitario y Política de No-Automedicación"
-            >
-                <div className="prose prose-sm max-w-none text-slate-600 space-y-4">
-                    <h4 className="font-bold text-slate-900">1. Política Ética de No-Automedicación</h4>
+            {/* Modal de Política de Calidad y Regulatorio */}
+            <Modal isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} title="Política de Calidad y Cumplimiento Sanitario">
+                <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
                     <p>
-                        En BOOZ LABORATORIO VGME, C.A., estamos firmemente comprometidos con el uso racional de los medicamentos. La información suministrada en este portal web, en las fichas técnicas y a través de nuestro asistente virtual tiene fines estrictamente educativos y referenciales. Bajo ningún concepto sustituye el diagnóstico, prescripción ni seguimiento de un médico colegiado o farmacéutico tratante.
+                        <strong>BOOZ LABORATORIO VGME, C.A.</strong> opera bajo los más rigurosos estándares de Buenas Prácticas de Manufactura (BPM) farmacéuticas. Cada lote de producción cuenta con análisis microbiológico, fisicoquímico y de estabilidad certificado.
                     </p>
-                    <h4 className="font-bold text-slate-900">2. Medicamentos Bajo Prescripción</h4>
-                    <p>
-                        Los productos antibióticos (como Moxifloxacina, Amikacina, Gentamicina) y corticosteroides (como Betametasona, Dexametasona) requieren indicación y récipe médico para su dispensación formal.
-                    </p>
-                    <h4 className="font-bold text-slate-900">3. Canal Oficial de Farmacovigilancia</h4>
-                    <p>
-                        Cualquier sospecha de falla de calidad, alteración de lote o reacción adversa debe ser notificada a través de nuestro formulario oficial de Farmacovigilancia para el debido seguimiento ante el Instituto Nacional de Higiene "Rafael Rangel".
+                    <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/50">
+                        <h4 className="font-bold text-[#002072] dark:text-cyan-400 mb-1">Aviso contra la Automedicación</h4>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            La información técnica provista en esta plataforma está destinada exclusivamente a la orientación sanitaria y educación médica. Bajo ninguna circunstancia sustituye la consulta, diagnóstico o prescripción de un facultativo médico colegiado.
+                        </p>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Para notificaciones urgentes sobre desvíos de calidad o eventos adversos, comuníquese de inmediato a través de nuestro canal formal de Farmacovigilancia.
                     </p>
                 </div>
             </Modal>

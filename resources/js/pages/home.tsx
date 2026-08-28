@@ -272,11 +272,11 @@ export default function Home({ productLines = [], products = [], testimonials = 
                         <div className="lg:col-span-5 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-950 p-8 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-center gap-6 relative overflow-hidden">
                             <div className="relative w-36 h-36 flex-shrink-0">
                                 <img
-                                    src="/assets/img/lira_mascot_transparent.png"
-                                    alt="Lira Asistente Virtual"
-                                    className="w-full h-full object-contain drop-shadow-2xl"
+                                    src="/assets/img/lira_saludo_animado.gif"
+                                    alt="Lira Asistente Virtual Saludando"
+                                    className="w-full h-full object-contain drop-shadow-2xl hover:scale-105 transition-transform"
                                     onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/assets/img/lira_head_avatar.png';
+                                        (e.target as HTMLImageElement).src = '/assets/img/lira_mascot_transparent.png';
                                     }}
                                 />
                             </div>

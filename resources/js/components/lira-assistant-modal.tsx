@@ -56,7 +56,6 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
                 },
                 body: JSON.stringify({ message: textToSend }),
             });
@@ -102,15 +101,15 @@ export default function LiraAssistantModal({ isOpen, onClose }: LiraAssistantMod
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Lira | Asistente Virtual Booz Laboratorio">
             <div className="bg-slate-900 -m-6 p-6 h-[560px] flex flex-col rounded-b-2xl">
-                {/* Lira Header Banner with Transparent Avatar */}
+                {/* Lira Header Banner with Animated Waving Mascot */}
                 <div className="flex items-center gap-3.5 pb-4 border-b border-slate-800">
-                    <div className="relative h-13 w-13 rounded-2xl bg-blue-950/80 border border-blue-500/40 p-1 flex-shrink-0 flex items-center justify-center overflow-hidden shadow-inner">
+                    <div className="relative h-14 w-14 rounded-2xl bg-blue-950/80 border border-blue-500/40 p-0.5 flex-shrink-0 flex items-center justify-center overflow-hidden shadow-inner">
                         <img 
-                            src="/assets/img/lira_head_avatar.png" 
-                            alt="Lira Asistente Virtual" 
+                            src="/assets/img/lira_saludo_animado.gif" 
+                            alt="Lira Asistente Virtual Saludando" 
                             className="h-full w-full object-cover rounded-xl"
                             onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/assets/img/lira_mascot_transparent.png';
+                                (e.target as HTMLImageElement).src = '/assets/img/lira_real_head_avatar.png';
                             }}
                         />
                     </div>
