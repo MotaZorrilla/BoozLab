@@ -122,9 +122,27 @@ $$\text{Nivel de Alerta} = \begin{cases}
 *   `severity`: `Leve`, `Moderada`, `Grave`.
 *   `status`: `Pendiente`, `En Revisión`, `Resuelto`.
 
-### 4.4 `testimonials` & `faqs`
-*   Testimonios de profesionales médicos (Dra. Mariana López, Dr. Alejandro Méndez).
-*   Preguntas frecuentes interactivas sincronizadas con la vista de bienvenida.
+### 4.5 `system_settings`
+*   `id` (PK)
+*   `key`: Clave única (ej. `whatsapp_sales_phone`, `gemini_api_key`, `gemini_model`, `lira_system_prompt`, `whatsapp_cart_header`, `whatsapp_cart_footer`).
+*   `value`: Valor serializado o cifrado (AES-256 para credenciales).
+*   `type`: `string`, `text`, `boolean`, `integer`, `encrypted`, `json`.
+*   `group`: `general`, `ai`, `commercial`, `legal`.
+*   `description`: Documentación de la clave.
+
+### 4.6 `roles` & `role_user`
+*   `roles`: `id`, `name` (`super_admin`, `director_tecnico`, `gestor_comercial`, `oficial_farmacovigilancia`), `label`, `description`, `permissions` (JSON array).
+*   `role_user`: `user_id` (FK), `role_id` (FK) con integridad referencial en cascada.
+
+### 4.7 `quotes` & `quote_items`
+*   `quotes`: `id`, `quote_number` (`BOOZ-COT-YYYY-XXXX`), `customer_name`, `customer_contact`, `customer_type` (*Paciente*, *Farmacia*, *Clínica*, *Distribuidor*), `channel` (*whatsapp*, *web_cart*, *manual*), `status` (*Pendiente*, *Contactado*, *Despachado*, *Cancelado*), `total_amount_usd`, `admin_notes`.
+*   `quote_items`: `id`, `quote_id` (FK), `product_id` (FK), `product_name`, `quantity`, `unit_price_usd`, `subtotal_usd`.
+
+### 4.8 `ai_knowledge_documents` (Corpus RAG de Lira AI)
+*   `id` (PK), `title`, `slug` (Unique), `category` (*vademecum*, *farmacovigilancia*, *comercial*, *protocolo*, *general*), `content` (LongText), `file_path`, `file_name`, `file_size_bytes`, `is_active` (Booleano para activar/desactivar del entrenamiento), `order`.
+
+### 4.9 `ai_guardrails` (Reglas de Contención Sanitaria)
+*   `id` (PK), `name`, `slug` (Unique), `type` (*bloqueo_estricto*, *advertencia_sanitaria*, *derivacion_humana*), `rule_instruction` (Text), `is_active`, `is_system` (Booleano que protege contra eliminación accidental), `order`.
 
 ---
 
@@ -141,7 +159,7 @@ sequenceDiagram
 
     U->>Web: Completa reporte (Producto, Lote, Reacción, Severidad)
     Web->>API: POST /api/farmacovigilancia
-    API->>API: Valida datos y genera Ticket (BOOZ-FV-YYYY-XXXX)
+    API->>API: Valida datos y genera Ticket (BOOZ-RAM-YYYY-XXXX)
     API->>DB: Guarda registro con estado 'Pendiente'
     API-->>Web: Retorna confirmación con N° de Ticket
     Web-->>U: Muestra comprobante formal para seguimiento
@@ -151,21 +169,24 @@ sequenceDiagram
 
 ---
 
-## 🤖 6. Motor de Inteligencia Artificial y Guardrails Éticos
+## 🤖 6. Motor de Inteligencia Artificial RAG y Guardrails Sanitarios
 
-El Asistente Virtual **Lira** implementa tres capas de seguridad algorítmica:
-1.  **Capa de Conocimiento:** Datos farmacológicos oficiales extraídos del catálogo de Booz Laboratorio.
-2.  **Capa de Sanitización y Clasificación:** Detecta si la intención del usuario solicita un diagnóstico o tratamiento para un síntoma desconocido.
-3.  **Capa de Guardrail Anti-Automedicación:** Si el usuario pregunta *"¿Qué crema me pongo para esta herida infectada?"*, Lira responde explicando las propiedades de las fórmulas del laboratorio pero antepone estrictamente:
-    > *"Recuerda que como laboratorio ético no fomentamos la automedicación. Esta información es puramente educativa. Consulta siempre con un médico o dermatólogo antes de aplicar cualquier medicamento."*
+El Asistente Virtual **Lira AI** implementa una arquitectura híbrida de **Generación Aumentada por Recuperación (RAG)** y contención sanitaria:
+1.  **Capa Documental RAG Dinámica:** En tiempo de ejecución, el sistema ensambla todos los `ai_knowledge_documents` activos (Vademécum de 18 fármacos, Procedimientos INH, Manual de Cotizaciones y Guía de Trato) concatenándolos en el contexto del modelo Google Gemini.
+2.  **Capa de Contención y Guardrails Activos:** Inyecta las reglas de `ai_guardrails` clasificadas en bloqueos estrictos de automedicación, advertencias obligatorias de récipe médico para antibióticos tópicos/esteroides y derivaciones asistidas a soporte humano.
+3.  **Motor Local Determinista de Respaldo:** En caso de intermitencia de red o ausencia de token, el motor local provee respuestas clínicas seguras con enlaces a la tienda, farmacovigilancia y soporte de WhatsApp.
 
 ---
 
-## 🧪 7. Protocolo de Pruebas Automatizadas (PHPUnit 11)
+## 🧪 7. Protocolo de Pruebas Automatizadas (PHPUnit 11 & OpenSpec)
 
-Se exige el 100% de éxito en las pruebas automatizadas:
+Se exige el 100% de éxito en la suite de pruebas de regresión y especificaciones formales:
 *   `ProductCatalogTest`: Verificación de listado, filtros por línea y renderizado de PDP por slug.
-*   `PharmacovigilanceTest`: Validación de envíos de reportes válidos e inválidos (unhappy paths).
+*   `PharmacovigilanceTest`: Validación de envíos de reportes válidos e inválidos (unhappy paths) y correlativo `BOOZ-RAM`.
 *   `PediatricCalculatorTest`: Verificación matemática de fórmulas de Clark y Young con límites de frontera.
-*   `AdminProductCrudTest`: Pruebas de autenticación y autorización para la gestión de productos.
-*   `ChatbotGuardrailsTest`: Comprobación del disclaimer médico obligatorio en las respuestas de la IA.
+*   `AdminRbacAuthorizationTest` & `AdminUserManagementTest`: Control estricto de acceso RBAC y asignación de roles.
+*   `DynamicSystemSettingsTest`: Persistencia en base de datos de configuraciones globales y número oficial de WhatsApp.
+*   `AdminAiTrainingAndGuardrailsTest`: Gestión de documentos RAG, carga de archivos, alternancia de guardrails y respuestas entrenadas.
+*   `AdminQuoteManagementTest` & `QuoteSubmissionTest`: Flujo de cotizaciones, creación manual, cálculo de totales y comprobante oficial.
+*   **Métricas Actuales:** **133 tests pasando en verde (536 assertions)** y **11/11 especificaciones OpenSpec validadas**.
+

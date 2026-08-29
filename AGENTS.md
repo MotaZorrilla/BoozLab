@@ -49,9 +49,10 @@ En el sector farmacéutico y clínico, la integridad de los datos, la precisión
 ## 📊 3. Reglas de Oro para Agentes de IA
 
 1.  **Cero Código sin Pruebas:** Cada nuevo endpoint, controlador o regla de cálculo debe contar con su correspondiente Feature / Unit Test.
-2.  **Verificación Previa al Cierre:** Nunca des por concluida una sesión de trabajo sin haber verificado que la suite completa de pruebas esté en verde:
+2.  **Verificación Previa al Cierre:** Nunca des por concluida una sesión de trabajo sin haber verificado que la suite completa de pruebas esté en verde (133 tests) y que todas las especificaciones formales OpenSpec validen:
     ```bash
     php artisan test
+    npm run opsx -- validate --specs
     ```
 3.  **Compilación Frontend:** Asegurar que los componentes de TypeScript/React compilen sin errores con `npm run build`.
 4.  **Integridad de Datos Farmacéuticos:** No inventar principios activos ni indicaciones. Utilizar siempre los datos oficiales del documento maestro `A.docx` y de los estuches registrados.

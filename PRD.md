@@ -63,16 +63,37 @@ Este documento especifica los requisitos de producto, diseño y arquitectura té
 *   **Datos Requeridos:** Nombre del producto, número de lote, fecha de vencimiento, descripción de la reacción adversa/falla, severidad (`Leve`, `Moderada`, `Grave`) y datos de contacto.
 *   **Generación de Ticket:** Asignación automática de código de seguimiento correlativo y persistencia en base de datos.
 
-### 4.3 Módulo Administrativo de Catálogo - CMS (P0 - Crítico)
-*   **CRUD de Productos en Tiempo Real:** Interfaz intuitiva en el panel administrativo para agregar nuevos medicamentos/cosméticos, editar información posológica, actualizar imágenes y activar/desactivar productos.
+### 4.3 Módulo Administrativo de Catálogo Farmacéutico & Editor de Fichas Médicas (P0 - Crítico)
+*   **Gestión Integral de Catálogo (`/admin/products`):** Filtros directos por los nombres oficiales de las líneas (*Cuidado de la piel*, *Tratamiento tópico*, *Salud y bienestar*, *Cuidado especializado*), tabla con columnas independientes para **Producto** y **Presentación**, miniaturas fotográficas y alternancia rápida de disponibilidad.
+*   **Editor Integral de Fichas Médicas & Landing Page:** Interfaz Master-Detail que permite seleccionar cualquiera de los 18 fármacos y editar en vivo sus fotos (galería de miniaturas en 1-clic), indicaciones clínicas, posología, contraindicaciones, alertas sanitarias y textos destacados visibles en `/productos/{slug}`.
 *   **Gestión de Contenidos:** Administración de testimonios médicos y preguntas frecuentes (FAQs).
 
 ### 4.4 Asistente Virtual IA "Lira" con Guardrails Éticos (P1 - Alto)
-*   **Integración Multimedia:** Incorporación de la mascota Lira con animación de video de fondo transparente.
+*   **Integración Multimedia:** Incorporación de la mascota Lira con animación interactiva.
 *   **Política de Cero Automedicación:** El asistente proporciona información educativa basada en el prospecto oficial, pero **nunca prescribe ni diagnostica**. Incluye disclaimers obligatorios recomendando la consulta médica o farmacéutica.
 
 ### 4.5 Calculadora Pediátrica Clínica (P1 - Alto)
 *   Herramienta interactiva para profesionales de la salud y padres que calcula dosis recomendadas en base al peso (kg) o edad del paciente según las reglas de Clark y regímenes de mg/kg/día.
+
+### 4.6 Tienda Virtual, Bolsa de Cotizaciones & Despacho Comercial por WhatsApp (P0 - Crítico)
+*   **Bolsa de Pedidos Interactiva:** Carrito accesible en todas las vistas con selector de perfil de solicitante (*Paciente Particular*, *Farmacia Aliada*, *Clínica / Hospital / Médico*, *Distribuidor B2B*).
+*   **Integración WhatsApp Inteligente:** Generación automática de mensaje estructurado con cabecera y pie configurables, cálculo del total en $ USD y persistencia en backend para auditoría de demanda.
+*   **Administrador de Tienda Virtual (`/admin/quotes`):** CRUD de cotizaciones, creación de cotizaciones manuales para pedidos por teléfono/planta, control de unidades disponibles y emisión de Comprobante Oficial Imprimible (`BOOZ-COT-YYYY-XXXX`).
+
+### 4.7 Consola de Administración Farmacéutica & Sistema RBAC (P0 - Crítico)
+*   **Arquitectura Modular:** Rutas dedicadas con navegación en Sidebar (`/admin/products`, `/admin/reports`, `/admin/messages`, `/admin/quotes`, `/admin/users`, `/admin/ai`, `/admin/settings`).
+*   **Control de Acceso Basado en Roles:** Matriz de permisos estricta con 4 roles (*Super Administrador*, *Director Técnico*, *Gestor Comercial*, *Oficial de Farmacovigilancia*).
+*   **Configuración Dinámica de WhatsApp:** Centralización del número comercial, plantillas de mensajes y datos de planta en Valle de Guanape vía `system_settings`.
+
+### 4.8 Centro de Entrenamiento Documental RAG y Guardrails Sanitarios de Lira AI (P0 - Crítico)
+*   **Base de Conocimiento Documental (RAG):** Carga y administración de documentos técnicos (`AiKnowledgeDocument`) para entrenar a Lira:
+    1. *Vademécum Maestro & Fórmulas de los 18 Productos Oficiales de Booz Laboratorio*.
+    2. *Protocolo Operativo Estándar de Farmacovigilancia INH Rafael Rangel*.
+    3. *Manual de Cotizaciones, Venta Institucional y Logística de Despacho*.
+    4. *Guía de Trato, Empatía y Protocolos de Comunicación de Lira AI*.
+*   **Subida de Archivos:** Soporte para subir archivos `.txt`, `.md`, `.json`, `.csv` o redactar textos clínicos directamente en la consola.
+*   **Gestor de Guardrails Sanitarios (`AiGuardrail`):** Definición de reglas de contención (*Bloqueo Estricto*, *Advertencia Sanitaria Obligatoria*, *Derivación a Soporte Humano*) con protección de reglas estructurales de sistema.
+*   **Simulador Playground:** Entorno interactivo para validar la inferencia de Lira en milisegundos con el corpus y guardrails activos.
 
 ---
 
@@ -80,3 +101,11 @@ Este documento especifica los requisitos de producto, diseño y arquitectura té
 
 *   Venta libre directa desregulada de antibióticos (Moxifloxacina, Amikacina) mediante pasarela de pago sin récipe médico previo. La adquisición se gestiona vía contacto con farmacias autorizadas y distribuidores.
 *   Conexión en tiempo real con sistemas ERP externos de inventario hospitalario.
+
+---
+
+## 📊 6. Métricas Actuales del Sistema
+*   **Vademécum Registrado:** 18 productos clasificados en sus 4 líneas terapéuticas oficiales.
+*   **Aseguramiento de Calidad:** 133 tests automatizados pasando en verde (536 assertions) en PHPUnit 11.
+*   **Especificaciones Formales:** 11 especificaciones OpenSpec en Gherkin BDD 100% validadas.
+
