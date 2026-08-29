@@ -85,7 +85,7 @@ class ChatbotController extends Controller
             ]);
         }
 
-        if (preg_match('/(farmacovigilancia|reacci[oó]n adversa|ram|efecto secundario|lote defectuoso)/i', $q)) {
+        if (preg_match('/(farmacovigilancia|reacci[oó]n adversa|reaccion adversa|ram|efecto secundario|lote)/iu', $q)) {
             return response()->json([
                 'reply' => 'En Booz Laboratorio contamos con un <strong>Protocolo Operativo de Farmacovigilancia</strong> conforme a las normativas del INH Rafael Rangel. Si sospechas de una reacción adversa a alguno de nuestros 18 medicamentos, por favor indícanos el nombre del fármaco, número de lote, fecha de vencimiento y sintomatología en nuestro <a href="/farmacovigilancia" class="text-blue-600 font-bold underline">formulario oficial de Farmacovigilancia</a>. Si los síntomas son severos, busca atención médica de emergencia inmediatamente.',
                 'suggestedProducts' => [],

@@ -201,9 +201,19 @@
   - `ChatbotController` y `callGemini` consumen la clave y modelo desde `SystemSetting` con fallback a `.env`.
   - Contexto estructurado en tiempo real agrupando los 18 fármacos clasificados bajo sus 4 líneas terapéuticas.
   - Blindaje inmutable de guardrails sanitarios (Cero automedicación, prescripción obligatoria y derivación administrativa).
+- [x] **Base de Conocimiento RAG & Guardrails Sanitarios Configurables para Lira AI (`/admin/ai`):**
+  - Creadas tablas y modelos `AiKnowledgeDocument` y `AiGuardrail` con soporte de estado activo/inactivo, ordenación y persistencia de archivos subidos.
+  - Implementado `AiKnowledgeAndGuardrailSeeder` precargando 4 documentos maestros:
+    1. *Vademécum Maestro & Fórmulas de los 18 Productos Oficiales de Booz Laboratorio* (extraído del corpus de prospectos y registros sanitarios INH).
+    2. *Protocolo Operativo Estándar de Farmacovigilancia INH Rafael Rangel* (definición de RAM, lotes, caducidad y notificación en 72h).
+    3. *Manual de Cotizaciones, Venta Institucional y Logística de Despacho* (bolsa de pedidos, perfiles de clientes y envíos desde Valle de Guanape).
+    4. *Guía de Trato, Empatía y Protocolos de Comunicación de Lira AI* (tono empático y rigor científico).
+  - 5 Guardrails sanitarios y reglas de contención preconfigurados (*Cero Automedicación*, *Venta bajo Récipe*, *Derivación a Farmacovigilancia*, *Derivación Comercial*, *Manejo Especializado de Pie Diabético con Bactrocis*).
+  - Rediseñada la consola `/admin/ai` con 4 pestañas operativas: Base de Conocimiento Documental (CRUD, subida de archivos .txt/.md y toggle de entrenamiento), Guardrails Sanitarios (creación y edición con protección de reglas de sistema), Simulador Playground en vivo y Configuración de Motor Gemini.
+  - Ensamblado dinámico en `ChatbotController` inyectando todo el contexto RAG activo y guardrails en tiempo real.
 - [x] **OpenSpec y QA/TDD:**
-  - Incorporadas 3 nuevas especificaciones OpenSpec en Gherkin canónico (`system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`).
-  - **10/10 especificaciones OpenSpec validadas al 100%** (`npm run opsx -- validate --specs`).
-  - Nuevas pruebas Feature implementadas: `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`.
-  - Suite de pruebas de regresión: **123 tests pasados en verde (481 assertions)** en PHPUnit.
-  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores**.
+  - Incorporadas 4 nuevas especificaciones OpenSpec en Gherkin canónico (`system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`, `lira-ai-training-and-guardrails`).
+  - **11/11 especificaciones OpenSpec validadas al 100%** (`npm run opsx -- validate --specs`).
+  - Nuevas pruebas Feature implementadas: `AdminAiTrainingAndGuardrailsTest`, `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`.
+  - Suite de pruebas de regresión: **133 tests pasados en verde (536 assertions)** en PHPUnit.
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 8.93s**.

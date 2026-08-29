@@ -171,12 +171,21 @@ graph TD
   - Integración dinámica en `ChatbotController` y `callGemini` consumiendo la API Key y modelo desde `SystemSetting`.
   - Inyección en tiempo real del contexto de los 18 fármacos estructurados por sus 4 líneas terapéuticas.
   - Guardrails sanitarios inmutables de Cero Automedicación y Venta bajo Récipe Médico.
+- **Base de Conocimiento RAG y Guardrails Sanitarios Configurables (`/admin/ai`):**
+  - Creación de modelos y tablas `AiKnowledgeDocument` y `AiGuardrail`.
+  - Seeder `AiKnowledgeAndGuardrailSeeder` precargando:
+    1. *Vademécum Maestro & Fórmulas de los 18 Productos Oficiales de Booz Laboratorio*.
+    2. *Protocolo Operativo Estándar de Farmacovigilancia INH Rafael Rangel*.
+    3. *Manual de Cotizaciones, Venta Institucional y Logística de Despacho*.
+    4. *Guía de Trato, Empatía y Protocolos de Comunicación de Lira AI*.
+  - Rediseño de la consola `/admin/ai` con 4 pestañas: Base de Conocimiento Documental (CRUD, subida de archivos `.txt`/`.md`, vista previa completa y toggle para activar/desactivar documentos), Guardrails Sanitarios (reglas de bloqueo estricto, advertencia y derivación con protección de reglas de sistema), Playground Simulador en vivo y Configuración de Motor Gemini.
+  - Conexión reactiva en `ChatbotController` que ensambla dinámicamente todos los documentos activos y guardrails en el system prompt de Gemini y en el motor determinista local.
 - **Validación OpenSpec y Cobertura QA:**
-  - 3 nuevas especificaciones creadas: `system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`.
-  - **10/10 especificaciones OpenSpec validadas al 100%** en verde.
-  - 5 nuevas suites de pruebas Feature (`AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`).
-  - Hito histórico alcanzado: **123 tests pasados en verde (481 assertions)** con PHPUnit 11.
-  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores**.
+  - 4 nuevas especificaciones creadas: `system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`, `lira-ai-training-and-guardrails`.
+  - **11/11 especificaciones OpenSpec validadas al 100%** en verde.
+  - 6 nuevas suites de pruebas Feature (`AdminAiTrainingAndGuardrailsTest`, `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`).
+  - Hito histórico alcanzado: **133 tests pasados en verde (536 assertions)** con PHPUnit 11.
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 8.93s**.
 
 ---
 
@@ -187,6 +196,7 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 123 tests pasados (481 assertions) 100% en verde con PHPUnit 11.
-- **Especificaciones OpenSpec:** 10 especificaciones BDD 100% validadas.
+- **Suite de Pruebas Automatizadas:** 133 tests pasados (536 assertions) 100% en verde con PHPUnit 11.
+- **Especificaciones OpenSpec:** 11 especificaciones BDD 100% validadas.
+
 
