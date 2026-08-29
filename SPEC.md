@@ -188,5 +188,5 @@ Se exige el 100% de éxito en la suite de pruebas de regresión y especificacion
 *   `DynamicSystemSettingsTest`: Persistencia en base de datos de configuraciones globales y número oficial de WhatsApp.
 *   `AdminAiTrainingAndGuardrailsTest`: Gestión de documentos RAG, carga de archivos, alternancia de guardrails y respuestas entrenadas.
 *   `AdminQuoteManagementTest` & `QuoteSubmissionTest`: Flujo de cotizaciones, creación manual, cálculo de totales y comprobante oficial.
-*   **Métricas Actuales:** **133 tests pasando en verde (536 assertions)** y **11/11 especificaciones OpenSpec validadas**.
+*   **Métricas Actuales:** **133 tests pasando en verde (536 assertions)** y **12/12 especificaciones OpenSpec validadas**.
 

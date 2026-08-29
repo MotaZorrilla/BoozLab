@@ -181,8 +181,8 @@ graph TD
   - Rediseño de la consola `/admin/ai` con 4 pestañas: Base de Conocimiento Documental (CRUD, subida de archivos `.txt`/`.md`, vista previa completa y toggle para activar/desactivar documentos), Guardrails Sanitarios (reglas de bloqueo estricto, advertencia y derivación con protección de reglas de sistema), Playground Simulador en vivo y Configuración de Motor Gemini.
   - Conexión reactiva en `ChatbotController` que ensambla dinámicamente todos los documentos activos y guardrails en el system prompt de Gemini y en el motor determinista local.
 - **Validación OpenSpec y Cobertura QA:**
-  - 4 nuevas especificaciones creadas: `system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`, `lira-ai-training-and-guardrails`.
-  - **11/11 especificaciones OpenSpec validadas al 100%** en verde.
+  - 5 nuevas especificaciones creadas: `system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`, `lira-ai-training-and-guardrails`, `admin-quotes-and-store-manager`.
+  - **12/12 especificaciones OpenSpec validadas al 100%** en verde.
   - 6 nuevas suites de pruebas Feature (`AdminAiTrainingAndGuardrailsTest`, `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`).
   - Hito histórico alcanzado: **133 tests pasados en verde (536 assertions)** con PHPUnit 11.
   - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 8.93s**.
@@ -197,6 +197,6 @@ graph TD
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
 - **Suite de Pruebas Automatizadas:** 133 tests pasados (536 assertions) 100% en verde con PHPUnit 11.
-- **Especificaciones OpenSpec:** 11 especificaciones BDD 100% validadas.
+- **Especificaciones OpenSpec:** 12 especificaciones BDD 100% validadas.
 
 

@@ -25,3 +25,11 @@ El sistema SHALL sanear automáticamente los números telefónicos ingresados po
 #### Scenario: Ingreso de número con formato local o caracteres especiales
 - **WHEN** el administrador ingresa un valor con formato `+58 (414) 887-3615`
 - **THEN** el sistema procesa y almacena únicamente la secuencia numérica `584148873615`
+
+### Requirement: Personalización Dinámica de Plantilla de Pedidos de WhatsApp
+El sistema SHALL permitir configurar desde `/admin/settings` el encabezado, pie de mensaje y los perfiles de solicitantes permitidos (*Paciente*, *Farmacia*, *Clínica*, *Distribuidor*) para la bolsa de pedidos de la tienda, con simulador interactivo en tiempo real.
+
+#### Scenario: Actualización del encabezado de la bolsa de pedidos
+- **WHEN** el Super Administrador modifica la plantilla de pedido en Ajustes
+- **THEN** la bolsa de pedidos pública (`store-cart-drawer.tsx`) genera los nuevos pedidos utilizando la cabecera y perfiles personalizados
+

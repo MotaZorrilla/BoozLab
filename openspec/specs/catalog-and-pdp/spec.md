@@ -29,3 +29,25 @@ Cada ficha técnica SHALL incluir un botón de acción rápida que redirige al c
 #### Scenario: Clic en botón de WhatsApp en PDP
 - **WHEN** el usuario presiona el botón de consulta vía WhatsApp
 - **THEN** se abre la aplicación de WhatsApp con el texto prellenado contextualizado para el producto específico
+
+### Requirement: Nombres Reales de Líneas Terapéuticas en Filtros de Catálogo
+El sistema SHALL mostrar los nombres comerciales y oficiales de las líneas (*Cuidado de la piel*, *Tratamiento tópico*, *Salud y bienestar*, *Cuidado especializado*) en lugar de códigos abstractos o números en todos los selectores y botones de filtro tanto en la vista pública como en el panel administrativo.
+
+#### Scenario: Filtrado con nombres reales de líneas en el panel
+- **WHEN** el administrador navega a `/admin/products`
+- **THEN** los botones de filtro muestran los nombres reales oficiales junto al conteo de fármacos disponibles
+
+### Requirement: Columnas Independientes de Producto y Presentación con Miniaturas
+La tabla de inventario del catálogo en `/admin/products` SHALL desagregar en columnas distintas el nombre del producto y la presentación farmacéutica, incluyendo una miniatura fotográfica del fármaco.
+
+#### Scenario: Visualización desagregada en la tabla administrativa
+- **WHEN** el administrador consulta la tabla de productos
+- **THEN** la información se presenta con columna dedicada para Foto, Producto, Presentación, Línea Terapéutica, Principio Activo, Precio y Stock
+
+### Requirement: Editor Integral de Fichas Médicas & Landing Page
+El sistema SHALL proveer una sección dedicada (`activeTab === 'editor'`) en `/admin/products` que permita editar en tiempo real toda la información visible en la landing page del fármaco (`/productos/{slug}`), incluyendo fotografía (con selector visual de miniaturas oficiales en 1-clic o carga de archivo), descripción destacada, indicaciones clínicas, posología y contraindicaciones.
+
+#### Scenario: Edición y previsualización de ficha técnica
+- **WHEN** el administrador modifica los textos clínicos o fotografía de un fármaco desde el editor integral
+- **THEN** los cambios se persisten en la base de datos y se reflejan inmediatamente en la landing page pública con botón de previsualización directa
+

@@ -212,8 +212,8 @@
   - Rediseñada la consola `/admin/ai` con 4 pestañas operativas: Base de Conocimiento Documental (CRUD, subida de archivos .txt/.md y toggle de entrenamiento), Guardrails Sanitarios (creación y edición con protección de reglas de sistema), Simulador Playground en vivo y Configuración de Motor Gemini.
   - Ensamblado dinámico en `ChatbotController` inyectando todo el contexto RAG activo y guardrails en tiempo real.
 - [x] **OpenSpec y QA/TDD:**
-  - Incorporadas 4 nuevas especificaciones OpenSpec en Gherkin canónico (`system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`, `lira-ai-training-and-guardrails`).
-  - **11/11 especificaciones OpenSpec validadas al 100%** (`npm run opsx -- validate --specs`).
+  - Incorporadas 5 nuevas especificaciones OpenSpec en Gherkin canónico (`system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`, `lira-ai-training-and-guardrails`, `admin-quotes-and-store-manager`).
+  - **12/12 especificaciones OpenSpec validadas al 100%** (`npm run opsx -- validate --specs`).
   - Nuevas pruebas Feature implementadas: `AdminAiTrainingAndGuardrailsTest`, `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`.
   - Suite de pruebas de regresión: **133 tests pasados en verde (536 assertions)** en PHPUnit.
   - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 8.93s**.

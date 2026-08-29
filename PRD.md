@@ -107,5 +107,5 @@ Este documento especifica los requisitos de producto, diseño y arquitectura té
 ## 📊 6. Métricas Actuales del Sistema
 *   **Vademécum Registrado:** 18 productos clasificados en sus 4 líneas terapéuticas oficiales.
 *   **Aseguramiento de Calidad:** 133 tests automatizados pasando en verde (536 assertions) en PHPUnit 11.
-*   **Especificaciones Formales:** 11 especificaciones OpenSpec en Gherkin BDD 100% validadas.
+*   **Especificaciones Formales:** 12 especificaciones OpenSpec en Gherkin BDD 100% validadas.
 
