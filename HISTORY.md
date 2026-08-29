@@ -180,6 +180,8 @@ graph TD
     4. *Guía de Trato, Empatía y Protocolos de Comunicación de Lira AI*.
   - Rediseño de la consola `/admin/ai` con 4 pestañas: Base de Conocimiento Documental (CRUD, subida de archivos `.txt`/`.md`, vista previa completa y toggle para activar/desactivar documentos), Guardrails Sanitarios (reglas de bloqueo estricto, advertencia y derivación con protección de reglas de sistema), Playground Simulador en vivo y Configuración de Motor Gemini.
   - Conexión reactiva en `ChatbotController` que ensambla dinámicamente todos los documentos activos y guardrails en el system prompt de Gemini y en el motor determinista local.
+- **Fase 20: Hoja de Ruta & Checklist de Despliegue a Producción:**
+  - Creación del documento maestro [`ROADMAP_AND_DEPLOYMENT_CHECKLIST.md`](file:///C:/xampp/htdocs/BoozLab/ROADMAP_AND_DEPLOYMENT_CHECKLIST.md) con la auditoría de módulos terminados, tareas operativas previas al lanzamiento (API Key definitiva de Gemini, credenciales SMTP corporativas, webhook de alertas) y guía técnica de despliegue en servidor web.
 - **Validación OpenSpec y Cobertura QA:**
   - 5 nuevas especificaciones creadas: `system-settings-and-whatsapp`, `admin-rbac-user-management`, `lira-ai-dynamic-corpus`, `lira-ai-training-and-guardrails`, `admin-quotes-and-store-manager`.
   - **12/12 especificaciones OpenSpec validadas al 100%** en verde.

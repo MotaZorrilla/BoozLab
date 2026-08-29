@@ -217,3 +217,13 @@
   - Nuevas pruebas Feature implementadas: `AdminAiTrainingAndGuardrailsTest`, `AdminRbacAuthorizationTest`, `AdminUserManagementTest`, `DynamicSystemSettingsTest`, `ChatbotDynamicCorpusTest`, `AdminQuoteManagementTest`.
   - Suite de pruebas de regresión: **133 tests pasados en verde (536 assertions)** en PHPUnit.
   - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 8.93s**.
+
+## 🚀 FASE 20: Checklist de Salida a Producción & Tareas Operativas Pendientes
+- [x] **Documento Maestro de Salida a Producción:** Creado [`ROADMAP_AND_DEPLOYMENT_CHECKLIST.md`](file:///C:/xampp/htdocs/BoozLab/ROADMAP_AND_DEPLOYMENT_CHECKLIST.md) con el desglose de tareas operativas pendientes:
+  - [ ] Rotación e inserción de la API Key definitiva de Google Gemini en `/admin/ai`.
+  - [ ] Configuración del servidor SMTP corporativo en `.env` para alertas de Farmacovigilancia y Leads.
+  - [ ] Webhook de alertas inmediatas para Telegram o Slack (`ADMIN_ALERT_WEBHOOK_URL`).
+  - [ ] Subida de fotografías reales adicionales de estudio en el nuevo Editor de Fichas Médicas.
+  - [ ] Interacción por voz con Lira Asistente Virtual (Speech-to-Text mediante Web Speech API).
+  - [ ] Procedimiento de despliegue en servidor web con Nginx/Apache, SSL y optimización de cachés.
+
