@@ -43,6 +43,20 @@ class AdminAnalyticsController extends Controller
         $totalWebMessages = \App\Models\Message::count();
         $totalQuotes = \App\Models\Quote::count();
 
+        // Métricas de Tráfico del Servidor (Páginas Vistas y Visitantes Únicos)
+        $totalPageViews = (int) (\App\Models\PageView::sum('views_count') ?: 0);
+        $todayPageViews = (int) (\App\Models\PageView::where('date', $today)->sum('views_count') ?: 0);
+        $totalUniqueVisitors = (int) (\App\Models\DailyVisitor::count() ?: 0);
+        $todayUniqueVisitors = (int) (\App\Models\DailyVisitor::where('date', $today)->count() ?: 0);
+        $catalogViews = (int) (\App\Models\PageView::whereIn('section', ['product', 'vademecum'])->sum('views_count') ?: 0);
+
+        $topPages = \App\Models\PageView::selectRaw('url_path, section, sum(views_count) as total_views, sum(unique_visitors_count) as total_uniques')
+            ->groupBy('url_path', 'section')
+            ->orderByDesc('total_views')
+            ->limit(5)
+            ->get()
+            ->toArray();
+
         // 2. Gráfico Cronológico (Últimos 7 días)
         $chartData = [];
         for ($i = 6; $i >= 0; $i--) {
@@ -54,6 +68,8 @@ class AdminAnalyticsController extends Controller
             $dayGemini = ChatMessage::where('source', 'gemini_api')->whereDate('created_at', $dateStr)->count();
             $dayDet = ChatMessage::where('source', 'like', 'deterministic_%')->whereDate('created_at', $dateStr)->count();
             $dayWa = \App\Models\InteractionEvent::where('event_type', 'whatsapp_click')->whereDate('created_at', $dateStr)->count();
+            $dayViews = (int) (\App\Models\PageView::where('date', $dateStr)->sum('views_count') ?: 0);
+            $dayUniques = (int) (\App\Models\DailyVisitor::where('date', $dateStr)->count() ?: 0);
 
             $chartData[] = [
                 'date' => $dateStr,
@@ -62,6 +78,8 @@ class AdminAnalyticsController extends Controller
                 'gemini' => $dayGemini,
                 'deterministic' => $dayDet,
                 'whatsapp' => $dayWa,
+                'views' => $dayViews,
+                'uniques' => $dayUniques,
             ];
         }
 
@@ -136,6 +154,11 @@ class AdminAnalyticsController extends Controller
                 'lira_deep_count' => $liraDeep,
                 'total_web_messages' => $totalWebMessages,
                 'total_quotes' => $totalQuotes,
+                'total_page_views' => $totalPageViews,
+                'today_page_views' => $todayPageViews,
+                'total_unique_visitors' => $totalUniqueVisitors,
+                'today_unique_visitors' => $todayUniqueVisitors,
+                'catalog_views' => $catalogViews,
             ],
             'channels' => [
                 'whatsapp_clicks' => $whatsappClicksTotal,
@@ -144,6 +167,7 @@ class AdminAnalyticsController extends Controller
                 'quotes' => $totalQuotes,
             ],
             'chartData' => $chartData,
+            'topPages' => $topPages,
             'topProducts' => $topProducts,
             'guardrailStats' => $guardrailStats,
             'sessions' => $sessions,

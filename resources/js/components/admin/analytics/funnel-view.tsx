@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageSquare, Bot, Pill, ShoppingBag, ArrowDown, TrendingUp } from 'lucide-react';
+import { MessageSquare, Bot, Pill, ShoppingBag, ArrowDown, TrendingUp, Globe } from 'lucide-react';
 
 interface FunnelViewProps {
     totalSessions: number;
@@ -9,6 +9,8 @@ interface FunnelViewProps {
     conversionRate: number;
     whatsappClicks?: number;
     totalQuotes?: number;
+    totalPageViews?: number;
+    catalogViews?: number;
 }
 
 export function FunnelView({
@@ -19,40 +21,52 @@ export function FunnelView({
     conversionRate,
     whatsappClicks = 0,
     totalQuotes = 0,
+    totalPageViews = 0,
+    catalogViews = 0,
 }: FunnelViewProps) {
     const finalConversions = totalQuotes > 0 ? totalQuotes : convertedSessions;
-    const baseTotal = Math.max(totalSessions + whatsappClicks, 1);
+    const baseTraffic = Math.max(totalPageViews, totalSessions + whatsappClicks, 1);
+    const catalogCount = Math.max(catalogViews, topProductsCount);
 
     const steps = [
         {
-            title: '1. Consultas Lira AI',
-            description: 'Visitantes que interactuaron con el asistente clínico',
-            count: totalSessions,
-            percentage: Math.round((totalSessions / baseTotal) * 100),
-            icon: MessageSquare,
-            color: 'bg-blue-600',
-            textColor: 'text-blue-600 dark:text-blue-400',
+            title: '1. Tráfico Servidor & Páginas Vistas',
+            description: 'Total de páginas web y portal entregados por el servidor',
+            count: totalPageViews > 0 ? totalPageViews : baseTraffic,
+            percentage: 100,
+            icon: Globe,
+            color: 'bg-purple-600',
+            textColor: 'text-purple-600 dark:text-purple-400',
         },
         {
-            title: '2. Intenciones de Contacto WhatsApp',
-            description: 'Clics en "Atención por WhatsApp" en ficha de producto y botón flotante',
-            count: whatsappClicks,
-            percentage: Math.round((whatsappClicks / baseTotal) * 100),
-            icon: Bot,
-            color: 'bg-cyan-500',
-            textColor: 'text-cyan-600 dark:text-cyan-400',
-        },
-        {
-            title: '3. Fármacos y Vademécum Recomendados',
-            description: 'Sesiones donde se sugirieron productos del vademécum oficial',
-            count: topProductsCount,
-            percentage: totalSessions > 0 ? Math.min(100, Math.round((topProductsCount / totalSessions) * 100)) : 0,
+            title: '2. Exploración de Fichas & Vademécum',
+            description: 'Visitas a fichas médicas de fármacos y vademécum descargable',
+            count: catalogCount,
+            percentage: Math.min(100, Math.round((catalogCount / baseTraffic) * 100)),
             icon: Pill,
             color: 'bg-indigo-500',
             textColor: 'text-indigo-600 dark:text-indigo-400',
         },
         {
-            title: '4. Cotizaciones Formales Registradas',
+            title: '3. Consultas Clínicas Lira AI',
+            description: 'Visitantes que interactuaron con el asistente clínico 24/7',
+            count: totalSessions,
+            percentage: Math.min(100, Math.round((totalSessions / baseTraffic) * 100)),
+            icon: MessageSquare,
+            color: 'bg-blue-600',
+            textColor: 'text-blue-600 dark:text-blue-400',
+        },
+        {
+            title: '4. Intenciones de Contacto WhatsApp',
+            description: 'Clics en "Atención por WhatsApp" en ficha de producto y botón flotante',
+            count: whatsappClicks,
+            percentage: Math.min(100, Math.round((whatsappClicks / baseTraffic) * 100)),
+            icon: Bot,
+            color: 'bg-cyan-500',
+            textColor: 'text-cyan-600 dark:text-cyan-400',
+        },
+        {
+            title: '5. Cotizaciones Formales Registradas',
             description: 'Pedidos y cotizaciones generados en BD desde la bolsa de pedidos',
             count: finalConversions,
             percentage: conversionRate,

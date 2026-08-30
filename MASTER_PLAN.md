@@ -458,6 +458,30 @@
   - `npm run build`: 2.767 módulos transformados sin errores en 10.30s.
   - OpenSpec: 14/14 especificaciones validadas.
 
+---
+
+## 🌐 Fase 31: Telemetría de Tráfico Servidor & Páginas Vistas (Zero-Latency)
+- [x] **Base de Datos y Modelado de Tráfico (`page_views` y `daily_visitors`):**
+  - Migración `2026_08_31_000003_create_page_views_and_traffic_tables.php` ejecutada.
+  - Tabla `page_views` indexada por fecha y ruta con conteo de vistas e impresiones únicas.
+  - Tabla `daily_visitors` con hash anónimo diario `SHA256(IP + UserAgent + Fecha)` para contar personas reales sin almacenar datos personales ni violar privacidad.
+  - Modelos `App\Models\PageView` y `App\Models\DailyVisitor`.
+- [x] **Terminable Middleware Zero-Latency (`TrackPageViews`):**
+  - Creado `App\Http\Middleware\TrackPageViews` que aprovecha el ciclo `terminate()` de Laravel para registrar la visita **después** de que el servidor ya envió todo el HTML al cliente.
+  - Cero milisegundos (0.00ms) de sobrecarga para el usuario que navega la web.
+  - Clasificador inteligente de secciones (`TrafficTelemetryService`): Home, Ficha de Producto, Vademécum, Farmacovigilancia, Herramientas, Casos Clínicos y Blog.
+  - Vinculación automática con `product_daily_stats.views_count` cuando la visita es a una ficha de medicamento.
+- [x] **Mirador Administrativo & Embudo Maestro (`/admin/analytics`):**
+  - Banner superior de Tráfico Servidor (4 tarjetas: Páginas Vistas, Visitantes Únicos, Fichas de Fármacos, Ratio Catálogo/Visitas).
+  - Sección de "Páginas Más Visitadas" en la pestaña de Estado Clínico.
+  - Gráfico de curvas `TrendChart` con línea punteada púrpura para el tráfico diario.
+  - Embudo Maestro de 5 Etapas en `FunnelView`:
+    $$\text{Tráfico Web (Servidor)} \longrightarrow \text{Exploración Catálogo} \longrightarrow \text{Consultas Lira AI} \longrightarrow \text{Intención WhatsApp} \longrightarrow \text{Cotizaciones en BD}$$
+- [x] **Verificación Integral y QA:**
+  - `php artisan test`: 151 tests pasando en verde (619 assertions).
+  - `npm run build`: 2.767 módulos transformados sin errores en 8.54s.
+  - OpenSpec: 14/14 especificaciones validadas.
+
 
 
 

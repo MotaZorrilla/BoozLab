@@ -7,6 +7,8 @@ interface ChartPoint {
     gemini: number;
     deterministic: number;
     whatsapp?: number;
+    views?: number;
+    uniques?: number;
 }
 
 interface TrendChartProps {
@@ -24,7 +26,7 @@ export function TrendChart({ data }: TrendChartProps) {
         );
     }
 
-    const maxVal = Math.max(...data.map(d => Math.max(d.sessions, d.gemini, d.deterministic, d.whatsapp || 0, 1)), 5);
+    const maxVal = Math.max(...data.map(d => Math.max(d.sessions, d.gemini, d.deterministic, d.whatsapp || 0, d.views || 0, 1)), 5);
 
     const width = 640;
     const height = 180;
@@ -46,11 +48,16 @@ export function TrendChart({ data }: TrendChartProps) {
     const geminiPoints = data.map((d, i) => `${getX(i)},${getY(d.gemini)}`).join(' ');
     const detPoints = data.map((d, i) => `${getX(i)},${getY(d.deterministic)}`).join(' ');
     const waPoints = data.map((d, i) => `${getX(i)},${getY(d.whatsapp || 0)}`).join(' ');
+    const viewsPoints = data.map((d, i) => `${getX(i)},${getY(d.views || 0)}`).join(' ');
 
     return (
         <div className="w-full">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3 text-xs">
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                    <span className="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
+                        <span className="w-3 h-3 rounded-full bg-purple-500 inline-block" />
+                        Páginas Vistas
+                    </span>
                     <span className="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
                         <span className="w-3 h-3 rounded-full bg-blue-600 inline-block" />
                         Sesiones Lira
@@ -144,6 +151,17 @@ export function TrendChart({ data }: TrendChartProps) {
                         points={waPoints}
                     />
 
+                    {/* Línea Páginas Vistas (Púrpura punteada) */}
+                    <polyline
+                        fill="none"
+                        stroke="#a855f7"
+                        strokeWidth="2.5"
+                        strokeDasharray="4 3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        points={viewsPoints}
+                    />
+
                     {/* Puntos interactivos */}
                     {data.map((d, i) => {
                         const cx = getX(i);
@@ -184,6 +202,7 @@ export function TrendChart({ data }: TrendChartProps) {
                         <div>
                             <span className="block text-slate-400 text-[10px]">{data[hoveredIdx].label}</span>
                             <span className="font-bold text-blue-400">{data[hoveredIdx].sessions} Sesiones</span>
+                            <span className="block text-purple-300 text-[10px] mt-0.5">{data[hoveredIdx].views || 0} Vistas ({data[hoveredIdx].uniques || 0} Únicos)</span>
                         </div>
                         <div className="border-l border-slate-700 pl-3 space-y-0.5">
                             <span className="block text-cyan-400 text-[10px]">Gemini: {data[hoveredIdx].gemini}</span>

@@ -272,6 +272,14 @@ graph TD
     - Actualizado el comando `telemetry:rollup` para agregar clics de WhatsApp por medicamento.
   - **Métricas:** 146 tests pasando en verde (595 assertions), compilación Vite en 10.30s (2.767 módulos) y 14/14 especificaciones OpenSpec validadas.
 
+- **Fase 31: Telemetría de Tráfico Servidor & Páginas Vistas (Zero-Latency) (30 de Agosto de 2026):**
+  - **Hitos Implementados:**
+    - Creación de tablas `page_views` (conteo de vistas e impresiones únicas por fecha y ruta) y `daily_visitors` (hash anónimo `SHA256(IP + UserAgent + Fecha)` para contar personas reales sin almacenar datos sensibles).
+    - Middleware Terminable `TrackPageViews` que aprovecha el ciclo `terminate()` de Laravel para ejecutar el registro en segundo plano tras enviar el HTML, garantizando 0.00ms de sobrecarga de latencia.
+    - Servicio `TrafficTelemetryService` con clasificación inteligente de secciones (Home, Fichas de Fármacos, Vademécum PDF, Farmacovigilancia, Herramientas, Casos Clínicos y Blog) y actualización automática de `product_daily_stats.views_count`.
+    - Mirador de Analítica `/admin/analytics` ampliado con banner de 4 tarjetas de tráfico general, sección de Top Páginas Más Visitadas, línea púrpura de tráfico en `TrendChart` y Embudo Maestro de 5 Etapas en `FunnelView`.
+  - **Métricas:** 151 tests pasando en verde (619 assertions), compilación Vite en 8.54s (2.767 módulos) y 14/14 especificaciones OpenSpec validadas.
+
 ---
 
 ## 📊 4. Métricas de Datos Clínicos y Portafolio Oficial
@@ -281,7 +289,7 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 146 tests pasados (595 assertions) 100% en verde con PHPUnit 11.
+- **Suite de Pruebas Automatizadas:** 151 tests pasados (619 assertions) 100% en verde con PHPUnit 11.
 - **Especificaciones OpenSpec:** 14 especificaciones BDD 100% validadas.
 
 

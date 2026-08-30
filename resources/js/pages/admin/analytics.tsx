@@ -18,6 +18,7 @@ import {
     ArrowRight,
     ShoppingBag,
     HelpCircle,
+    Globe,
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { ConversationTranscriptModal } from '@/components/admin/analytics/conversation-transcript-modal';
@@ -41,6 +42,11 @@ interface KPIProps {
     lira_deep_count?: number;
     total_web_messages?: number;
     total_quotes?: number;
+    total_page_views?: number;
+    today_page_views?: number;
+    total_unique_visitors?: number;
+    today_unique_visitors?: number;
+    catalog_views?: number;
 }
 
 interface ChartPoint {
@@ -49,6 +55,9 @@ interface ChartPoint {
     sessions: number;
     gemini: number;
     deterministic: number;
+    whatsapp?: number;
+    views?: number;
+    uniques?: number;
 }
 
 interface TopProduct {
@@ -56,6 +65,13 @@ interface TopProduct {
     name: string;
     presentation: string;
     count: number;
+}
+
+interface TopPage {
+    url_path: string;
+    section: string;
+    total_views: number;
+    total_uniques: number;
 }
 
 interface GuardrailStat {
@@ -81,6 +97,7 @@ interface ChatSessionItem {
 interface AnalyticsProps {
     kpis: KPIProps;
     chartData: ChartPoint[];
+    topPages?: TopPage[];
     topProducts: TopProduct[];
     guardrailStats: GuardrailStat[];
     sessions: {
@@ -101,6 +118,7 @@ interface AnalyticsProps {
 export default function Analytics({
     kpis,
     chartData,
+    topPages = [],
     topProducts,
     guardrailStats,
     sessions,
@@ -198,6 +216,60 @@ export default function Analytics({
                         >
                             <RefreshCw className="w-4 h-4" />
                         </button>
+                    </div>
+                </div>
+
+                {/* Métricas de Tráfico del Servidor (Zero-Latency) */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                    <div className="bg-gradient-to-br from-purple-50 to-indigo-50/50 dark:from-purple-950/20 dark:to-indigo-950/20 p-4 rounded-xl border border-purple-200 dark:border-purple-900/50 shadow-sm">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider">
+                                Páginas Vistas
+                            </span>
+                            <Globe className="w-4 h-4 text-purple-500" />
+                        </div>
+                        <div className="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">
+                            {kpis.total_page_views || 0}
+                        </div>
+                        <span className="text-[10px] text-purple-600 dark:text-purple-400 font-medium">
+                            +{kpis.today_page_views || 0} servidas hoy
+                        </span>
+                    </div>
+
+                    <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                            Visitantes Únicos
+                        </span>
+                        <div className="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">
+                            {kpis.total_unique_visitors || 0}
+                        </div>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                            +{kpis.today_unique_visitors || 0} únicos hoy
+                        </span>
+                    </div>
+
+                    <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                            Fichas de Fármacos
+                        </span>
+                        <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1 font-mono">
+                            {kpis.catalog_views || 0}
+                        </div>
+                        <span className="text-[10px] text-slate-400 block">
+                            Vistas de catálogo y vademécum
+                        </span>
+                    </div>
+
+                    <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                            Ratio Catálogo / Visitas
+                        </span>
+                        <div className="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1 font-mono">
+                            {kpis.total_page_views ? Math.round(((kpis.catalog_views || 0) / kpis.total_page_views) * 100) : 0}%
+                        </div>
+                        <span className="text-[10px] text-slate-400 block">
+                            Interés en productos
+                        </span>
                     </div>
                 </div>
 
@@ -399,6 +471,28 @@ export default function Analytics({
                                     </span>
                                 )}
                             </div>
+
+                            {/* Top Páginas Más Visitadas (Servidor) */}
+                            {topPages && topPages.length > 0 && (
+                                <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                                    <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2.5 flex items-center gap-1.5">
+                                        <Globe className="w-3.5 h-3.5 text-purple-500" />
+                                        Páginas Más Visitadas (Servidor)
+                                    </h4>
+                                    <div className="space-y-2">
+                                        {topPages.map((pg, idx) => (
+                                            <div key={idx} className="flex items-center justify-between text-[11px]">
+                                                <span className="text-slate-600 dark:text-slate-400 font-mono truncate max-w-[200px]" title={pg.url_path}>
+                                                    {pg.url_path === '/' ? '/ (Inicio)' : pg.url_path}
+                                                </span>
+                                                <span className="font-mono text-purple-600 dark:text-purple-400 font-bold bg-purple-50 dark:bg-purple-950/60 px-1.5 py-0.5 rounded">
+                                                    {pg.total_views} vistas
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
@@ -615,6 +709,8 @@ export default function Analytics({
                             conversionRate={kpis.conversion_rate}
                             whatsappClicks={kpis.whatsapp_clicks_total || 0}
                             totalQuotes={kpis.total_quotes || kpis.converted_sessions}
+                            totalPageViews={kpis.total_page_views || 0}
+                            catalogViews={kpis.catalog_views || 0}
                         />
                     </div>
                 )}
