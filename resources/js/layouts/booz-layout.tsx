@@ -26,6 +26,7 @@ import SearchModal from '@/components/search-modal';
 import StoreCartDrawer, { type CartItem } from '@/components/store-cart-drawer';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
+import { trackInteractionEvent } from '@/lib/telemetry';
 import type { Product } from '@/types';
 
 function TikTokIcon({ className = 'h-4 w-4' }: { className?: string }) {
@@ -372,6 +373,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                     href={createWhatsAppUrl(defaultMessage, 'contact')}
                     target="_blank" 
                     rel="noreferrer"
+                    onClick={() => trackInteractionEvent('whatsapp_click', 'whatsapp', 'floating_button')}
                     className="flex h-12 w-12 sm:h-13 sm:w-13 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl hover:bg-emerald-400 hover:scale-110 active:scale-95 transition-all group cursor-pointer"
                     title="Contacto directo por WhatsApp oficial"
                 >

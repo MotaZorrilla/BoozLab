@@ -262,6 +262,16 @@ graph TD
     - Preservación del flujo ergonómico en dispositivos móviles (`block lg:hidden`) para mantener la compra ágil y las fichas técnicas al final.
   - **Métricas:** 144 tests pasando en verde (588 assertions), compilación Vite en 9.88s (2.766 módulos) y 14/14 especificaciones OpenSpec validadas.
 
+- **Fase 30: Telemetría Multi-Canal & Rastreo de Intención de Clics de WhatsApp (30 de Agosto de 2026):**
+  - **Hitos Implementados:**
+    - Diseñada e implementada la tabla `interaction_events` y la columna `whatsapp_clicks_count` en `product_daily_stats`.
+    - Creado el endpoint `POST /api/telemetry/event` gestionado por `TelemetryEventController` y `ChatTelemetryService::recordInteraction()`.
+    - Implementado el módulo de frontend `resources/js/lib/telemetry.ts` con soporte prioritario para `navigator.sendBeacon()` y respaldo en `fetch({ keepalive: true })`, garantizando captura en < 3ms sin retrasar la navegación ni la apertura externa de WhatsApp.
+    - Integrado el rastreo de eventos en la Ficha de Producto (botón dual de WhatsApp y Lira), en el botón flotante global y en la confirmación de la bolsa de pedidos.
+    - Actualizado el panel `/admin/analytics` con cuadrícula de 6 KPIs multi-canal (Sesiones breves vs. profundas de Lira, Clics de WhatsApp, Cotizaciones formales en BD, Formularios Web, Latencia y Conversión), gráfico de tendencias con línea esmeralda para WhatsApp, y embudo multi-etapa en `FunnelView`.
+    - Actualizado el comando `telemetry:rollup` para agregar clics de WhatsApp por medicamento.
+  - **Métricas:** 146 tests pasando en verde (595 assertions), compilación Vite en 10.30s (2.767 módulos) y 14/14 especificaciones OpenSpec validadas.
+
 ---
 
 ## 📊 4. Métricas de Datos Clínicos y Portafolio Oficial
@@ -271,7 +281,7 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 144 tests pasados (588 assertions) 100% en verde con PHPUnit 11.
+- **Suite de Pruebas Automatizadas:** 146 tests pasados (595 assertions) 100% en verde con PHPUnit 11.
 - **Especificaciones OpenSpec:** 14 especificaciones BDD 100% validadas.
 
 

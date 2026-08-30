@@ -131,4 +131,44 @@ class TelemetryTest extends TestCase
 
         $this->assertEquals(18, ProductDailyStat::count());
     }
+
+    public function test_client_can_track_interaction_event(): void
+    {
+        $product = Product::firstOrFail();
+
+        $response = $this->postJson('/api/telemetry/event', [
+            'event_type' => 'whatsapp_click',
+            'channel' => 'whatsapp',
+            'source' => 'pdp_dual_card',
+            'product_id' => $product->id,
+            'session_uid' => 'test-session-intent-1',
+            'metadata' => ['product_name' => $product->name],
+        ]);
+
+        $response->assertOk();
+        $response->assertJson(['success' => true]);
+
+        $this->assertDatabaseHas('interaction_events', [
+            'event_type' => 'whatsapp_click',
+            'channel' => 'whatsapp',
+            'source' => 'pdp_dual_card',
+            'product_id' => $product->id,
+            'session_uid' => 'test-session-intent-1',
+        ]);
+
+        $this->assertDatabaseHas('product_daily_stats', [
+            'product_id' => $product->id,
+            'date' => now()->toDateString(),
+            'whatsapp_clicks_count' => 1,
+        ]);
+    }
+
+    public function test_telemetry_event_endpoint_validates_payload(): void
+    {
+        $response = $this->postJson('/api/telemetry/event', []);
+
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['event_type']);
+    }
 }
+

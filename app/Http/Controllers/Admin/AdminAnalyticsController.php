@@ -35,6 +35,14 @@ class AdminAnalyticsController extends Controller
         $convertedSessions = ChatSession::where('converted_to_order', true)->count();
         $conversionRate = $totalSessions > 0 ? round(($convertedSessions / $totalSessions) * 100, 1) : 0.0;
 
+        // Nuevas métricas multi-canal e intenciones WhatsApp
+        $whatsappClicksTotal = \App\Models\InteractionEvent::where('event_type', 'whatsapp_click')->count();
+        $whatsappClicksToday = \App\Models\InteractionEvent::where('event_type', 'whatsapp_click')->whereDate('created_at', $today)->count();
+        $liraBounces = ChatSession::where('turn_count', 1)->count();
+        $liraDeep = ChatSession::where('turn_count', '>=', 2)->count();
+        $totalWebMessages = \App\Models\Message::count();
+        $totalQuotes = \App\Models\Quote::count();
+
         // 2. Gráfico Cronológico (Últimos 7 días)
         $chartData = [];
         for ($i = 6; $i >= 0; $i--) {
@@ -45,6 +53,7 @@ class AdminAnalyticsController extends Controller
             $daySessions = ChatSession::whereDate('started_at', $dateStr)->count();
             $dayGemini = ChatMessage::where('source', 'gemini_api')->whereDate('created_at', $dateStr)->count();
             $dayDet = ChatMessage::where('source', 'like', 'deterministic_%')->whereDate('created_at', $dateStr)->count();
+            $dayWa = \App\Models\InteractionEvent::where('event_type', 'whatsapp_click')->whereDate('created_at', $dateStr)->count();
 
             $chartData[] = [
                 'date' => $dateStr,
@@ -52,6 +61,7 @@ class AdminAnalyticsController extends Controller
                 'sessions' => $daySessions,
                 'gemini' => $dayGemini,
                 'deterministic' => $dayDet,
+                'whatsapp' => $dayWa,
             ];
         }
 
@@ -120,6 +130,18 @@ class AdminAnalyticsController extends Controller
                 'guardrails_triggered_count' => $guardrailsTriggered,
                 'conversion_rate' => $conversionRate,
                 'converted_sessions' => $convertedSessions,
+                'whatsapp_clicks_total' => $whatsappClicksTotal,
+                'whatsapp_clicks_today' => $whatsappClicksToday,
+                'lira_bounces_count' => $liraBounces,
+                'lira_deep_count' => $liraDeep,
+                'total_web_messages' => $totalWebMessages,
+                'total_quotes' => $totalQuotes,
+            ],
+            'channels' => [
+                'whatsapp_clicks' => $whatsappClicksTotal,
+                'lira_sessions' => $totalSessions,
+                'web_messages' => $totalWebMessages,
+                'quotes' => $totalQuotes,
             ],
             'chartData' => $chartData,
             'topProducts' => $topProducts,

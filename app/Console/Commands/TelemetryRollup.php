@@ -52,10 +52,20 @@ class TelemetryRollup extends Command
             }
         }
 
+        // Obtener conteo de clics de WhatsApp por producto en esa fecha
+        $whatsappClicksByProduct = \App\Models\InteractionEvent::where('event_type', 'whatsapp_click')
+            ->whereDate('created_at', $date)
+            ->whereNotNull('product_id')
+            ->selectRaw('product_id, count(*) as count')
+            ->groupBy('product_id')
+            ->pluck('count', 'product_id')
+            ->toArray();
+
         foreach ($products as $product) {
             $mentions = $mentionsByProduct[$product->id] ?? 0;
             $quotes = $quotesByProduct[$product->id] ?? 0;
             $views = $product->views_count ?: 0;
+            $waClicks = $whatsappClicksByProduct[$product->id] ?? 0;
 
             ProductDailyStat::updateOrCreate(
                 [
@@ -66,6 +76,7 @@ class TelemetryRollup extends Command
                     'views_count' => $views,
                     'chatbot_mentions_count' => $mentions,
                     'quote_requests_count' => $quotes,
+                    'whatsapp_clicks_count' => $waClicks,
                 ]
             );
 

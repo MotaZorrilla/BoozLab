@@ -7,6 +7,8 @@ interface FunnelViewProps {
     topProductsCount: number;
     convertedSessions: number;
     conversionRate: number;
+    whatsappClicks?: number;
+    totalQuotes?: number;
 }
 
 export function FunnelView({
@@ -15,29 +17,34 @@ export function FunnelView({
     topProductsCount,
     convertedSessions,
     conversionRate,
+    whatsappClicks = 0,
+    totalQuotes = 0,
 }: FunnelViewProps) {
+    const finalConversions = totalQuotes > 0 ? totalQuotes : convertedSessions;
+    const baseTotal = Math.max(totalSessions + whatsappClicks, 1);
+
     const steps = [
         {
-            title: '1. Sesiones de Chat Iniciadas',
-            description: 'Visitantes que abrieron y consultaron a Lira AI',
+            title: '1. Consultas Lira AI',
+            description: 'Visitantes que interactuaron con el asistente clínico',
             count: totalSessions,
-            percentage: 100,
+            percentage: Math.round((totalSessions / baseTotal) * 100),
             icon: MessageSquare,
             color: 'bg-blue-600',
             textColor: 'text-blue-600 dark:text-blue-400',
         },
         {
-            title: '2. Interacción y Turnos Clínicos',
-            description: 'Total de mensajes y respuestas intercambiadas',
-            count: totalMessages,
-            percentage: totalSessions > 0 ? Math.min(100, Math.round((totalMessages / (totalSessions * 2)) * 100)) : 0,
+            title: '2. Intenciones de Contacto WhatsApp',
+            description: 'Clics en "Atención por WhatsApp" en ficha de producto y botón flotante',
+            count: whatsappClicks,
+            percentage: Math.round((whatsappClicks / baseTotal) * 100),
             icon: Bot,
             color: 'bg-cyan-500',
             textColor: 'text-cyan-600 dark:text-cyan-400',
         },
         {
-            title: '3. Recomendaciones Farmacológicas',
-            description: 'Sesiones donde se sugirió un fármaco del catálogo',
+            title: '3. Fármacos y Vademécum Recomendados',
+            description: 'Sesiones donde se sugirieron productos del vademécum oficial',
             count: topProductsCount,
             percentage: totalSessions > 0 ? Math.min(100, Math.round((topProductsCount / totalSessions) * 100)) : 0,
             icon: Pill,
@@ -45,9 +52,9 @@ export function FunnelView({
             textColor: 'text-indigo-600 dark:text-indigo-400',
         },
         {
-            title: '4. Conversión a Pedido / Cotización',
-            description: 'Sesiones que culminaron en un pedido o cotización por WhatsApp',
-            count: convertedSessions,
+            title: '4. Cotizaciones Formales Registradas',
+            description: 'Pedidos y cotizaciones generados en BD desde la bolsa de pedidos',
+            count: finalConversions,
             percentage: conversionRate,
             icon: ShoppingBag,
             color: 'bg-emerald-500',

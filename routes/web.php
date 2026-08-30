@@ -23,6 +23,7 @@ Route::post('/api/farmacovigilancia', [PharmacovigilanceController::class, 'stor
 Route::post('/api/chatbot', [ChatbotController::class, 'query'])->middleware('throttle:30,1')->name('chatbot.query');
 Route::post('/api/messages', [MessageController::class, 'store'])->middleware('throttle:10,1')->name('api.messages.store');
 Route::post('/api/quotes', [\App\Http\Controllers\QuoteController::class, 'store'])->middleware('throttle:30,1')->name('api.quotes.store');
+Route::post('/api/telemetry/event', [\App\Http\Controllers\Api\TelemetryEventController::class, 'store'])->middleware('throttle:60,1')->name('api.telemetry.event');
 Route::get('/api/search', [ProductController::class, 'search'])->middleware('throttle:60,1')->name('api.search');
 
 // Auxiliary Knowledge & Tools Pages

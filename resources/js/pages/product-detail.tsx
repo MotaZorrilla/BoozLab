@@ -6,6 +6,7 @@ import {
 import React from 'react';
 import BoozLayout from '@/layouts/booz-layout';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
+import { trackInteractionEvent } from '@/lib/telemetry';
 import type { Product } from '@/types';
 
 interface ProductDetailProps {
@@ -289,7 +290,10 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                                     {/* Botón Lira AI */}
                                     <button
                                         type="button"
-                                        onClick={handleOpenLira}
+                                        onClick={() => {
+                                            trackInteractionEvent('lira_open', 'lira_ai', 'pdp_dual_card', product.id, { product_name: product.name });
+                                            handleOpenLira();
+                                        }}
                                         className="p-3.5 rounded-2xl bg-gradient-to-br from-[#002072] to-blue-800 hover:from-blue-900 hover:to-blue-950 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 text-white flex items-center gap-3 shadow-md hover:shadow-lg transition-all text-left cursor-pointer group active:scale-[0.98]"
                                         title="Abrir asistente virtual Lira AI"
                                     >
@@ -319,6 +323,9 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                                         href={whatsappUrl}
                                         target="_blank"
                                         rel="noreferrer"
+                                        onClick={() => {
+                                            trackInteractionEvent('whatsapp_click', 'whatsapp', 'pdp_dual_card', product.id, { product_name: product.name });
+                                        }}
                                         className="p-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white flex items-center gap-3 shadow-md hover:shadow-lg transition-all text-left cursor-pointer group"
                                         title="Contactar al equipo por WhatsApp"
                                     >

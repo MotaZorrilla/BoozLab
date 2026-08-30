@@ -35,6 +35,12 @@ interface KPIProps {
     guardrails_triggered_count: number;
     conversion_rate: number;
     converted_sessions: number;
+    whatsapp_clicks_total?: number;
+    whatsapp_clicks_today?: number;
+    lira_bounces_count?: number;
+    lira_deep_count?: number;
+    total_web_messages?: number;
+    total_quotes?: number;
 }
 
 interface ChartPoint {
@@ -195,77 +201,83 @@ export default function Analytics({
                     </div>
                 </div>
 
-                {/* Cuadrícula de KPIs Rápidos */}
+                {/* Cuadrícula de KPIs Rápidos Multi-Canal */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+                    {/* 1. Lira AI Sesiones */}
                     <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                         <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                            Sesiones Totales
+                            Sesiones Lira AI
                         </span>
                         <div className="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">
                             {kpis.total_sessions}
                         </div>
-                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                            +{kpis.today_sessions} registradas hoy
+                        <span className="text-[10px] text-blue-600 dark:text-cyan-400 font-medium block truncate">
+                            {kpis.lira_deep_count || 0} profundas / {kpis.lira_bounces_count || 0} breves
                         </span>
                     </div>
 
+                    {/* 2. Clics WhatsApp */}
                     <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                         <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                            Turnos de Chat
+                            Clics WhatsApp
+                        </span>
+                        <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 font-mono">
+                            {kpis.whatsapp_clicks_total || 0}
+                        </div>
+                        <span className="text-[10px] text-emerald-700 dark:text-emerald-300 font-medium block">
+                            +{kpis.whatsapp_clicks_today || 0} intención hoy
+                        </span>
+                    </div>
+
+                    {/* 3. Cotizaciones Formales */}
+                    <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                            Cotizaciones BD
+                        </span>
+                        <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1 font-mono">
+                            {kpis.total_quotes || kpis.converted_sessions}
+                        </div>
+                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 block">
+                            Bolsa de pedidos formal
+                        </span>
+                    </div>
+
+                    {/* 4. Mensajes Web */}
+                    <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                            Mensajes Web
                         </span>
                         <div className="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">
-                            {kpis.total_messages}
+                            {kpis.total_web_messages || 0}
                         </div>
-                        <span className="text-[10px] text-slate-400">
-                            Mensajes interactuados
+                        <span className="text-[10px] text-slate-400 block">
+                            Formularios de contacto
                         </span>
                     </div>
 
+                    {/* 5. Latencia Promedio */}
                     <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                         <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                            Latencia Promedio
+                            Latencia Lira
                         </span>
                         <div className="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">
                             {kpis.avg_latency_ms} <span className="text-xs font-normal text-slate-400">ms</span>
                         </div>
-                        <span className="text-[10px] text-cyan-600 dark:text-cyan-400">
-                            Tiempo de respuesta
+                        <span className="text-[10px] text-slate-400 block truncate">
+                            {kpis.gemini_calls_count} Gemini / {kpis.deterministic_calls_count} Local
                         </span>
                     </div>
 
+                    {/* 6. Tasa de Conversión */}
                     <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                         <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                            Inferencia Gemini
-                        </span>
-                        <div className="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1 font-mono">
-                            {kpis.gemini_calls_count}
-                        </div>
-                        <span className="text-[10px] text-slate-400">
-                            {kpis.deterministic_calls_count} vía determinista
-                        </span>
-                    </div>
-
-                    <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                            Guardrails Activos
-                        </span>
-                        <div className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1 font-mono">
-                            {kpis.guardrails_triggered_count}
-                        </div>
-                        <span className="text-[10px] text-amber-600 dark:text-amber-400">
-                            Contenciones clínicas
-                        </span>
-                    </div>
-
-                    <div className="bg-white dark:bg-[#0D172E] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                            Conversión Pedidos
+                            Tasa Conversión
                         </span>
                         <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 font-mono">
                             {kpis.conversion_rate}%
                         </div>
-                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400">
-                            {kpis.converted_sessions} cotizaciones
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block">
+                            Cierre comercial global
                         </span>
                     </div>
                 </div>
@@ -601,6 +613,8 @@ export default function Analytics({
                             topProductsCount={topProducts.reduce((acc, p) => acc + p.count, 0)}
                             convertedSessions={kpis.converted_sessions}
                             conversionRate={kpis.conversion_rate}
+                            whatsappClicks={kpis.whatsapp_clicks_total || 0}
+                            totalQuotes={kpis.total_quotes || kpis.converted_sessions}
                         />
                     </div>
                 )}

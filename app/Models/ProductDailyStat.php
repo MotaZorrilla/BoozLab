@@ -16,6 +16,7 @@ class ProductDailyStat extends Model
         'views_count',
         'chatbot_mentions_count',
         'quote_requests_count',
+        'whatsapp_clicks_count',
     ];
 
     protected $casts = [
@@ -23,6 +24,7 @@ class ProductDailyStat extends Model
         'views_count' => 'integer',
         'chatbot_mentions_count' => 'integer',
         'quote_requests_count' => 'integer',
+        'whatsapp_clicks_count' => 'integer',
     ];
 
     public function product(): BelongsTo

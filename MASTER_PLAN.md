@@ -431,6 +431,33 @@
   - `php artisan test`: 144 tests pasando en verde (588 assertions).
   - OpenSpec: 14/14 especificaciones validadas.
 
+---
+
+## 📡 Fase 30: Telemetría Multi-Canal & Rastreo de Intención de WhatsApp
+- [x] **Base de Datos y Modelado de Intención (`interaction_events`):**
+  - Migración `2026_08_31_000002_create_interaction_events_table.php` ejecutada.
+  - Tabla `interaction_events` con campos `event_type`, `channel`, `source`, `product_id`, `session_uid`, `metadata` e índices optimizados.
+  - Agregada columna `whatsapp_clicks_count` a `product_daily_stats` para consultas analíticas instantáneas por producto.
+  - Modelo `App\Models\InteractionEvent` con scopes de filtrado por canal y fecha.
+- [x] **API y Servicio de Telemetría Fail-Safe:**
+  - Creado `App\Http\Controllers\Api\TelemetryEventController` con ruta `POST /api/telemetry/event` (exenta de CSRF, con throttle y validación).
+  - Método `ChatTelemetryService::recordInteraction()` con captura de excepciones que garantiza que ningún fallo de red o BD interrumpa la navegación del usuario.
+- [x] **Frontend Beacon No Bloqueante (`resources/js/lib/telemetry.ts`):**
+  - Implementado `trackInteractionEvent()` priorizando `navigator.sendBeacon()` y respaldo con `fetch({ keepalive: true })` (< 3ms de ejecución, invisible al usuario).
+  - Integrado en botón *"Atención por WhatsApp"* de la ficha de producto (`product-detail.tsx`).
+  - Integrado en botón flotante global de WhatsApp (`booz-layout.tsx`).
+  - Integrado en el botón de confirmación de cotización de la bolsa de pedidos (`store-cart-drawer.tsx`).
+- [x] **Mirador Administrativo Multi-Canal (`/admin/analytics`):**
+  - Nueva cuadrícula de 6 KPIs: Sesiones Lira (Breves vs. Profundas), Clics WhatsApp (Total y Hoy), Cotizaciones en BD, Formularios Web Recibidos, Latencia Lira y Tasa de Conversión.
+  - Gráfico `TrendChart` actualizado con línea esmeralda para el volumen diario de intenciones de WhatsApp.
+  - Embudo `FunnelView` adaptado para mostrar los 4 escalones del recorrido del paciente/cliente farmacéutico.
+- [x] **Consolidación Diaria (`telemetry:rollup`):**
+  - Actualizado el comando artisan para totalizar e indexar clics de WhatsApp por medicamento.
+- [x] **Verificación Integral y QA:**
+  - `php artisan test`: 146 tests pasando en verde (595 assertions).
+  - `npm run build`: 2.767 módulos transformados sin errores en 10.30s.
+  - OpenSpec: 14/14 especificaciones validadas.
+
 
 
 

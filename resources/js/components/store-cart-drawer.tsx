@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShoppingBag, X, Trash2, Plus, Minus, MessageCircle, Building, User, Hospital, Truck, Sparkles } from 'lucide-react';
 import type { CartItem } from '@/types';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
+import { trackInteractionEvent } from '@/lib/telemetry';
 
 interface StoreCartDrawerProps {
     isOpen: boolean;
@@ -99,6 +100,11 @@ export default function StoreCartDrawer({
             console.error('Error registrando cotización de telemetría:', err);
         } finally {
             setIsSubmittingQuote(false);
+            trackInteractionEvent('quote_whatsapp_sent', 'store_cart', 'cart_checkout', items[0]?.product?.id, {
+                total_units: totalUnits,
+                total_amount: subtotal,
+                customer_type: customerType,
+            });
             window.open(generateWhatsAppOrderUrl(), '_blank');
         }
     };

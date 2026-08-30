@@ -139,4 +139,47 @@ class ChatTelemetryService
 
         return false;
     }
+
+    /**
+     * Record an interaction event (e.g. WhatsApp click, quote, web form) in a fail-safe manner.
+     */
+    public function recordInteraction(
+        string $eventType,
+        string $channel,
+        string $source,
+        ?int $productId = null,
+        ?string $sessionUid = null,
+        array $metadata = []
+    ): ?\App\Models\InteractionEvent {
+        try {
+            $event = \App\Models\InteractionEvent::create([
+                'event_type' => $eventType,
+                'channel' => $channel,
+                'source' => $source,
+                'product_id' => $productId,
+                'session_uid' => $sessionUid,
+                'metadata' => $metadata,
+            ]);
+
+            // Si es un clic de WhatsApp para un producto, incrementar contador diario en product_daily_stats
+            if ($productId && $eventType === 'whatsapp_click') {
+                $todayStr = now()->toDateString();
+                $stat = \App\Models\ProductDailyStat::firstOrNew([
+                    'product_id' => $productId,
+                    'date' => $todayStr,
+                ]);
+                $stat->whatsapp_clicks_count = ($stat->whatsapp_clicks_count ?: 0) + 1;
+                $stat->save();
+            }
+
+            return $event;
+        } catch (\Throwable $e) {
+            Log::warning('ChatTelemetryService: Excepción registrando evento de interacción: ' . $e->getMessage(), [
+                'event_type' => $eventType,
+                'channel' => $channel,
+            ]);
+
+            return null;
+        }
+    }
 }
