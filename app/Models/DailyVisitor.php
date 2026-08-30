@@ -16,6 +16,10 @@ class DailyVisitor extends Model
     protected $fillable = [
         'date',
         'visitor_hash',
+        'browser',
+        'device_type',
+        'os',
+        'entry_path',
         'created_at',
     ];
 

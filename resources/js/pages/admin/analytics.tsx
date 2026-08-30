@@ -94,12 +94,50 @@ interface ChatSessionItem {
     messages_count: number;
 }
 
+interface SectionStat {
+    section: string;
+    views: number;
+    uniques: number;
+}
+
+interface EntryPathStat {
+    path: string;
+    count: number;
+}
+
+interface DeviceStat {
+    device_type: string;
+    count: number;
+}
+
+interface BrowserStat {
+    browser: string;
+    count: number;
+}
+
+interface OsStat {
+    os: string;
+    count: number;
+}
+
 interface AnalyticsProps {
-    kpis: KPIProps;
+    kpis: KPIProps & {
+        period_sessions?: number;
+        period_page_views?: number;
+        period_unique_visitors?: number;
+        period_catalog_views?: number;
+        whatsapp_clicks_period?: number;
+    };
     chartData: ChartPoint[];
     topPages?: TopPage[];
     topProducts: TopProduct[];
     guardrailStats: GuardrailStat[];
+    sectionsBreakdown?: SectionStat[];
+    topEntryPaths?: EntryPathStat[];
+    devicesBreakdown?: DeviceStat[];
+    browsersBreakdown?: BrowserStat[];
+    osBreakdown?: OsStat[];
+    currentPeriod?: string;
     sessions: {
         data: ChatSessionItem[];
         current_page: number;
@@ -108,6 +146,7 @@ interface AnalyticsProps {
         links: Array<{ url: string | null; label: string; active: boolean }>;
     };
     filters: {
+        period?: string;
         search: string;
         source: string;
         from: string;
@@ -121,10 +160,17 @@ export default function Analytics({
     topPages = [],
     topProducts,
     guardrailStats,
+    sectionsBreakdown = [],
+    topEntryPaths = [],
+    devicesBreakdown = [],
+    browsersBreakdown = [],
+    osBreakdown = [],
+    currentPeriod = '7d',
     sessions,
     filters,
 }: AnalyticsProps) {
-    const [activeTab, setActiveTab] = useState<'health' | 'conversations' | 'funnel'>('health');
+    const [activeTab, setActiveTab] = useState<'health' | 'conversations' | 'funnel' | 'traffic'>('health');
+    const [selectedPeriod, setSelectedPeriod] = useState(filters.period || currentPeriod);
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [sourceFilter, setSourceFilter] = useState(filters.source || 'all');
     const [fromDate, setFromDate] = useState(filters.from || '');
@@ -133,11 +179,27 @@ export default function Analytics({
     const [selectedSession, setSelectedSession] = useState<any | null>(null);
     const [loadingTranscript, setLoadingTranscript] = useState(false);
 
+    const handlePeriodChange = (newPeriod: string) => {
+        setSelectedPeriod(newPeriod);
+        router.get(
+            '/admin/analytics',
+            {
+                period: newPeriod,
+                search: searchTerm || undefined,
+                source: sourceFilter !== 'all' ? sourceFilter : undefined,
+                from: fromDate || undefined,
+                to: toDate || undefined,
+            },
+            { preserveState: true, replace: true }
+        );
+    };
+
     const handleApplyFilters = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         router.get(
             '/admin/analytics',
             {
+                period: selectedPeriod,
                 search: searchTerm,
                 source: sourceFilter !== 'all' ? sourceFilter : undefined,
                 from: fromDate || undefined,
@@ -369,6 +431,17 @@ export default function Analytics({
                     </button>
                     <button
                         type="button"
+                        onClick={() => setActiveTab('traffic')}
+                        className={`px-4 py-2 text-xs font-bold rounded-lg transition ${
+                            activeTab === 'traffic'
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                        Tráfico, Secciones & Dispositivos
+                    </button>
+                    <button
+                        type="button"
                         onClick={() => setActiveTab('conversations')}
                         className={`px-4 py-2 text-xs font-bold rounded-lg transition ${
                             activeTab === 'conversations'
@@ -396,15 +469,27 @@ export default function Analytics({
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Gráfica de Tendencia (2 columnas) */}
                         <div className="lg:col-span-2 bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-                            <div>
-                                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                                    Curva de Consultas y Fuentes de Respuesta
-                                </h3>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
-                                    Distribución diaria de consultas atendidas por Gemini AI vs. motor determinista de respaldo.
-                                </p>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                                        Curva de Consultas, Tráfico y Fuentes
+                                    </h3>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        Páginas vistas, sesiones Lira, Gemini AI y WhatsApp en el periodo seleccionado.
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-[10px] text-slate-400 font-mono block">Periodo Activo</span>
+                                    <span className="text-xs font-bold text-blue-600 dark:text-cyan-400 uppercase font-mono">
+                                        {selectedPeriod}
+                                    </span>
+                                </div>
                             </div>
-                            <TrendChart data={chartData} />
+                            <TrendChart 
+                                data={chartData} 
+                                currentPeriod={selectedPeriod} 
+                                onPeriodChange={handlePeriodChange} 
+                            />
                         </div>
 
                         {/* Top Productos Consultados */}
@@ -493,6 +578,193 @@ export default function Analytics({
                                     </div>
                                 </div>
                             )}
+                        </div>
+                    </div>
+                )}
+
+                {/* CONTENIDO PESTAÑA: TRÁFICO, SECCIONES & DISPOSITIVOS */}
+                {activeTab === 'traffic' && (
+                    <div className="space-y-6">
+                        {/* Resumen de Tráfico del Periodo Seleccionado vs Histórico */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                                    Vistas en Periodo ({selectedPeriod.toUpperCase()})
+                                </span>
+                                <div className="text-3xl font-black text-purple-600 dark:text-purple-400 mt-2 font-mono">
+                                    {kpis.period_page_views || kpis.today_page_views || 0}
+                                </div>
+                                <span className="text-[11px] text-slate-400 mt-1 block">
+                                    De {kpis.total_page_views || 0} acumuladas en histórico
+                                </span>
+                            </div>
+
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                                    Visitantes Únicos ({selectedPeriod.toUpperCase()})
+                                </span>
+                                <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-2 font-mono">
+                                    {kpis.period_unique_visitors || kpis.today_unique_visitors || 0}
+                                </div>
+                                <span className="text-[11px] text-slate-400 mt-1 block">
+                                    De {kpis.total_unique_visitors || 0} personas únicas registradas
+                                </span>
+                            </div>
+
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                                    Vistas Fichas Fármacos
+                                </span>
+                                <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400 mt-2 font-mono">
+                                    {kpis.period_catalog_views || kpis.catalog_views || 0}
+                                </div>
+                                <span className="text-[11px] text-slate-400 mt-1 block">
+                                    Interés específico en vademécum
+                                </span>
+                            </div>
+
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                                    Interacción WhatsApp
+                                </span>
+                                <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-2 font-mono">
+                                    {kpis.whatsapp_clicks_period || kpis.whatsapp_clicks_today || 0}
+                                </div>
+                                <span className="text-[11px] text-slate-400 mt-1 block">
+                                    Clics de intención en este periodo
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Grid de 3 Columnas: Secciones del Sitio, Navegadores/Dispositivos, y Rutas de Entrada */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Columna 1: Distribución por Secciones */}
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <Globe className="w-4 h-4 text-blue-600" />
+                                        Secciones Más Navegadas
+                                    </h3>
+                                    <span className="text-[10px] text-slate-400 font-mono">Tráfico</span>
+                                </div>
+
+                                <div className="space-y-3">
+                                    {sectionsBreakdown.length > 0 ? (
+                                        sectionsBreakdown.map((sec, idx) => {
+                                            const secNames: Record<string, string> = {
+                                                home: 'Inicio (Landing Page)',
+                                                product: 'Fichas de Medicamentos',
+                                                vademecum: 'Vademécum Oficial',
+                                                farmacovigilancia: 'Canal Farmacovigilancia',
+                                                tools: 'Herramientas Clínicas',
+                                                glossary: 'Glosario Farmacéutico',
+                                                cases: 'Casos Clínicos',
+                                                other: 'Otras Rutas',
+                                            };
+                                            const totalSecViews = sectionsBreakdown.reduce((a, b) => a + Number(b.views), 0) || 1;
+                                            const pct = Math.round((Number(sec.views) / totalSecViews) * 100);
+
+                                            return (
+                                                <div key={idx} className="space-y-1">
+                                                    <div className="flex items-center justify-between text-xs">
+                                                        <span className="font-semibold text-slate-800 dark:text-slate-200">
+                                                            {secNames[sec.section] || sec.section}
+                                                        </span>
+                                                        <span className="font-mono text-slate-500 font-medium">
+                                                            {sec.views} vistas ({pct}%)
+                                                        </span>
+                                                    </div>
+                                                    <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                        <div 
+                                                            className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full transition-all"
+                                                            style={{ width: `${pct}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <p className="text-xs text-slate-400">Sin datos registrados aún.</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Columna 2: Dispositivos y Navegadores */}
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <Cpu className="w-4 h-4 text-cyan-600" />
+                                    Entorno Tecnológico
+                                </h3>
+
+                                <div className="space-y-3">
+                                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                                        Dispositivos
+                                    </span>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {devicesBreakdown.map((dev, idx) => (
+                                            <div key={idx} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 text-center">
+                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-200 block">
+                                                    {dev.device_type}
+                                                </span>
+                                                <span className="font-mono text-sm font-black text-blue-600 dark:text-cyan-400">
+                                                    {dev.count}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
+                                            Navegadores
+                                        </span>
+                                        <div className="space-y-1.5">
+                                            {browsersBreakdown.map((br, idx) => (
+                                                <div key={idx} className="flex items-center justify-between text-xs">
+                                                    <span className="text-slate-600 dark:text-slate-400 font-medium">
+                                                        {br.browser}
+                                                    </span>
+                                                    <span className="font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                                                        {br.count}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Columna 3: Top Rutas de Aterrizaje / Entrada */}
+                            <div className="bg-white dark:bg-[#0D172E] p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <ArrowRight className="w-4 h-4 text-emerald-600" />
+                                    Páginas de Entrada (Landing)
+                                </h3>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    Primera URL que impacta el visitante al iniciar su sesión de navegación.
+                                </p>
+
+                                <div className="space-y-2.5">
+                                    {topEntryPaths.length > 0 ? (
+                                        topEntryPaths.map((entry, idx) => (
+                                            <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/60 text-xs">
+                                                <div className="flex items-center gap-2 truncate max-w-[210px]">
+                                                    <span className="w-4 h-4 rounded-full bg-blue-600/10 text-blue-600 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                                                        {idx + 1}
+                                                    </span>
+                                                    <span className="font-mono text-slate-700 dark:text-slate-300 truncate" title={entry.path}>
+                                                        {entry.path === '/' ? '/ (Página Inicio)' : entry.path}
+                                                    </span>
+                                                </div>
+                                                <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded flex-shrink-0">
+                                                    {entry.count}
+                                                </span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-xs text-slate-400">Registrando primeras visitas...</p>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}

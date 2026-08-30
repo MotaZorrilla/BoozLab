@@ -505,6 +505,44 @@
   - `npm run build`: 2.767 módulos transformados sin errores en 9.65s.
   - OpenSpec: 14/14 especificaciones validadas.
 
+---
+
+## 🎨 Fase 33: Optimización Cromática y Alto Contraste de Lira AI
+- [x] **Desacoplamiento de Fondo y Eliminación de Mimetismo Visual:**
+  - Como el personaje Lira comparte los colores corporativos oficiales (`#002072` azul marino y cyan), los fondos oscuros mimetizaban la silueta del personaje reduciendo su impacto.
+  - Se sustituyeron los fondos azules planos por podios y pods con **degradado blanco perla luminoso** (`bg-gradient-to-b from-white via-slate-50 to-blue-50`), ribetes en cyan brillante (`border-2 border-cyan-400 dark:border-cyan-300`) y anillos perimetrales reflectantes (`ring-2 ring-white/90`).
+  - **Ubicaciones actualizadas:**
+    - Barra de navegación móvil inferior (`booz-layout.tsx`).
+    - Botón flotante de escritorio junto a WhatsApp (`booz-layout.tsx`).
+    - Botón "Consultar a Lira AI" en la Ficha de Producto / PDP (`product-detail.tsx`).
+    - Tarjeta "Hola, soy Lira" en el Bento Grid de la Portada (`home.tsx`) con halo multicapa de luz perla y cian claro.
+    - Encabezado, tarjeta de bienvenida y miniaturas en los globos de diálogo del modal (`lira-assistant-modal.tsx`).
+
+---
+
+## 📊 Fase 34: Telemetría Expandida, Filtros Dinámicos de Tiempo y Entorno Tecnológico
+- [x] **Enriquecimiento del Esquema de Datos (`daily_visitors`):**
+  - Migración `2026_08_30_194848_enhance_daily_visitors_table.php` ejecutada.
+  - Nuevas columnas analíticas: `browser` (32), `device_type` (32), `os` (32) y `entry_path` (255).
+- [x] **Captura Zero-Latency en el Servidor (`TrafficTelemetryService.php`):**
+  - Parser ultra-rápido de `User-Agent` basado en expresiones regulares nativas (sin sobrecarga ni dependencias externas).
+  - Detección de dispositivos (*Desktop*, *Mobile*, *Tablet*), navegadores (*Chrome*, *Safari*, *Firefox*, *Edge*, *Opera*) y sistemas operativos (*Windows*, *macOS*, *Android*, *iOS*, *Linux*).
+  - Registro de la primera ruta de aterrizaje (`entry_path`) de cada visitante diario.
+- [x] **Controlador Analítico Flexible (`AdminAnalyticsController.php`):**
+  - Soporte de selector dinámico de periodos: `7d` (por defecto), `15d`, `30d`, `6m`, `1y` y `all` (histórico total).
+  - Adaptación de resolución temporal: diario para periodos cortos y mensual para periodos extendidos.
+  - Métricas agregadas de periodo vs. acumulado histórico para páginas vistas y visitantes únicos.
+- [x] **Curva de Tendencias Interactiva (`trend-chart.tsx`):**
+  - Selector de rangos temporales en píldoras (`7 Días`, `15 Días`, `1 Mes`, `6 Meses`, `1 Año`, `Histórico`).
+  - Leyendas activas: posibilidad de alternar con un clic la visibilidad de cada serie (*Páginas Vistas*, *Sesiones Lira*, *Gemini AI*, *Motor Local*, *WhatsApp*).
+- [x] **Pestaña Analítica "Tráfico, Secciones & Dispositivos" (`analytics.tsx`):**
+  - Tarjetas comparativas del periodo activo frente al acumulado histórico.
+  - Gráfico de barras de porcentaje de las secciones más visitadas (*Inicio*, *Catálogo*, *Vademécum*, *Farmacovigilancia*, etc.).
+  - Matriz de entorno tecnológico (proporción de dispositivos y navegadores).
+  - Top 5 de páginas de entrada (Landing / Entry Paths).
+- [x] **Verificación Integral y QA:**
+  - `npm run build`: 2.767 módulos compilados limpiamente sin advertencias en 8.78s.
+
 
 
 

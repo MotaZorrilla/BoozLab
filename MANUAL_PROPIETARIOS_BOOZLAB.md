@@ -107,13 +107,17 @@ Pensando en los **visitadores médicos, médicos tratantes y regentes de farmaci
 
 ---
 
-### 2.4 Lira: Su Asistente Científica con Inteligencia Artificial
-**Lira** es la mascota oficial de Booz Laboratorio: un personaje 3D en bata médica blanca y orejas azules que acompaña a los usuarios.
+### 2.4 Lira: Su Asistente Científica 3D con Inteligencia Artificial
+**Lira** es la mascota oficial y embajadora de marca de Booz Laboratorio: un entrañable personaje canino en 3D con orejas azules, medalla plateada grabada con el sello oficial **"BOOZ"** y patitas alzadas saludando amistosamente.
 
 **¿Qué hace Lira por su empresa?**
-* **Atención 24/7:** Responde preguntas de pacientes y médicos sobre indicaciones, posología y composición de cualquiera de los 18 fármacos.
-* **Política Estricta de Cero Automedicación (Protección Legal):** Lira está programada con *Guardrails Éticos*; **nunca receta ni diagnostica**. Si un usuario pregunta sobre síntomas graves, le orienta sobre los productos de Booz pero le exige consultar a su médico tratante.
-* **Captura de Clientes al Mayor:** Si alguien dice *"quiero comprar al mayor para mi farmacia"*, Lira le despliega inmediatamente un formulario para capturar su nombre, teléfono y correo, enviando el aviso a la directiva.
+* **Presencia Visual de Alta Definición:** Recientemente integrada con tecnología de fondo 100% transparente, aparece en la portada institucional con un halo de luz médica cyan, en el encabezado del asistente con indicador de conexión en vivo (punto verde pulsante) y en una **Tarjeta de Bienvenida Visual** al iniciar el chat.
+* **Atención Clínica 24/7:** Responde de forma instantánea preguntas de pacientes, médicos y farmacias sobre indicaciones, modo de uso, posología y composición de cualquiera de los 18 medicamentos.
+* **Política Estricta de Cero Automedicación (Blindaje Legal):** Lira está dotada de *Guardrails Sanitarios*; **nunca receta ni diagnostica por su cuenta**. Ante patologías delicadas o dudas diagnósticas, orienta sobre los productos de Booz pero exige consultar al médico tratante.
+* **Captura Proactiva de Clientes al Mayor:** Si el visitante indica *"quiero comprar al mayor para mi droguería"*, Lira le despliega inmediatamente un formulario dentro de la conversación para capturar su nombre, teléfono y correo, notificando al equipo comercial.
+* **Tarjeta Dual en Fichas de Medicamentos:** En cada producto, el visitante cuenta con dos botones estratégicos:
+  1. `[ 🐾 Consultar a Lira AI ]`: Abre la orientación clínica inmediata sin consumir tiempo del personal de guardia.
+  2. `[ 💬 Atención por WhatsApp ]`: Enlace directo con ventas y regencia técnica con mensaje prellenado del fármaco.
 
 ---
 
@@ -131,6 +135,7 @@ En la esquina superior y en la barra móvil, los usuarios disponen de su **Bolsa
 * **Cálculo Automático:** Suma las unidades y el monto referencial en USD.
 * **Alerta de Récipe:** Si el pedido incluye fármacos controlados (como antibióticos), añade automáticamente la cláusula *"Bajo Récipe Médico"*.
 * **Envío en 1 Clic a WhatsApp:** Al presionar *"Solicitar Cotización"*, se abre WhatsApp con un mensaje oficial estructurado que llega directamente al equipo de ventas de Booz.
+* **Telemetría de Clics:** El sistema registra en base de datos la intención de compra en el instante en que el usuario presiona el botón, permitiendo a la directiva medir cuántas personas quisieron cotizar.
 
 ---
 
@@ -198,13 +203,36 @@ Al entrar, la directiva visualiza de un vistazo la salud de su negocio:
 
 ---
 
-### 3.7 Mirador de Telemetría: Analítica de Consultas y Conversión (`/admin/analytics`)
-La más reciente innovación incorporada a la plataforma:
-* **Curva de Consultas y Salud de IA:** Gráficos que muestran cuántas preguntas recibe Lira día a día y qué porcentaje se atiende con inteligencia artificial profunda versus el motor local.
-* **Fármacos Más Consultados:** Sepa con exactitud qué medicamentos buscan más los pacientes en Venezuela, ayudando a planificar la producción en planta.
-* **Embudo de Ventas:** Muestra el camino desde que una persona saluda a Lira hasta que pide una cotización formal.
-* **Auditoría de Conversaciones Turno a Turno:** La directiva puede abrir cualquier conversación y leer exactamente lo que el usuario preguntó y lo que Lira respondió, con tiempos de respuesta en milisegundos.
-* **Exportación de Auditoría a Excel:** Botón para descargar el historial de telemetría completo.
+### 3.7 Mirador de Telemetría: Analítica de Tráfico, Consultas y Conversión (`/admin/analytics`)
+El centro de inteligencia comercial y analítica en tiempo real de Booz Laboratorio:
+
+* **Nuevo Banner de Tráfico del Servidor (Cero Latencia):**
+  - **Páginas Vistas:** Contador acumulado e histórico de cuántas páginas ha entregado el servidor a los visitantes (con desglose de las vistas de hoy y del periodo seleccionado).
+  - **Visitantes Únicos:** Cantidad de personas reales que visitan el portal (calculado con un hash diario anónimo que respeta al 100% la privacidad del paciente).
+  - **Fichas de Fármacos Vistas:** Conteo exacto de cuántas veces se han leído las fichas médicas y descargado el Vademécum en PDF.
+  - **Ratio de Interés en Catálogo:** Porcentaje de visitantes que profundizan en los productos farmacéuticos.
+
+* **Filtros Temporales Dinámicos en la Curva de Tendencias (`TrendChart`):**
+  - La directiva puede seleccionar el rango temporal de análisis en 1 clic: **7 Días**, **15 Días**, **1 Mes**, **6 Meses**, **1 Año** o **Histórico Completo**.
+  - **Control Interactivo de Series:** Es posible prender o apagar líneas individuales en el gráfico para aislar datos:
+    - 🟣 **Púrpura:** Páginas vistas de tráfico general.
+    - 🔵 **Azul:** Sesiones iniciadas con Lira AI.
+    - 🟢 **Esmeralda:** Clics e intenciones de contacto por WhatsApp.
+    - 🔷 **Cian:** Consultas resueltas por Gemini AI.
+    - 🟠 **Ámbar:** Consultas resueltas por el motor local rápido.
+
+* **Nueva Pestaña Especializada: "Tráfico, Secciones & Dispositivos":**
+  - **Comparativa de Periodo vs. Histórico:** Analice el desempeño del mes actual frente al acumulado de la plataforma.
+  - **Secciones Más Navegadas:** Barra porcentual que clasifica el tráfico entre *Inicio*, *Fichas de Medicamentos*, *Vademécum Oficial*, *Canal de Farmacovigilancia* y *Herramientas Clínicas*.
+  - **Entorno Tecnológico:** Conozca el porcentaje de visitantes que acceden desde **Teléfonos Móviles vs. Computadoras de Escritorio**, así como los navegadores más utilizados (*Chrome*, *Safari*, *Firefox*, *Edge*).
+  - **Páginas de Entrada (Landing Pages):** Registra exactamente cuál fue la primera página por la que entró cada visitante.
+
+* **El Embudo Maestro de Conversión en 5 Etapas (`FunnelView`):**
+  Muestra con precisión matemática cómo se transforman los visitantes en ventas:
+  $$\text{1. Tráfico Web Servidor} \longrightarrow \text{2. Fichas de Catálogo} \longrightarrow \text{3. Consultas Lira AI} \longrightarrow \text{4. Clics WhatsApp} \longrightarrow \text{5. Cotizaciones en BD}$$
+* **Fármacos Más Consultados y Recomendados:** Registro automático de cuáles medicamentos son los más sugeridos por Lira y más explorados en el catálogo, facilitando la toma de decisiones para lotes de producción en planta.
+* **Auditoría de Conversaciones Turno a Turno:** La directiva puede hacer clic en cualquier sesión y leer la conversación íntegra entre el usuario y Lira, evaluando la calidad clínica y la velocidad de respuesta.
+* **Exportación Completa a Excel (CSV):** Botón para descargar todas las sesiones y métricas en formato compatible con Excel o Google Sheets.
 
 ---
 

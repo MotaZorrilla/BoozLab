@@ -334,11 +334,17 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                 {/* Central AI Trigger Floating */}
                 <button 
                     onClick={() => setIsAIOpen(true)}
-                    className="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-0.5 text-[10px] font-bold text-blue-600 dark:text-cyan-400 cursor-pointer -mt-4 transition-transform active:scale-95"
+                    className="relative flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-0.5 text-[10px] font-bold text-blue-600 dark:text-cyan-400 cursor-pointer -mt-4 transition-transform active:scale-95"
                     aria-label="Asistente virtual Lira IA"
                 >
-                    <div className="h-12 w-12 rounded-full bg-[#002072] text-white p-0.5 shadow-lg border-2 border-white dark:border-slate-800 overflow-hidden flex items-center justify-center ring-2 ring-cyan-400/40">
-                        <img src="/assets/img/lira_head_avatar.png" alt="Lira" className="h-full w-full object-cover rounded-full" />
+                    <div className="relative">
+                        <div className="h-12 w-12 rounded-full bg-gradient-to-b from-white via-slate-50 to-blue-50 text-slate-900 p-0.5 shadow-xl border-2 border-cyan-400 dark:border-cyan-300 overflow-hidden flex items-center justify-center ring-2 ring-white/90 dark:ring-slate-900/90">
+                            <img src="/assets/img/lira_head_avatar.png" alt="Lira" className="h-full w-full object-cover rounded-full" />
+                        </div>
+                        <span className="absolute -top-1 -right-1 flex h-4 w-4 z-20 pointer-events-none">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80"></span>
+                            <span className="relative inline-flex rounded-full h-4 w-4 bg-gradient-to-br from-cyan-400 to-blue-600 text-[7px] font-black items-center justify-center text-white border border-white dark:border-slate-900 shadow-sm">AI</span>
+                        </span>
                     </div>
                     <span>Lira IA</span>
                 </button>
@@ -383,17 +389,24 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                 {/* AI Assistant Floating Avatar (Lira) - En escritorio se muestra flotante */}
                 <button 
                     onClick={() => setIsAIOpen(true)}
-                    className="hidden md:flex h-14 w-14 items-center justify-center rounded-full bg-[#002072] dark:bg-blue-600 text-white shadow-2xl hover:scale-110 transition-all relative group border-2 border-white dark:border-slate-800 overflow-hidden p-1 cursor-pointer"
+                    className="hidden md:flex h-14 w-14 items-center justify-center rounded-full shadow-2xl hover:scale-110 transition-all relative group cursor-pointer"
                     title="Consultar con Lira (Asistente Virtual)"
                 >
-                    <img
-                        src="/assets/img/lira_head_avatar.png"
-                        alt="Lira"
-                        className="h-full w-full object-cover rounded-full"
-                    />
-                    <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-4 w-4 bg-cyan-500 text-[8px] font-black items-center justify-center text-slate-900">AI</span>
+                    {/* Contenedor circular recortado con el avatar de Lira */}
+                    <div className="h-full w-full rounded-full bg-gradient-to-b from-white via-white to-blue-50 text-slate-900 border-2 border-cyan-400 dark:border-cyan-300 overflow-hidden p-0.5 ring-2 ring-white/90 dark:ring-blue-900/50">
+                        <img
+                            src="/assets/img/lira_head_avatar.png"
+                            alt="Lira"
+                            className="h-full w-full object-cover rounded-full"
+                        />
+                    </div>
+
+                    {/* Insignia / Badge "AI" con pulso y ping flotando por fuera en la esquina superior derecha */}
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 z-20 pointer-events-none">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80"></span>
+                        <span className="relative inline-flex rounded-full h-5 w-5 bg-gradient-to-br from-cyan-400 to-blue-600 text-[8.5px] font-black items-center justify-center text-white border-2 border-white dark:border-slate-900 shadow-md">
+                            AI
+                        </span>
                     </span>
                 </button>
 

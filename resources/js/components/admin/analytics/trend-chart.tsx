@@ -13,10 +13,25 @@ interface ChartPoint {
 
 interface TrendChartProps {
     data: ChartPoint[];
+    currentPeriod?: string;
+    onPeriodChange?: (period: string) => void;
 }
 
-export function TrendChart({ data }: TrendChartProps) {
+export function TrendChart({ data, currentPeriod = '7d', onPeriodChange }: TrendChartProps) {
     const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+    // Toggle para visibilidad de series en el gráfico
+    const [visibleSeries, setVisibleSeries] = useState({
+        views: true,
+        sessions: true,
+        gemini: true,
+        deterministic: true,
+        whatsapp: true,
+    });
+
+    const toggleSeries = (key: keyof typeof visibleSeries) => {
+        setVisibleSeries(prev => ({ ...prev, [key]: !prev[key] }));
+    };
 
     if (!data || data.length === 0) {
         return (
@@ -26,7 +41,26 @@ export function TrendChart({ data }: TrendChartProps) {
         );
     }
 
-    const maxVal = Math.max(...data.map(d => Math.max(d.sessions, d.gemini, d.deterministic, d.whatsapp || 0, d.views || 0, 1)), 5);
+    const periods = [
+        { id: '7d', label: '7 Días' },
+        { id: '15d', label: '15 Días' },
+        { id: '30d', label: '1 Mes' },
+        { id: '6m', label: '6 Meses' },
+        { id: '1y', label: '1 Año' },
+        { id: 'all', label: 'Histórico' },
+    ];
+
+    const maxVal = Math.max(
+        ...data.map(d => Math.max(
+            visibleSeries.sessions ? d.sessions : 0,
+            visibleSeries.gemini ? d.gemini : 0,
+            visibleSeries.deterministic ? d.deterministic : 0,
+            visibleSeries.whatsapp ? (d.whatsapp || 0) : 0,
+            visibleSeries.views ? (d.views || 0) : 0,
+            1
+        )),
+        5
+    );
 
     const width = 640;
     const height = 180;
@@ -51,31 +85,99 @@ export function TrendChart({ data }: TrendChartProps) {
     const viewsPoints = data.map((d, i) => `${getX(i)},${getY(d.views || 0)}`).join(' ');
 
     return (
-        <div className="w-full">
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-3 text-xs">
-                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                    <span className="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                        <span className="w-3 h-3 rounded-full bg-purple-500 inline-block" />
-                        Páginas Vistas
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                        <span className="w-3 h-3 rounded-full bg-blue-600 inline-block" />
-                        Sesiones Lira
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                        <span className="w-3 h-3 rounded-full bg-cyan-500 inline-block" />
-                        Gemini AI
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                        <span className="w-3 h-3 rounded-full bg-amber-500 inline-block" />
-                        Motor Local
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                        <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
-                        Clics WhatsApp
-                    </span>
+        <div className="w-full space-y-3">
+            {/* Barra Superior con Selector de Periodo y Filtro de Series */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                {/* Botones de Periodo */}
+                <div className="inline-flex items-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 overflow-x-auto no-scrollbar">
+                    {periods.map(p => (
+                        <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => onPeriodChange && onPeriodChange(p.id)}
+                            className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                                currentPeriod === p.id
+                                    ? 'bg-blue-600 text-white shadow-sm'
+                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                            }`}
+                        >
+                            {p.label}
+                        </button>
+                    ))}
                 </div>
-                <span className="text-slate-500 dark:text-slate-400 font-mono text-[11px]">Últimos 7 días</span>
+
+                {/* Filtros Interactivos de Series */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs">
+                    <button
+                        type="button"
+                        onClick={() => toggleSeries('views')}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
+                            visibleSeries.views
+                                ? 'border-purple-300 bg-purple-50 text-purple-800 dark:border-purple-800 dark:bg-purple-950/40 dark:text-purple-300'
+                                : 'border-slate-200 bg-slate-50 text-slate-400 opacity-60 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600'
+                        }`}
+                        title="Alternar visibilidad de Páginas Vistas"
+                    >
+                        <span className="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block" />
+                        Páginas Vistas
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => toggleSeries('sessions')}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
+                            visibleSeries.sessions
+                                ? 'border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
+                                : 'border-slate-200 bg-slate-50 text-slate-400 opacity-60 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600'
+                        }`}
+                        title="Alternar visibilidad de Sesiones Lira"
+                    >
+                        <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" />
+                        Sesiones Lira
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => toggleSeries('gemini')}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
+                            visibleSeries.gemini
+                                ? 'border-cyan-300 bg-cyan-50 text-cyan-800 dark:border-cyan-800 dark:bg-cyan-950/40 dark:text-cyan-300'
+                                : 'border-slate-200 bg-slate-50 text-slate-400 opacity-60 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600'
+                        }`}
+                        title="Alternar visibilidad de Gemini AI"
+                    >
+                        <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block" />
+                        Gemini AI
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => toggleSeries('deterministic')}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
+                            visibleSeries.deterministic
+                                ? 'border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300'
+                                : 'border-slate-200 bg-slate-50 text-slate-400 opacity-60 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600'
+                        }`}
+                        title="Alternar visibilidad de Motor Local"
+                    >
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" />
+                        Motor Local
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => toggleSeries('whatsapp')}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
+                            visibleSeries.whatsapp
+                                ? 'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'
+                                : 'border-slate-200 bg-slate-50 text-slate-400 opacity-60 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600'
+                        }`}
+                        title="Alternar visibilidad de Clics WhatsApp"
+                    >
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+                        WhatsApp
+                    </button>
+                </div>
             </div>
 
             <div className="relative w-full overflow-hidden">
@@ -112,55 +214,65 @@ export function TrendChart({ data }: TrendChartProps) {
                     })}
 
                     {/* Línea Sesiones Totales (Azul) */}
-                    <polyline
-                        fill="none"
-                        stroke="#2563eb"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        points={sessionPoints}
-                    />
+                    {visibleSeries.sessions && (
+                        <polyline
+                            fill="none"
+                            stroke="#2563eb"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            points={sessionPoints}
+                        />
+                    )}
 
                     {/* Línea Gemini (Cian) */}
-                    <polyline
-                        fill="none"
-                        stroke="#06b6d4"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        points={geminiPoints}
-                    />
+                    {visibleSeries.gemini && (
+                        <polyline
+                            fill="none"
+                            stroke="#06b6d4"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            points={geminiPoints}
+                        />
+                    )}
 
                     {/* Línea Determinista (Ámbar) */}
-                    <polyline
-                        fill="none"
-                        stroke="#f59e0b"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        points={detPoints}
-                    />
+                    {visibleSeries.deterministic && (
+                        <polyline
+                            fill="none"
+                            stroke="#f59e0b"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            points={detPoints}
+                        />
+                    )}
 
                     {/* Línea Clics WhatsApp (Esmeralda) */}
-                    <polyline
-                        fill="none"
-                        stroke="#10b981"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        points={waPoints}
-                    />
+                    {visibleSeries.whatsapp && (
+                        <polyline
+                            fill="none"
+                            stroke="#10b981"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            points={waPoints}
+                        />
+                    )}
 
                     {/* Línea Páginas Vistas (Púrpura punteada) */}
-                    <polyline
-                        fill="none"
-                        stroke="#a855f7"
-                        strokeWidth="2.5"
-                        strokeDasharray="4 3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        points={viewsPoints}
-                    />
+                    {visibleSeries.views && (
+                        <polyline
+                            fill="none"
+                            stroke="#a855f7"
+                            strokeWidth="2.5"
+                            strokeDasharray="4 3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            points={viewsPoints}
+                        />
+                    )}
 
                     {/* Puntos interactivos */}
                     {data.map((d, i) => {

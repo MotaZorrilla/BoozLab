@@ -688,13 +688,14 @@ export default function Home({
 
                         {/* Columna 2: Hola, soy Lira - Tu asistente virtual (Con Lira Oficial 3D Saludando) */}
                         <div className="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-xl sm:flex-row sm:gap-6 sm:rounded-3xl sm:p-8 lg:col-span-5 group">
-                            {/* Halo de luz de fondo para destacar la figura 3D */}
-                            <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
-                            <div className="relative h-32 w-32 flex-shrink-0 sm:h-44 sm:w-44 flex items-center justify-center">
+                            {/* Podio / Halo luminoso blanco perla de alto contraste */}
+                            <div className="relative h-36 w-36 flex-shrink-0 sm:h-48 sm:w-48 flex items-center justify-center">
+                                <div className="absolute inset-4 sm:inset-3 rounded-full bg-gradient-to-tr from-white/95 via-cyan-100/90 to-white/90 blur-lg opacity-85 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-6 sm:inset-4 rounded-full bg-white/40 blur-sm pointer-events-none" />
                                 <img
                                     src="/assets/img/lira_official_transparent.png"
                                     alt="Lira Asistente Virtual Saludando"
-                                    className="h-full w-full object-contain drop-shadow-[0_10px_25px_rgba(6,182,212,0.4)] transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1"
+                                    className="relative z-10 h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,32,114,0.4)] transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
                                             '/assets/img/lira_head_avatar.png';

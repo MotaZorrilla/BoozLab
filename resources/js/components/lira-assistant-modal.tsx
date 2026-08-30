@@ -212,7 +212,7 @@ export default function LiraAssistantModal({
             <div className="-m-6 flex h-[78dvh] sm:h-[580px] flex-col rounded-b-2xl bg-slate-900 p-4 sm:p-6">
                 {/* Lira Header Banner with Official 3D Mascot */}
                 <div className="flex items-center gap-3.5 border-b border-slate-800 pb-3 sm:pb-4">
-                    <div className="relative flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-blue-900/90 to-slate-950 p-1 shadow-lg shadow-cyan-500/10 group">
+                    <div className="relative flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-white via-white to-blue-50 p-1 shadow-lg shadow-cyan-500/20 group ring-2 ring-white/20">
                         <img
                             src="/assets/img/lira_head_avatar.png"
                             alt="Lira Asistente Virtual Oficial"
@@ -249,11 +249,12 @@ export default function LiraAssistantModal({
                     {/* Tarjeta de Bienvenida con Lira Oficial en cuerpo entero cuando el chat recién se abre */}
                     {messages.length === 1 && (
                         <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-blue-950/80 via-indigo-950/70 to-slate-900 border border-blue-500/30 flex items-center gap-3.5 shadow-md">
-                            <div className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 flex items-center justify-center">
+                            <div className="relative h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 flex items-center justify-center">
+                                <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-white/95 to-cyan-100/90 blur-md opacity-85" />
                                 <img
                                     src="/assets/img/lira_official_transparent.png"
                                     alt="Lira Mascota Oficial"
-                                    className="h-full w-full object-contain drop-shadow-[0_4px_15px_rgba(6,182,212,0.35)] hover:scale-105 transition-transform"
+                                    className="relative z-10 h-full w-full object-contain drop-shadow-md hover:scale-105 transition-transform"
                                 />
                             </div>
                             <div className="space-y-1">
@@ -272,11 +273,11 @@ export default function LiraAssistantModal({
                             className={`flex gap-2.5 sm:gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                             {msg.sender === 'lira' && (
-                                <div className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 overflow-hidden rounded-full border border-blue-400/50 bg-blue-950 shadow-md">
+                                <div className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 overflow-hidden rounded-full border-2 border-cyan-300 bg-gradient-to-b from-white via-white to-blue-50 p-0.5 shadow-md ring-1 ring-white/30">
                                     <img
                                         src="/assets/img/lira_head_avatar.png"
                                         alt="Lira"
-                                        className="h-full w-full object-cover"
+                                        className="h-full w-full object-cover rounded-full"
                                     />
                                 </div>
                             )}
