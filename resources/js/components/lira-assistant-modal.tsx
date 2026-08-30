@@ -210,31 +210,32 @@ export default function LiraAssistantModal({
             title="Lira | Asistente Virtual Booz Laboratorio"
         >
             <div className="-m-6 flex h-[78dvh] sm:h-[580px] flex-col rounded-b-2xl bg-slate-900 p-4 sm:p-6">
-                {/* Lira Header Banner with Animated Mascot */}
+                {/* Lira Header Banner with Official 3D Mascot */}
                 <div className="flex items-center gap-3.5 border-b border-slate-800 pb-3 sm:pb-4">
-                    <div className="relative flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-blue-500/40 bg-blue-950/80 p-0.5 shadow-inner">
+                    <div className="relative flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-blue-900/90 to-slate-950 p-1 shadow-lg shadow-cyan-500/10 group">
                         <img
-                            src="/assets/img/lira_saludo_animado.gif"
-                            alt="Lira Asistente Virtual Saludando"
-                            className="h-full w-full rounded-xl object-cover"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src =
-                                    '/assets/img/lira_real_head_avatar.png';
-                            }}
+                            src="/assets/img/lira_head_avatar.png"
+                            alt="Lira Asistente Virtual Oficial"
+                            className="h-full w-full rounded-xl object-cover transition-transform group-hover:scale-105"
                         />
+                        <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-slate-900"></span>
+                        </span>
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h3 className="text-sm sm:text-base font-bold text-white">
+                            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-1.5">
                                 Lira
+                                <span className="text-xs text-cyan-400 font-normal">🐾</span>
                             </h3>
-                            <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/30 bg-blue-500/20 px-2 py-0.5 text-[10px] font-bold text-cyan-300">
+                            <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/30 bg-cyan-500/15 px-2 py-0.5 text-[10px] font-bold text-cyan-300">
                                 <Sparkles className="h-2.5 w-2.5" /> Asistente
                                 Inteligente
                             </span>
                         </div>
                         <p className="text-[11px] sm:text-xs text-slate-400">
-                            Booz Laboratorio VGME, C.A. • Orientación Farmacéutica y Contacto Directo
+                            Booz Laboratorio VGME, C.A. • Orientación Farmacéutica Oficial
                         </p>
                     </div>
                 </div>
@@ -245,6 +246,26 @@ export default function LiraAssistantModal({
                     aria-live="polite" 
                     className="flex-1 space-y-3.5 overflow-y-auto py-3 pr-1 text-xs sm:text-sm"
                 >
+                    {/* Tarjeta de Bienvenida con Lira Oficial en cuerpo entero cuando el chat recién se abre */}
+                    {messages.length === 1 && (
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-blue-950/80 via-indigo-950/70 to-slate-900 border border-blue-500/30 flex items-center gap-3.5 shadow-md">
+                            <div className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 flex items-center justify-center">
+                                <img
+                                    src="/assets/img/lira_official_transparent.png"
+                                    alt="Lira Mascota Oficial"
+                                    className="h-full w-full object-contain drop-shadow-[0_4px_15px_rgba(6,182,212,0.35)] hover:scale-105 transition-transform"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <span className="text-[11px] font-bold text-cyan-300 uppercase tracking-wider block">
+                                    Mascota & Asistente Oficial 3D
+                                </span>
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    ¡Hola! Conoce nuestro vademécum clínico o conecta con nuestra dirección técnica y comercial.
+                                </p>
+                            </div>
+                        </div>
+                    )}
                     {messages.map((msg, index) => (
                         <div
                             key={msg.id || index}

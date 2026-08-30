@@ -686,16 +686,18 @@ export default function Home({
                             )}
                         </div>
 
-                        {/* Columna 2: Hola, soy Lira - Tu asistente virtual (Con Lira Animado Saludando) */}
-                        <div className="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-xl sm:flex-row sm:gap-6 sm:rounded-3xl sm:p-8 lg:col-span-5">
-                            <div className="relative h-28 w-28 flex-shrink-0 sm:h-36 sm:w-36">
+                        {/* Columna 2: Hola, soy Lira - Tu asistente virtual (Con Lira Oficial 3D Saludando) */}
+                        <div className="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-xl sm:flex-row sm:gap-6 sm:rounded-3xl sm:p-8 lg:col-span-5 group">
+                            {/* Halo de luz de fondo para destacar la figura 3D */}
+                            <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
+                            <div className="relative h-32 w-32 flex-shrink-0 sm:h-44 sm:w-44 flex items-center justify-center">
                                 <img
-                                    src="/assets/img/lira_saludo_animado.gif"
+                                    src="/assets/img/lira_official_transparent.png"
                                     alt="Lira Asistente Virtual Saludando"
-                                    className="h-full w-full object-contain drop-shadow-2xl transition-transform hover:scale-105"
+                                    className="h-full w-full object-contain drop-shadow-[0_10px_25px_rgba(6,182,212,0.4)] transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
-                                            '/assets/img/lira_real_head_avatar.png';
+                                            '/assets/img/lira_head_avatar.png';
                                     }}
                                 />
                             </div>

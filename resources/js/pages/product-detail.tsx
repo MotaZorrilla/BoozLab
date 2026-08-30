@@ -297,11 +297,11 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                                         className="p-3.5 rounded-2xl bg-gradient-to-br from-[#002072] to-blue-800 hover:from-blue-900 hover:to-blue-950 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 text-white flex items-center gap-3 shadow-md hover:shadow-lg transition-all text-left cursor-pointer group active:scale-[0.98]"
                                         title="Abrir asistente virtual Lira AI"
                                     >
-                                        <div className="h-9 w-9 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform overflow-hidden">
+                                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-400/30 to-blue-950/60 border border-cyan-400/40 p-0.5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md overflow-hidden">
                                             <img
                                                 src="/assets/img/lira_head_avatar.png"
                                                 alt="Lira AI"
-                                                className="h-full w-full object-cover"
+                                                className="h-full w-full object-cover rounded-lg"
                                                 onError={(e) => {
                                                     (e.target as HTMLElement).style.display = 'none';
                                                 }}

@@ -280,6 +280,16 @@ graph TD
     - Mirador de Analítica `/admin/analytics` ampliado con banner de 4 tarjetas de tráfico general, sección de Top Páginas Más Visitadas, línea púrpura de tráfico en `TrendChart` y Embudo Maestro de 5 Etapas en `FunnelView`.
   - **Métricas:** 151 tests pasando en verde (619 assertions), compilación Vite en 8.54s (2.767 módulos) y 14/14 especificaciones OpenSpec validadas.
 
+- **Fase 32: Mascota Oficial Lira 3D con Fondo Transparente & Experiencia Visual Mejorada (30 de Agosto de 2026):**
+  - **Hitos Implementados:**
+    - Procesamiento de la imagen oficial entregada por la dirección (`audios_y_material/Lira oficial.jpeg`) mediante segmentación `u2net` y matting alpha sub-píxel para conservar el pelaje 3D, orejas azules, medalla grabada con "BOOZ" y patitas saludando.
+    - Generación de activos web optimizados en PNG y WebP (`lira_official_transparent.png`, `lira_official_transparent.webp`, `lira_head_avatar.png`, `lira_head_avatar.webp`).
+    - Eliminación del GIF estático de baja resolución con falso fondo de cuadros de ajedrez (`lira_saludo_animado.gif`), sustituyéndolo por la versión transparente oficial.
+    - Despliegue en la portada (`home.tsx` Bento Grid) con halo de luz médica cyan (`drop-shadow`) y microinteracción de escala.
+    - Renovación del Modal de Asistente Virtual (`lira-assistant-modal.tsx`) con nuevo encabezado, badge de estado activo y Tarjeta de Bienvenida Visual con Lira de cuerpo entero.
+    - Optimización del botón interactivo de Lira en la Ficha de Producto (`product-detail.tsx`).
+  - **Métricas:** 151 tests pasando en verde (619 assertions), compilación Vite en 9.65s (2.767 módulos) y 14/14 especificaciones OpenSpec validadas.
+
 ---
 
 ## 📊 4. Métricas de Datos Clínicos y Portafolio Oficial

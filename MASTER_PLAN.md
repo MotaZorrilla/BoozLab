@@ -482,6 +482,29 @@
   - `npm run build`: 2.767 módulos transformados sin errores en 8.54s.
   - OpenSpec: 14/14 especificaciones validadas.
 
+---
+
+## 🐾 Fase 32: Mascota Oficial Lira 3D con Fondo Transparente & Experiencia Visual Mejorada
+- [x] **Procesamiento de Imagen con Segmentación de Alta Fidelidad (`u2net`):**
+  - Procesada la imagen original entregada por la dirección: `audios_y_material/Lira oficial.jpeg`.
+  - Extracción y eliminación completa del fondo blanco y sombras mediante matting alpha sub-píxel, conservando cada detalle del pelaje 3D, orejas azules, medalla oficial grabada "BOOZ", expresión facial sonriente y patitas saludando.
+  - Generación de activos optimizados en PNG y WebP de alta velocidad:
+    - `public/assets/img/lira_official_transparent.png` y `.webp` (Cuerpo entero transparente).
+    - `public/assets/img/lira_head_avatar.png` y `.webp` (Avatar cuadrado centrado 512x512).
+    - `public/assets/img/lira_real_head_avatar.png`, `lira_real_head_transparent.png` y `lira_mascot_transparent.png` (Retrocompatibilidad total).
+    - Reemplazo y saneamiento del viejo GIF `lira_saludo_animado.gif` (que contenía un patrón de ajedrez gris/blanco artificial).
+- [x] **Mejora del Requerimiento & Despliegue en la Interfaz:**
+  - **Bento Grid de la Portada (`home.tsx`):** Tarjeta interactiva de Lira con la mascota oficial 3D completa en alta definición, halo de iluminación médica cyan (`drop-shadow-[0_10px_25px_rgba(6,182,212,0.4)]`) y animación hover.
+  - **Modal del Asistente Virtual (`lira-assistant-modal.tsx`):**
+    - Encabezado renovado con avatar nítido, medalla visible y punto de estado en línea (verde esmeralda pulsante).
+    - Tarjeta de Bienvenida Visual: cuando el usuario abre el chat por primera vez, Lira oficial aparece saludando de cuerpo entero junto a un mensaje amigable y orientativo.
+  - **Ficha de Producto (`product-detail.tsx`):** Botón "Consultar a Lira AI" en la tarjeta dual con avatar nítido enmarcado en degradado cyan/azul.
+  - **Botón Flotante y Barra Móvil (`booz-layout.tsx`):** Integración homogénea de la nueva imagen en escritorio y móviles.
+- [x] **Verificación Integral y QA:**
+  - `php artisan test`: 151 tests pasando en verde (619 assertions).
+  - `npm run build`: 2.767 módulos transformados sin errores en 9.65s.
+  - OpenSpec: 14/14 especificaciones validadas.
+
 
 
 
