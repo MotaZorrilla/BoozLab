@@ -36,6 +36,62 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
         window.dispatchEvent(new CustomEvent('booz:add-to-cart', { detail: product }));
     };
 
+    const handleOpenLira = () => {
+        window.dispatchEvent(new CustomEvent('booz:open-lira'));
+    };
+
+    const renderClinicalSpecs = () => (
+        <div className="space-y-4">
+            {/* Indicaciones */}
+            <div className="bg-white dark:bg-[#0D172E] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
+                    Indicaciones Terapéuticas
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                    {product.indications}
+                </p>
+            </div>
+
+            {/* Posología */}
+            {product.posology && (
+                <div className="bg-white dark:bg-[#0D172E] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                        Posología y Modo de Empleo
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                        {product.posology}
+                    </p>
+                </div>
+            )}
+
+            {/* Advertencias y Precauciones */}
+            {product.contraindications && (
+                <div className="bg-white dark:bg-[#0D172E] p-6 rounded-2xl border border-amber-200 dark:border-amber-900/50 shadow-sm space-y-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-amber-900 dark:text-amber-400 flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                        Advertencias y Precauciones
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                        {product.contraindications}
+                    </p>
+                </div>
+            )}
+
+            {/* Reporte Sanitario Disclaimer */}
+            <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 text-xs text-blue-900 dark:text-cyan-300 flex items-start gap-3">
+                <ShieldCheck className="h-5 w-5 text-blue-600 dark:text-cyan-400 flex-shrink-0 mt-0.5" />
+                <div>
+                    <p className="font-bold">Garantía Sanitaria y Farmacovigilancia</p>
+                    <p className="text-[11px] text-blue-800 dark:text-slate-300 mt-0.5">
+                        Elaborado por <strong>BOOZ LABORATORIO VGME, C.A.</strong> (Valle de Guanape, Venezuela). Si experimenta alguna reacción adversa, por favor notifíquelo a través de nuestro canal de <Link href="/farmacovigilancia" className="underline font-bold hover:text-cyan-400">Farmacovigilancia Oficial</Link>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <BoozLayout>
             <Head>
@@ -84,8 +140,8 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
 
                     {/* Main Product Presentation Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-16">
-                        {/* Image Showcase (Left) */}
-                        <div className="lg:col-span-5 lg:sticky lg:top-28">
+                        {/* Image Showcase & Clinical Datasheet (Left Column on Desktop) */}
+                        <div className="lg:col-span-5 space-y-6">
                             <div className="aspect-square rounded-3xl bg-white dark:bg-[#0D172E] p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-center relative overflow-hidden group">
                                 <img
                                     src={product.image_path}
@@ -107,7 +163,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                             </div>
 
                             {/* Presentation Badge */}
-                            <div className="mt-4 p-4 rounded-2xl bg-white dark:bg-[#0D172E] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                            <div className="p-4 rounded-2xl bg-white dark:bg-[#0D172E] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Pill className="h-5 w-5 text-blue-600 dark:text-cyan-400" />
                                     <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Presentación Oficial:</span>
@@ -117,19 +173,13 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                                 </span>
                             </div>
 
-                            {/* Botón Táctil de Añadir a Pedido (Columna Izquierda) */}
-                            <button
-                                type="button"
-                                onClick={handleAddToCart}
-                                className="mt-3 w-full py-3.5 px-4 rounded-2xl bg-[#002072] hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20 active:scale-95 transition-all cursor-pointer"
-                                title={`Añadir ${product.name} a la bolsa`}
-                            >
-                                <ShoppingBag className="h-4 w-4 text-cyan-300" />
-                                <span>Añadir a la Bolsa (${Number(product.price || 0).toFixed(2)})</span>
-                            </button>
+                            {/* En PC: Las indicaciones terapéuticas y posología ocupan el espacio libre de la izquierda */}
+                            <div className="hidden lg:block">
+                                {renderClinicalSpecs()}
+                            </div>
                         </div>
 
-                        {/* Clinical Datasheet (Right) */}
+                        {/* Commercial & Consultation Column (Right) */}
                         <div className="lg:col-span-7 space-y-6">
                             {/* Line & Code Badge (con soporte oficial Pantone 506 C) */}
                             <div className="flex items-center gap-2">
@@ -210,78 +260,86 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                                 </p>
                             </div>
 
-                            {/* WhatsApp Direct CTA Button */}
-                            <div className="p-6 rounded-3xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 text-white shadow-xl space-y-3">
+                            {/* Tarjeta Dual: Orientación Farmacéutica con Lira AI & Canal WhatsApp */}
+                            <div className="p-6 rounded-3xl bg-white dark:bg-[#0D172E] border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <MessageCircle className="h-6 w-6" />
-                                        <h3 className="font-bold text-base">Atención Médica y Farmacias Aliadas</h3>
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-2xl bg-blue-600/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-cyan-400">
+                                            <Sparkles className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                                                Orientación Científica & Atención Directa
+                                            </h3>
+                                            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                                Consulta 24/7 con Lira AI o enlace directo con nuestra regencia farmacéutica
+                                            </p>
+                                        </div>
                                     </div>
-                                    <span className="text-[10px] uppercase font-bold bg-white/20 px-2 py-0.5 rounded-md">Canal Directo</span>
+                                    <span className="hidden sm:inline-block text-[10px] uppercase font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-cyan-300 border border-blue-200 dark:border-blue-800 px-2.5 py-1 rounded-full">
+                                        Canales Oficiales
+                                    </span>
                                 </div>
-                                <p className="text-xs text-emerald-50 leading-relaxed">
-                                    ¿Deseas consultar sobre disponibilidad, dosificación o puntos de distribución autorizados de <strong>{product.name}</strong>? Nuestro equipo farmacéutico te atiende de inmediato.
+
+                                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                    ¿Deseas conocer más sobre el uso de <strong>{product.name}</strong>, interacciones o condiciones comerciales para farmacias y clínicas? Elige tu canal preferido:
                                 </p>
-                                <a
-                                    href={whatsappUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="w-full py-3 px-6 rounded-xl bg-white text-emerald-900 font-black text-xs sm:text-sm text-center flex items-center justify-center gap-2 hover:bg-emerald-50 active:scale-[0.98] transition-all shadow-md cursor-pointer"
-                                >
-                                    <MessageCircle className="h-4 w-4 text-emerald-600" />
-                                    <span>Consultar sobre {product.name} vía WhatsApp</span>
-                                </a>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                    {/* Botón Lira AI */}
+                                    <button
+                                        type="button"
+                                        onClick={handleOpenLira}
+                                        className="p-3.5 rounded-2xl bg-gradient-to-br from-[#002072] to-blue-800 hover:from-blue-900 hover:to-blue-950 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 text-white flex items-center gap-3 shadow-md hover:shadow-lg transition-all text-left cursor-pointer group active:scale-[0.98]"
+                                        title="Abrir asistente virtual Lira AI"
+                                    >
+                                        <div className="h-9 w-9 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform overflow-hidden">
+                                            <img
+                                                src="/assets/img/lira_head_avatar.png"
+                                                alt="Lira AI"
+                                                className="h-full w-full object-cover"
+                                                onError={(e) => {
+                                                    (e.target as HTMLElement).style.display = 'none';
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <span className="block text-xs font-bold leading-tight flex items-center gap-1">
+                                                Consultar a Lira AI
+                                                <Sparkles className="h-3 w-3 text-cyan-300" />
+                                            </span>
+                                            <span className="block text-[10px] text-blue-200 dark:text-blue-100 mt-0.5">
+                                                Respuesta clínica 24/7
+                                            </span>
+                                        </div>
+                                    </button>
+
+                                    {/* Botón WhatsApp */}
+                                    <a
+                                        href={whatsappUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="p-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white flex items-center gap-3 shadow-md hover:shadow-lg transition-all text-left cursor-pointer group"
+                                        title="Contactar al equipo por WhatsApp"
+                                    >
+                                        <div className="h-9 w-9 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <MessageCircle className="h-5 w-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <span className="block text-xs font-bold leading-tight">
+                                                Atención por WhatsApp
+                                            </span>
+                                            <span className="block text-[10px] text-emerald-100 mt-0.5">
+                                                Ventas y regencia en vivo
+                                            </span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
 
-                            {/* Technical Clinical Sections */}
-                            <div className="space-y-4">
-                                {/* Indicaciones */}
-                                <div className="bg-white dark:bg-[#0D172E] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-                                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-                                        <CheckCircle2 className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
-                                        Indicaciones Terapéuticas
-                                    </h3>
-                                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                                        {product.indications}
-                                    </p>
-                                </div>
-
-                                {/* Posología */}
-                                {product.posology && (
-                                    <div className="bg-white dark:bg-[#0D172E] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-                                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-                                            <Clock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                                            Posología y Modo de Empleo
-                                        </h3>
-                                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                                            {product.posology}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* Advertencias y Precauciones */}
-                                {product.contraindications && (
-                                    <div className="bg-white dark:bg-[#0D172E] p-6 rounded-2xl border border-amber-200 dark:border-amber-900/50 shadow-sm space-y-2">
-                                        <h3 className="text-sm font-bold uppercase tracking-wider text-amber-900 dark:text-amber-400 flex items-center gap-2">
-                                            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                                            Advertencias y Precauciones
-                                        </h3>
-                                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                                            {product.contraindications}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* Reporte Sanitario Disclaimer */}
-                                <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 text-xs text-blue-900 dark:text-cyan-300 flex items-start gap-3">
-                                    <ShieldCheck className="h-5 w-5 text-blue-600 dark:text-cyan-400 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="font-bold">Garantía Sanitaria y Farmacovigilancia</p>
-                                        <p className="text-[11px] text-blue-800 dark:text-slate-300 mt-0.5">
-                                            Elaborado por <strong>BOOZ LABORATORIO VGME, C.A.</strong> (Valle de Guanape, Venezuela). Si experimenta alguna reacción adversa, por favor notifíquelo a través de nuestro canal de <Link href="/farmacovigilancia" className="underline font-bold hover:text-cyan-400">Farmacovigilancia Oficial</Link>.
-                                        </p>
-                                    </div>
-                                </div>
+                            {/* En móvil: Indicaciones y Posología se muestran aquí al final */}
+                            <div className="block lg:hidden">
+                                {renderClinicalSpecs()}
                             </div>
                         </div>
                     </div>

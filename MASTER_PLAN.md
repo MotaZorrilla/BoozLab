@@ -413,6 +413,24 @@
   - `php artisan test`: 144 tests pasando en verde (588 assertions).
   - OpenSpec: 14/14 especificaciones validadas.
 
+---
+
+## 🎨 Fase 29: Optimización Ergonómica de Ficha de Producto & Tarjeta Dual Lira AI / WhatsApp (`product-detail.tsx`)
+- [x] **Rebalanceo de Cuadrícula en PC (Escritorio):**
+  - Se eliminó el espacio vacío que quedaba bajo la imagen del medicamento en pantallas de computadora.
+  - Las especificaciones clínicas (Indicaciones Terapéuticas, Posología y Modo de Empleo, Advertencias y Garantía de Farmacovigilancia INH) se reposicionaron en la columna izquierda bajo la foto oficial y la presentación (`hidden lg:block`).
+  - Ambas columnas (clínica a la izquierda y comercial a la derecha) quedan perfectamente equilibradas en altura y jerarquía visual.
+- [x] **Tarjeta Dual de Orientación & Asistencia Inmediata:**
+  - Transformada la tarjeta exclusiva de WhatsApp en un centro de orientación con dos opciones claras:
+    1. **Botón Lira AI:** Activa el asistente virtual médico 24/7 en un solo clic mediante el evento global `booz:open-lira`.
+    2. **Botón WhatsApp Oficial:** Abre el canal directo con el equipo comercial y regencia técnica para cotizaciones al mayor o compras directas.
+- [x] **Ergonomía Móvil Preservada:**
+  - En teléfonos móviles (`block lg:hidden`), las especificaciones clínicas se ubican al final, manteniendo primero la imagen, el título, el precio, el botón de añadir a la bolsa y la tarjeta dual de consulta.
+- [x] **Verificación Integral y QA:**
+  - `npm run build`: 2.766 módulos transformados sin errores en 9.88s.
+  - `php artisan test`: 144 tests pasando en verde (588 assertions).
+  - OpenSpec: 14/14 especificaciones validadas.
+
 
 
 

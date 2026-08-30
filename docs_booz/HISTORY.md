@@ -253,6 +253,15 @@ graph TD
     - Comando `php artisan telemetry:rollup` idempotente para consolidación diaria por producto.
   - **Métricas:** 144 tests pasando en verde (588 assertions), compilación Vite exitosa en 9.34s (2.766 módulos) y 14/14 especificaciones OpenSpec validadas.
 
+- **Fase 29: Optimización Ergonómica de Ficha de Producto & Tarjeta Dual Lira AI / WhatsApp (`product-detail.tsx`) (30 de Agosto de 2026):**
+  - **Hitos Implementados:**
+    - Rebalanceo visual para PC: Las especificaciones clínicas (indicaciones terapéuticas, posología y modo de empleo, advertencias y precauciones, y garantía de farmacovigilancia INH) fueron reposicionadas en la columna izquierda bajo la imagen y la presentación oficial, eliminando el espacio en blanco vacío en monitores de escritorio.
+    - Transformación de la tarjeta de consulta: Se reemplazó la tarjeta dedicada exclusivamente a WhatsApp por un centro de atención dual que ofrece dos opciones:
+      1. Botón Lira AI con avatar oficial para consultas clínicas automatizadas 24/7 sin ocupar tiempo del personal de guardia.
+      2. Botón de WhatsApp oficial para enlace directo con ventas y regencia técnica.
+    - Preservación del flujo ergonómico en dispositivos móviles (`block lg:hidden`) para mantener la compra ágil y las fichas técnicas al final.
+  - **Métricas:** 144 tests pasando en verde (588 assertions), compilación Vite en 9.88s (2.766 módulos) y 14/14 especificaciones OpenSpec validadas.
+
 ---
 
 ## 📊 4. Métricas de Datos Clínicos y Portafolio Oficial
