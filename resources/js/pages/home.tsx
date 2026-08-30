@@ -496,7 +496,7 @@ export default function Home({
                         {/* Hero Image Showcase con Inclinación 3D en Scroll */}
                         <div className="relative flex justify-center lg:col-span-5">
                             <div
-                                className="relative flex aspect-square w-full max-w-sm items-center justify-center rounded-3xl border border-blue-100 bg-gradient-to-tr from-blue-900/10 via-white to-indigo-100/50 p-4 shadow-2xl shadow-blue-900/10 transition-colors sm:max-w-md sm:p-6 dark:border-blue-900/40 dark:from-blue-950/40 dark:via-[#0D172E] dark:to-cyan-950/30"
+                                className="relative flex aspect-square w-full max-w-sm sm:max-w-md items-center justify-center rounded-3xl border border-blue-200/70 bg-gradient-to-tr from-blue-900/10 via-white to-cyan-100/40 p-2 sm:p-3 shadow-2xl shadow-blue-900/15 transition-colors overflow-hidden dark:border-cyan-500/30 dark:from-blue-950/40 dark:via-[#0D172E] dark:to-cyan-950/30 group"
                                 style={{
                                     transform: `perspective(1000px) rotateX(${tiltRotateX}deg) rotateY(${tiltRotateY}deg) translateY(${tiltTranslateY}px) scale(${tiltScale})`,
                                     transition:
@@ -506,15 +506,15 @@ export default function Home({
                             >
                                 <img
                                     src="/assets/img/hero_products.png"
-                                    alt="Línea de Productos Booz Laboratorio"
-                                    className="h-auto max-h-[300px] w-full object-contain drop-shadow-2xl sm:max-h-[380px]"
+                                    alt="Línea Oficial de Medicamentos y Tratamientos Tópicos Booz Laboratorio"
+                                    className="h-full w-full object-cover rounded-2xl drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
                                             '/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg';
                                     }}
                                 />
-                                <div className="absolute right-3 -bottom-3 flex items-center gap-2.5 rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-xl sm:right-4 sm:-bottom-4 sm:gap-3 sm:px-4 sm:py-2.5 dark:border-slate-800 dark:bg-[#0D172E]">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm">
+                                <div className="absolute right-3 bottom-3 flex items-center gap-2.5 rounded-2xl border border-slate-100/90 bg-white/95 backdrop-blur-md px-3 py-2 shadow-xl sm:right-4 sm:bottom-4 sm:gap-3 sm:px-4 sm:py-2.5 dark:border-slate-800 dark:bg-[#0D172E]/95">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm shadow-md shadow-emerald-500/20">
                                         ✓
                                     </div>
                                     <div>
