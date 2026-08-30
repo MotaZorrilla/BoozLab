@@ -165,4 +165,28 @@ class AdminProductCrudTest extends TestCase
             'admin_notes' => 'Lote verificado en control de calidad. No se evidenciaron impurezas.',
         ]);
     }
+
+    public function test_admin_can_upload_product_image(): void
+    {
+        $admin = User::first();
+
+        $file = \Illuminate\Http\UploadedFile::fake()->image('test_product.jpg', 400, 400);
+
+        $response = $this->actingAs($admin)->postJson(route('admin.products.uploadImage'), [
+            'image' => $file,
+        ]);
+
+        $response->assertOk();
+        $response->assertJson([
+            'success' => true,
+        ]);
+        $url = $response->json('url');
+        $this->assertNotEmpty($url);
+        $this->assertStringStartsWith('/assets/img/uploads/prod_', $url);
+
+        $fullPath = public_path(ltrim($url, '/'));
+        if (file_exists($fullPath)) {
+            @unlink($fullPath);
+        }
+    }
 }

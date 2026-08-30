@@ -1,8 +1,8 @@
 # 🚀 Hoja de Ruta, Pendientes Operativos y Checklist de Despliegue a Producción
 ## Booz Laboratorio - Clinical AI Platform
 
-> **Fecha de Actualización:** 28 de Agosto de 2026  
-> **Estado Técnico:** 100% Funcional y Verificado (133 Tests PHPUnit en Verde • 12/12 Especificaciones OpenSpec Validadas)
+> **Fecha de Actualización:** 30 de Agosto de 2026  
+> **Estado Técnico:** 100% Funcional y Verificado (139 Tests PHPUnit en Verde [556 assertions] • 13/13 Especificaciones OpenSpec Validadas)
 
 ---
 
@@ -36,6 +36,27 @@ La arquitectura técnica, la base de datos, el vademécum de 18 productos, los m
    - Actas sanitarias imprimibles/PDF, exportación masiva a CSV para Excel y respuesta directa por WhatsApp en 1-clic.
 7. **Control de Acceso RBAC & Usuarios (`/admin/users`):**
    - 4 roles oficiales configurados (`super_admin`, `director_tecnico`, `gestor_comercial`, `oficial_farmacovigilancia`) y matriz de permisos.
+8. **Experiencia de Catálogo en Landing Page (Fase 21):**
+   - Carrusel infinito con efecto peek lateral responsivo (~5.5% desktop, ~3.5% tablet, ~9% móvil) y soporte gestual nativo (swipe táctil).
+   - Tarjeta 100% clickeable hacia la Ficha Técnica Médica (`/producto/{slug}`) y botón "+ Pedido" ergonómico con eventos aislados.
+   - Transiciones suaves de 220ms entre líneas terapéuticas y necesidades clínicas.
+9. **Navegación Esencial, Consola y Login Corporativo (Fases 22 y 23):**
+   - Menú superior depurado a 4 accesos esenciales (*Líneas*, *Catálogo*, *Conocimiento*, *Farmacovigilancia*), buscador lupa con atajo `Ctrl+K` y calculadora pediátrica reubicada en footer.
+   - Pantalla `/login` unificada con `BoozLayout`, supresión de autoregistro público y botón exclusivo en Dashboard para que el Superadmin registre colaboradores con asignación de roles.
+10. **Segmentación Multicanal de Telefonía & Redes Oficiales (Fase 24):**
+    - 3 líneas independientes en `system_settings` y `/admin/settings` (WhatsApp Atención General, WhatsApp Ventas/Tienda y Central Telefónica de Planta).
+    - Hook reactivo `useWhatsApp` y unificación de redes corporativas en el pie de página (`@booz.laboratorio`).
+11. **Calculadora Pediátrica Clínica Desacoplada & Motor RAG `LiraAiService` (Fase 25):**
+    - Motor reactivo de 3 métodos matemáticos oficiales (Regla de Clark, Régimen Ponderado fraccionado y Regla de Young).
+    - Servicio `LiraAiService` desacoplado y deshardcodeo total de datos de planta, RIF y telefonía en respuestas deterministas y RAG.
+12. **Arquitectura Responsiva Tri-Nivel: Móvil, 1080p y 4K (Fase 26):**
+    - Breakpoints `--breakpoint-2xl: 96rem` y `--breakpoint-3xl: 120rem` con expansión de contenedores fluidos hasta 1840px para eliminar bandas vacías en monitores 4K.
+    - Tarjetas táctiles de gestión en `/admin/products` para control completo desde smartphones sin desbordamientos de tabla.
+    - Cuadrícula compacta de tienda móvil en 2 columnas y bolsa a pantalla completa (`w-full`).
+13. **Farmacovigilancia Dark Mode, Vademécum Clínico en PDF & Compra Directa (Fase 27):**
+    - Soporte completo de tema oscuro en `/farmacovigilancia` y menú móvil desplegable en cabecera.
+    - Tarjeta comercial destacada y botón táctil "+ Añadir a la Bolsa" directamente en `/producto/{slug}`.
+    - Ficha Técnica & Vademécum Clínico Oficial en PDF imprimible (`/producto/{slug}/vademecum`) con diseño azul `#002072`, fotografía del fármaco y protocolo INH.
 
 ---
 

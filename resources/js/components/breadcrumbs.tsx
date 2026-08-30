@@ -26,11 +26,11 @@ export function Breadcrumbs({
                                 <Fragment key={index}>
                                     <BreadcrumbItem>
                                         {isLast ? (
-                                            <BreadcrumbPage>
+                                            <BreadcrumbPage className="truncate max-w-[150px] sm:max-w-none">
                                                 {item.title}
                                             </BreadcrumbPage>
                                         ) : (
-                                            <BreadcrumbLink asChild>
+                                            <BreadcrumbLink asChild className="truncate max-w-[120px] sm:max-w-none">
                                                 <Link href={item.href}>
                                                     {item.title}
                                                 </Link>

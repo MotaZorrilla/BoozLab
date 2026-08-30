@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { 
     Package, ShieldAlert, CheckCircle2, ArrowUpRight, Filter,
     MessageSquare, TrendingUp, Bot, Pill, Users, Settings,
-    Building2, Sparkles, ChevronRight, ExternalLink
+    Building2, Sparkles, ChevronRight, ExternalLink, UserPlus
 } from 'lucide-react';
 import React from 'react';
 import AppLayout from '@/layouts/app-layout';
@@ -74,7 +74,7 @@ export default function Dashboard({
         <AppLayout breadcrumbs={[{ title: 'Panel Administrativo Booz', href: '/dashboard' }]}>
             <Head title="Consola de Administración Farmacéutica | Booz Laboratorio" />
 
-            <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
+            <div className="p-3 sm:p-6 lg:p-8 max-w-7xl 2xl:max-w-[1600px] 3xl:max-w-[1900px] mx-auto space-y-6 sm:space-y-8">
                 {/* Cabecera Ejecutiva */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -90,19 +90,27 @@ export default function Dashboard({
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <Link
+                            href="/admin/users?create=1"
+                            className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-900/20 transition-all cursor-pointer"
+                            title="Registrar nuevo usuario o personal institucional con asignación de rol"
+                        >
+                            <UserPlus className="h-4 w-4" />
+                            <span>Nuevo Registro / Usuario</span>
+                        </Link>
                         <a
                             href="/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 shadow-sm"
+                            className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 shadow-sm"
                         >
                             <span>Ver Portal Web</span>
                             <ExternalLink className="h-3.5 w-3.5" />
                         </a>
                         <Link
                             href="/admin/products"
-                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#002072] dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-500 text-white text-xs font-bold shadow-md shadow-blue-900/20 transition-all"
+                            className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#002072] dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-500 text-white text-xs font-bold shadow-md shadow-blue-900/20 transition-all"
                         >
                             <Pill className="h-4 w-4" />
                             <span>Gestionar Catálogo</span>
@@ -111,8 +119,8 @@ export default function Dashboard({
                 </div>
 
                 {/* Métricas y KPIs Superiores */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <div className="bg-white dark:bg-[#0D172E] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+                    <div className="bg-white dark:bg-[#0D172E] p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
                         <div>
                             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Productos</span>
                             <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{stats.total_products}</h3>
@@ -162,7 +170,7 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-[#0D172E] p-4 sm:p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 shadow-sm flex items-center justify-between bg-gradient-to-r from-white dark:from-[#0D172E] to-emerald-50/20 dark:to-emerald-950/30 transition-colors">
+                    <div className="col-span-2 sm:col-span-1 lg:col-span-1 bg-white dark:bg-[#0D172E] p-3.5 sm:p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 shadow-sm flex items-center justify-between bg-gradient-to-r from-white dark:from-[#0D172E] to-emerald-50/20 dark:to-emerald-950/30 transition-colors">
                         <div>
                             <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">Demanda Comercial</span>
                             <h3 className="text-2xl font-black text-emerald-900 dark:text-emerald-200 mt-0.5">{stats.total_quotes ?? 0}</h3>
@@ -188,7 +196,7 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-4 gap-4 sm:gap-5">
                         {/* Ficha 1: Gestión de Catálogo */}
                         <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:border-blue-500/50 dark:hover:border-cyan-500/50 hover:shadow-lg transition-all flex flex-col justify-between group">
                             <div className="space-y-4">

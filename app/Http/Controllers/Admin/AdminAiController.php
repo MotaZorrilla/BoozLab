@@ -240,82 +240,18 @@ class AdminAiController extends Controller
             'message' => ['required', 'string', 'max:500'],
         ]);
 
-        $apiKey = SettingService::geminiKey();
-        $model = SettingService::geminiModel();
         $startTime = microtime(true);
+        $liraAi = app(\App\Services\LiraAiService::class);
+        $result = $liraAi->answer($validated['message']);
+        $latency = round((microtime(true) - $startTime) * 1000);
 
-        if (empty($apiKey)) {
-            // Simulamos la respuesta con el motor determinístico local enriquecido
-            $controller = app(\App\Http\Controllers\ChatbotController::class);
-            $fakeRequest = \App\Http\Requests\AskChatbotRequest::create('/api/chatbot', 'POST', ['message' => $validated['message']]);
-            $response = $controller->query($fakeRequest);
-            $data = $response->getData(true);
-
-            return response()->json([
-                'success' => true,
-                'source' => 'deterministic_engine',
-                'latency_ms' => round((microtime(true) - $startTime) * 1000),
-                'response' => strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $data['reply'] ?? '')),
-            ]);
-        }
-
-        try {
-            // Ensamble de todo el contexto RAG activo para la simulación
-            $knowledgeContext = Cache::remember('chatbot:ai_knowledge_context', 1800, function () {
-                $docs = AiKnowledgeDocument::active()->orderBy('order')->get();
-                return $docs->map(fn ($d) => "=== DOCUMENTO ENTRENADO: {$d->title} ===\n{$d->content}")->implode("\n\n");
-            });
-
-            $guardrailsContext = Cache::remember('chatbot:ai_guardrails_context', 1800, function () {
-                $rules = AiGuardrail::active()->orderBy('order')->get();
-                return $rules->map(fn ($g) => "- [{$g->type}] {$g->name}: {$g->rule_instruction}")->implode("\n");
-            });
-
-            $basePrompt = SettingService::liraSystemPrompt() ?? 'Eres Lira, la asistente virtual científica de Booz Laboratorio.';
-            $systemInstruction = "{$basePrompt}\n\nDOCUMENTOS DE ENTRENAMIENTO:\n{$knowledgeContext}\n\nGUARDRAILS:\n{$guardrailsContext}";
-
-            $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
-            $response = Http::timeout(10)
-                ->withOptions(['verify' => false])
-                ->post($url, [
-                    'system_instruction' => [
-                        'parts' => [['text' => $systemInstruction]],
-                    ],
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $validated['message']],
-                            ],
-                        ],
-                    ],
-                ]);
-
-            $latency = round((microtime(true) - $startTime) * 1000);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                $reply = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Conexión exitosa pero sin texto devuelto.';
-                return response()->json([
-                    'success' => true,
-                    'source' => 'gemini_api',
-                    'latency_ms' => $latency,
-                    'response' => trim($reply),
-                ]);
-            }
-
-            return response()->json([
-                'success' => false,
-                'source' => 'gemini_api_error',
-                'latency_ms' => $latency,
-                'error' => "Error HTTP {$response->status()}: " . substr($response->body(), 0, 150),
-            ], 422);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'source' => 'exception',
-                'latency_ms' => round((microtime(true) - $startTime) * 1000),
-                'error' => 'Fallo de conexión con Google Gemini: ' . $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'source' => $result['source'] ?? 'unknown',
+            'latency_ms' => $latency,
+            'response' => $result['reply'],
+            'suggestedProducts' => $result['suggestedProducts'] ?? [],
+            'disclaimer' => $result['disclaimer'] ?? null,
+        ]);
     }
 }

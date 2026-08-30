@@ -434,6 +434,13 @@ class BoozClinicalPlatformSeeder extends Seeder
                 'order' => 5,
                 'is_active' => true,
             ],
+            [
+                'question' => '¿Cómo solicitar cotizaciones al mayor para droguerías, clínicas o farmacias?',
+                'answer' => 'Las droguerías, farmacias independientes y centros de salud pueden generar su cotización oficial agregando productos a la Bolsa de Pedidos / Tienda Virtual, o solicitar atención comercial directa vía WhatsApp para acceder a listas de precios y condiciones al mayor.',
+                'category' => 'comercial',
+                'order' => 6,
+                'is_active' => true,
+            ],
         ];
 
         foreach ($faqs as $f) {

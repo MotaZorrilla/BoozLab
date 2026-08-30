@@ -32,6 +32,8 @@ class DynamicSystemSettingsTest extends TestCase
 
         $response = $this->actingAs($superAdmin)->put(route('admin.settings.update'), [
             'whatsapp_sales_phone' => '+58 (412) 999-8877',
+            'whatsapp_contact_phone' => '+58 (414) 111-2233',
+            'company_phone' => '+58 (281) 444-5566',
             'whatsapp_default_message' => 'Hola Booz, deseo información comercial.',
             'whatsapp_cart_header' => '*COTIZACIÓN BOOZ LAB*',
             'whatsapp_cart_footer' => '_Confirmar disponibilidad inmediata_',
@@ -43,6 +45,8 @@ class DynamicSystemSettingsTest extends TestCase
 
         $response->assertRedirect();
         $this->assertEquals('584129998877', SettingService::whatsappPhone());
+        $this->assertEquals('584141112233', SettingService::whatsappContactPhone());
+        $this->assertEquals('582814445566', SettingService::companyPhone());
         $this->assertEquals('Hola Booz, deseo información comercial.', SettingService::whatsappDefaultMessage());
         $this->assertEquals('*COTIZACIÓN BOOZ LAB*', SettingService::whatsappCartHeader());
         $this->assertEquals('_Confirmar disponibilidad inmediata_', SettingService::whatsappCartFooter());
@@ -67,6 +71,8 @@ class DynamicSystemSettingsTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->has('settings.whatsapp_sales_phone')
+            ->has('settings.whatsapp_contact_phone')
+            ->has('settings.company_phone')
             ->has('settings.whatsapp_default_message')
             ->has('settings.whatsapp_cart_header')
             ->has('settings.whatsapp_cart_footer')

@@ -62,6 +62,45 @@ export default function AdminProducts({ products, productLines, stockImages = []
         image_path: '',
     });
 
+    // Subida de imágenes desde la PC
+    const editorFileInputRef = React.useRef<HTMLInputElement>(null);
+    const createFileInputRef = React.useRef<HTMLInputElement>(null);
+    const editModalFileInputRef = React.useRef<HTMLInputElement>(null);
+    const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+    const [uploadSuccessMessage, setUploadSuccessMessage] = useState<string | null>(null);
+
+    const handleUploadImage = async (file: File, onSuccess: (url: string) => void) => {
+        setIsUploadingPhoto(true);
+        setUploadSuccessMessage(null);
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
+            const res = await fetch('/admin/products/upload-image', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: formData,
+            });
+
+            const data = await res.json();
+            if (res.ok && data.url) {
+                onSuccess(data.url);
+                setUploadSuccessMessage('¡Fotografía cargada exitosamente!');
+                setTimeout(() => setUploadSuccessMessage(null), 4000);
+            } else {
+                alert(data.message || 'Error al subir la imagen. Verifica que sea un archivo JPG, PNG o WEBP de menos de 5MB.');
+            }
+        } catch {
+            alert('Error de conexión al subir la imagen.');
+        } finally {
+            setIsUploadingPhoto(false);
+        }
+    };
+
     // Sincronizar formulario del Editor cuando cambia el producto seleccionado
     React.useEffect(() => {
         if (selectedEditorProduct) {
@@ -157,7 +196,7 @@ export default function AdminProducts({ products, productLines, stockImages = []
         <AppLayout breadcrumbs={[{ title: 'Panel Administrativo Booz', href: '/dashboard' }, { title: 'Catálogo Farmacéutico', href: '/admin/products' }]}>
             <Head title="Gestión de Catálogo Farmacéutico | Booz Laboratorio" />
 
-            <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
+            <div className="p-3 sm:p-6 lg:p-8 max-w-7xl 2xl:max-w-[1600px] 3xl:max-w-[1880px] mx-auto space-y-6">
                 {/* Cabecera Principal */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
                     <div className="flex items-center gap-2.5">
@@ -270,7 +309,8 @@ export default function AdminProducts({ products, productLines, stockImages = []
 
                         {/* Tabla de Catálogo con Columnas Separadas: Miniatura, Producto, Presentación, etc. */}
                         <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                            <div className="overflow-x-auto">
+                            {/* VISTA ESCRITORIO (md:block): TABLA COMPLETA CON 10 COLUMNAS */}
+                            <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-left text-xs text-slate-600 dark:text-slate-300">
                                     <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 uppercase font-black tracking-wider text-[10px] border-b border-slate-200 dark:border-slate-800">
                                         <tr>
@@ -298,7 +338,7 @@ export default function AdminProducts({ products, productLines, stockImages = []
                                                             className="h-full w-full object-contain"
                                                             onError={(e) => {
                                                                 (e.target as HTMLImageElement).src = '/assets/img/product_1.png';
-                                                            }}
+                                                             }}
                                                         />
                                                     </div>
                                                 </td>
@@ -309,12 +349,12 @@ export default function AdminProducts({ products, productLines, stockImages = []
                                                         {p.name}
                                                     </div>
                                                     <a
-                                                        href={`/productos/${p.slug}`}
+                                                        href={`/producto/${p.slug}`}
                                                         target="_blank"
                                                         rel="noreferrer"
                                                         className="text-[10px] text-blue-600 dark:text-cyan-400 hover:underline inline-flex items-center gap-1 font-mono"
                                                     >
-                                                        <span>/productos/{p.slug}</span>
+                                                        <span>/producto/{p.slug}</span>
                                                         <ExternalLink className="h-2.5 w-2.5" />
                                                     </a>
                                                 </td>
@@ -391,7 +431,7 @@ export default function AdminProducts({ products, productLines, stockImages = []
                                                 <td className="py-3 px-4 text-right">
                                                     <div className="flex items-center justify-end gap-1.5">
                                                         <a
-                                                            href={`/productos/${p.slug}`}
+                                                            href={`/producto/${p.slug}`}
                                                             target="_blank"
                                                             rel="noreferrer"
                                                             className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -436,6 +476,93 @@ export default function AdminProducts({ products, productLines, stockImages = []
                                     </tbody>
                                 </table>
                             </div>
+
+                            {/* VISTA MÓVIL (md:hidden): TARJETAS TÁCTILES ESTILO APP PARA TELÉFONOS */}
+                            <div className="block md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+                                {filteredProducts.map((p) => (
+                                    <div key={p.id} className="p-3.5 space-y-3">
+                                        <div className="flex items-start gap-3">
+                                            <div className="h-16 w-16 rounded-2xl bg-slate-50 dark:bg-slate-800 p-1.5 shrink-0 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden">
+                                                <img
+                                                    src={p.image_path || '/assets/img/product_1.png'}
+                                                    alt={p.name}
+                                                    className="h-full w-full object-contain"
+                                                    onError={(e) => {
+                                                        (e.target as HTMLImageElement).src = '/assets/img/product_1.png';
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-start justify-between gap-1.5">
+                                                    <h4 className="font-black text-sm text-slate-900 dark:text-white truncate">
+                                                        {p.name}
+                                                    </h4>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleToggleActive(p)}
+                                                        className={`px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0 transition-colors ${
+                                                            p.is_active
+                                                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                                                : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                                        }`}
+                                                    >
+                                                        {p.is_active ? '● Activo' : '○ Inactivo'}
+                                                    </button>
+                                                </div>
+                                                <p className="text-xs font-semibold text-blue-600 dark:text-cyan-400 truncate">
+                                                    {p.presentation}
+                                                </p>
+                                                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-mono">
+                                                    {p.active_ingredients}
+                                                </p>
+                                                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#002072] dark:text-cyan-300">
+                                                        {p.product_line?.name}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 font-mono">
+                                                        Stock: {p.stock}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                                                        ${Number(p.price || 0).toFixed(2)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Botones Táctiles Móviles Cómodos (min-h 38px) */}
+                                        <div className="grid grid-cols-3 gap-1.5 pt-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleOpenEditModal(p)}
+                                                className="py-2 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1 min-h-[38px]"
+                                            >
+                                                <Edit3 className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-400" />
+                                                <span>Editar</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedEditorProduct(p);
+                                                    setActiveTab('editor');
+                                                }}
+                                                className="py-2 px-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/50 text-[#002072] dark:text-cyan-300 text-xs font-bold flex items-center justify-center gap-1 min-h-[38px]"
+                                            >
+                                                <SlidersHorizontal className="h-3.5 w-3.5" />
+                                                <span>Editor</span>
+                                            </button>
+                                            <a
+                                                href={`/producto/${p.slug}`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="py-2 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center justify-center gap-1 min-h-[38px]"
+                                            >
+                                                <Eye className="h-3.5 w-3.5" />
+                                                <span>Ver</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -445,8 +572,8 @@ export default function AdminProducts({ products, productLines, stockImages = []
                 {/* ========================================================================= */}
                 {activeTab === 'editor' && selectedEditorProduct && (
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                        {/* Selector Lateral de Fármacos */}
-                        <div className="lg:col-span-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 shadow-sm space-y-3">
+                        {/* Selector Lateral de Fármacos (Desktop) */}
+                        <div className="hidden lg:block lg:col-span-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 shadow-sm space-y-3">
                             <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                                 <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
                                     Seleccionar Fármaco ({products.length})
@@ -491,7 +618,28 @@ export default function AdminProducts({ products, productLines, stockImages = []
                         </div>
 
                         {/* Ficha de Edición Completa */}
-                        <div className="lg:col-span-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
+                        <div className="lg:col-span-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-sm space-y-6">
+                            {/* Selector Rápido para Teléfono (Mobile Only) */}
+                            <div className="block lg:hidden rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 p-3 shadow-xs">
+                                <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">
+                                    Cambiar Fármaco en Edición:
+                                </label>
+                                <select
+                                    value={selectedEditorProduct.id}
+                                    onChange={(e) => {
+                                        const found = products.find((pr) => pr.id === Number(e.target.value));
+                                        if (found) setSelectedEditorProduct(found);
+                                    }}
+                                    className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-600"
+                                >
+                                    {products.map((pr) => (
+                                        <option key={pr.id} value={pr.id}>
+                                            {pr.name} ({pr.presentation})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
                             {/* Cabecera del Editor */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
                                 <div>
@@ -505,7 +653,7 @@ export default function AdminProducts({ products, productLines, stockImages = []
 
                                 <div className="flex items-center gap-2">
                                     <a
-                                        href={`/productos/${editForm.data.slug || selectedEditorProduct.slug}`}
+                                        href={`/producto/${editForm.data.slug || selectedEditorProduct.slug}`}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
@@ -564,7 +712,40 @@ export default function AdminProducts({ products, productLines, stockImages = []
                                                 })}
                                             </div>
 
-                                            <div className="pt-2">
+                                            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                                <div>
+                                                    <input
+                                                        type="file"
+                                                        ref={editorFileInputRef}
+                                                        accept="image/jpeg,image/png,image/jpg,image/webp"
+                                                        className="hidden"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                handleUploadImage(file, (url) => editForm.setData('image_path', url));
+                                                            }
+                                                        }}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        disabled={isUploadingPhoto}
+                                                        onClick={() => editorFileInputRef.current?.click()}
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs cursor-pointer transition-all disabled:opacity-50"
+                                                    >
+                                                        <Upload className="h-3.5 w-3.5" />
+                                                        <span>{isUploadingPhoto ? 'Subiendo fotografía...' : '📁 Subir Foto desde tu PC'}</span>
+                                                    </button>
+                                                </div>
+
+                                                {uploadSuccessMessage && (
+                                                    <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                                        <CheckCircle2 className="h-3.5 w-3.5" />
+                                                        {uploadSuccessMessage}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            <div className="pt-1">
                                                 <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
                                                     O ingresa la Ruta / URL de la Imagen:
                                                 </label>
@@ -851,6 +1032,64 @@ export default function AdminProducts({ products, productLines, stockImages = []
                             </div>
                         </div>
 
+                        {/* Miniaturas y Foto */}
+                        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 flex items-center gap-4">
+                            <div className="h-16 w-16 rounded-xl bg-white dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
+                                <img
+                                    src={createForm.data.image_path || '/assets/img/product_1.png'}
+                                    alt="Preview"
+                                    className="h-full w-full object-contain"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = '/assets/img/product_1.png';
+                                    }}
+                                />
+                            </div>
+                            <div className="flex-1 space-y-1.5">
+                                <div className="flex items-center justify-between">
+                                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                                        Fotografía del Producto:
+                                    </label>
+                                    <div>
+                                        <input
+                                            type="file"
+                                            ref={createFileInputRef}
+                                            accept="image/jpeg,image/png,image/jpg,image/webp"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    handleUploadImage(file, (url) => createForm.setData('image_path', url));
+                                                }
+                                            }}
+                                        />
+                                        <button
+                                            type="button"
+                                            disabled={isUploadingPhoto}
+                                            onClick={() => createFileInputRef.current?.click()}
+                                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold shadow-xs cursor-pointer disabled:opacity-50"
+                                        >
+                                            <Upload className="h-3 w-3" />
+                                            <span>{isUploadingPhoto ? 'Subiendo...' : 'Subir desde PC'}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                    {stockImages.map((img) => (
+                                        <button
+                                            key={img.url}
+                                            type="button"
+                                            onClick={() => createForm.setData('image_path', img.url)}
+                                            className={`h-7 w-7 rounded-lg p-0.5 border cursor-pointer ${
+                                                createForm.data.image_path === img.url ? 'border-blue-600 ring-1 ring-blue-500' : 'border-slate-200 dark:border-slate-700'
+                                            }`}
+                                        >
+                                            <img src={img.url} alt={img.label} className="h-full w-full object-contain" />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
                         <div>
                             <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Descripción Clínica</label>
                             <textarea
@@ -931,10 +1170,35 @@ export default function AdminProducts({ products, productLines, stockImages = []
                                         }}
                                     />
                                 </div>
-                                <div className="flex-1 space-y-1">
-                                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                                        Seleccionar Miniatura:
-                                    </label>
+                                <div className="flex-1 space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                                            Seleccionar Miniatura:
+                                        </label>
+                                        <div>
+                                            <input
+                                                type="file"
+                                                ref={editModalFileInputRef}
+                                                accept="image/jpeg,image/png,image/jpg,image/webp"
+                                                className="hidden"
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        handleUploadImage(file, (url) => editForm.setData('image_path', url));
+                                                    }
+                                                }}
+                                            />
+                                            <button
+                                                type="button"
+                                                disabled={isUploadingPhoto}
+                                                onClick={() => editModalFileInputRef.current?.click()}
+                                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold shadow-xs cursor-pointer disabled:opacity-50"
+                                            >
+                                                <Upload className="h-3 w-3" />
+                                                <span>{isUploadingPhoto ? 'Subiendo...' : 'Subir desde PC'}</span>
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div className="flex items-center gap-1.5 flex-wrap">
                                         {stockImages.map((img) => (
                                             <button

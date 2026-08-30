@@ -8,6 +8,7 @@ use App\Models\ProductLine;
 use App\Models\Testimonial;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -62,6 +63,20 @@ class ProductController extends Controller
             'product' => $product,
             'relatedProducts' => $relatedProducts,
         ]);
+    }
+
+    /**
+     * Display printable official clinical Vademecum datasheet (PDF format).
+     */
+    public function printVademecum(string $slug): View
+    {
+        // SEGURIDAD SANITARIA: Solo productos activos son accesibles públicamente
+        $product = Product::with('productLine')
+            ->where('slug', $slug)
+            ->active()
+            ->firstOrFail();
+
+        return view('catalog.vademecum-pdf', compact('product'));
     }
 
     /**

@@ -227,3 +227,170 @@
   - [ ] Interacción por voz con Lira Asistente Virtual (Speech-to-Text mediante Web Speech API).
   - [ ] Procedimiento de despliegue en servidor web con Nginx/Apache, SSL y optimización de cachés.
 
+## 🎠 FASE 21: Experiencia de Catálogo en Landing Page — Carrusel Infinito con Efecto Peek, Tarjeta 100% Clickeable, Desincorporación de WhatsApp & Transición Suave (29 de Agosto de 2026)
+- [x] **Carrusel Infinito con Efecto Peek (Vislumbre Lateral):**
+  - En desktop (`lg` ≥ 1024px): Muestra 3 tarjetas completas centrales y un asomo ("peek") de ~5.5% de las tarjetas previa (izquierda) y siguiente (derecha).
+  - En tablet (`sm`/`md`): Muestra 2 tarjetas centrales con peek lateral del 3.5%.
+  - En móvil (`< 640px`): Muestra 1 tarjeta central amplia (74% del ancho) con un peek lateral del 9% a cada lado para orientar intuitivamente al usuario hacia el deslizamiento gestual.
+  - Buffer de 3 copias y reposicionamiento sin salto (`transition: none` transparente) que genera un bucle infinito real en ambas direcciones.
+  - Soporte de gestos táctiles nativos de swipe (`onTouchStart`, `onTouchMove`, `onTouchEnd`) para celulares y tablets.
+  - Botones circulares flotantes de navegación con estilo clínico translúcido (`ChevronLeft`, `ChevronRight`) y barra de indicadores (dots) interactivos con contador de producto.
+- [x] **Tarjeta Universal Clickeable (100% Ficha Técnica):**
+  - Toda el área de la tarjeta está vinculada con un `<Link href={'/producto/' + slug}>` con cursor pointer, elevación en hover y escalado sutil de la fotografía.
+- [x] **Depuración y Reubicación de Botones de Acción:**
+  - Eliminación total del botón de WhatsApp en las tarjetas del catálogo (el canal de WhatsApp se preserva en la trinidad flotante y en la bolsa de cotizaciones).
+  - Reubicación del botón "+ Pedido" en el pie de la tarjeta con aislamiento de eventos (`e.stopPropagation()` y `e.preventDefault()`) para garantizar que añadir un fármaco a la bolsa no dispare la apertura involuntaria de la ficha técnica.
+- [x] **Transiciones Suaves al Seleccionar Líneas y Necesidades:**
+  - Implementado estado `isFadingCategory` y manejador unificado `handleSelectCategory()` y `handleSelectNeed()` que produce un desvanecimiento suave (`opacity-0 translate-y-2 scale-[0.98] blur-[0.5px]`) de 220ms eliminando cualquier cambio brusco de contenido.
+- [x] **Verificación Técnica:**
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 7.79s**.
+  - Suite de pruebas de regresión: **133 tests en verde (536 assertions)** en PHPUnit 11.
+  - Especificaciones OpenSpec: **12/12 validadas al 100%**.
+
+## 🧭 FASE 22: Limpieza y Reordenamiento de la Barra de Navegación, Buscador Minimalista y Consola Médica (29 de Agosto de 2026)
+- [x] **Depuración de Logo e Identidad Visual Superior:**
+  - Reducción del encabezado a "BOOZ LABORATORIO" eliminando el subtítulo largo para máxima ligereza y elegancia visual en la cabecera.
+- [x] **Navegación Esencial de 4 Enlaces:**
+  - Menú superior depurado a exactamente 4 accesos directos: **Líneas** (`/#lineas`), **Catálogo** (`/#productos`), **Conocimiento** (`/#conocimiento`) y **Farmacovigilancia** (`/farmacovigilancia`).
+- [x] **Reubicación de la Calculadora Pediátrica en el Footer:**
+  - Trasladada la Calculadora Pediátrica (`/herramientas`) a la columna "Canal Regulatorio & Herramientas" del footer con icono `Sparkles`, despejando el menú superior y manteniéndola accesible desde cualquier página.
+- [x] **Buscador Minimalista (Solo Lupa Interactiva):**
+  - Reemplazo de la caja de texto ancha por un botón icónico compacto de lupa (`Search`) con touch-target de 42px que despliega instantáneamente el modal de búsqueda rápida con atajo `Ctrl+K`.
+- [x] **Conservación de la Tienda:**
+  - Preservado el botón de Tienda / Bolsa de pedidos con su icono `ShoppingBag`, contador reactivo de unidades y apertura de `StoreCartDrawer`.
+- [x] **Modernización del Acceso Administrativo ("Consola"):**
+  - Reemplazo del botón genérico "Admin" por **"Consola"** con icono clínico `ShieldCheck`, indicador de estado en verde esmeralda y estilo dark tech con acentos Pantone 2747 C y Dark Mode, sincronizado tanto en la barra de escritorio como en la barra inferior móvil (`md:hidden`).
+- [x] **Verificación Técnica:**
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 8.25s**.
+  - Suite de pruebas de regresión: **133 tests en verde (536 assertions)** en PHPUnit 11.
+  - Especificaciones OpenSpec: **12/12 validadas al 100%**.
+
+## 🔐 FASE 23: Login Corporativo Unificado con BoozLayout, Eliminación de Autoregistro Público y Botón de Nuevo Registro Administrativo para Superadmin (29 de Agosto de 2026)
+- [x] **Depuración Total del Navbar Superior:**
+  - Retirado el botón de "Habla con Lira" de la barra superior, manteniendo su presencia ergonómica en el avatar flotante de escritorio (efecto radar en esquina inferior derecha) y en el disparador central de la barra móvil inferior.
+- [x] **Login Integrado con la Identidad Visual BoozLaboratorio:**
+  - Pantalla de inicio de sesión (`/login`) migrada de `AuthLayout` a `BoozLayout`, conservando la barra de navegación corporativa, selector de tema claro/oscuro y pie de página institucional.
+  - Tarjeta de acceso clínico centrada con insignia `ShieldCheck`, título "Consola de Administración" y campos para correo institucional y contraseña.
+  - Supresión definitiva del enlace y botón público de autoregistro ("Don't have an account? Sign up").
+- [x] **Botón de "Nuevo Registro / Usuario" en Dashboard para Superadmin:**
+  - En la cabecera ejecutiva de `resources/js/pages/dashboard.tsx`, se integró un botón destacado en verde esmeralda con icono `UserPlus`: "Nuevo Registro / Usuario".
+  - Enlace directo a `/admin/users?create=1`.
+- [x] **Flujo Administrativo de Registro con Asignación de Roles en `AppLayout`:**
+  - En `resources/js/pages/admin/users.tsx`, se implementó detección automática del parámetro `?create=1` para desplegar el modal de registro al instante.
+  - Formulario de alta administrativa bajo `AppLayout` que captura: Nombre Completo y Cargo, Correo Electrónico Institucional, Contraseña Inicial y Selección obligatoria del Rol (Super Administrador, Director Técnico Farmacéutico, Gestor Comercial y Pedidos, Oficial de Farmacovigilancia y Calidad).
+- [x] **OpenSpec Formal:**
+  - Actualizada la especificación `spec/admin-rbac-user-management` incorporando el requisito de "Registro Exclusivo Interno y Restricción de Autoregistro Público".
+- [x] **Verificación Técnica Integral:**
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 7.95s**.
+  - Suite de pruebas de regresión: **133 tests pasados en verde (536 assertions)** en PHPUnit 11.
+  - Especificaciones OpenSpec: **12/12 validadas al 100%**.
+
+## 📞 FASE 24: FAQ Comercial al Mayor, Redes Sociales Unificadas en Footer y Segmentación Multicanal de Telefonía y WhatsApp (29 de Agosto de 2026)
+- [x] **6ta Pregunta Frecuente (FAQ) en Landing Page:**
+  - Incorporada 6ta pregunta frecuente institucional sobre compras al mayor para droguerías, farmacias independientes y clínicas en `BoozClinicalPlatformSeeder.php` y base de datos activa, logrando un balance visual armónico en el grid frente al formulario de contacto.
+- [x] **Homogeneización de Redes Sociales en el Footer:**
+  - En `resources/js/layouts/booz-layout.tsx`, columna "Contacto Oficial & Redes", integradas las 4 redes oficiales unificadas bajo el identificador corporativo:
+    - **Instagram:** `@booz.laboratorio` (`https://instagram.com/booz.laboratorio`)
+    - **Facebook:** `booz.laboratorio` (`https://facebook.com/booz.laboratorio`)
+    - **YouTube:** `booz.laboratorio` (`https://youtube.com/@booz.laboratorio`) con icono de YouTube
+    - **TikTok:** `booz.laboratorio` (`https://tiktok.com/@booz.laboratorio`) con icono SVG de TikTok
+- [x] **Arquitectura Multicanal de Telefonía y WhatsApp:**
+  - En `SettingService` y `SystemSetting`, implementada la segmentación de 3 líneas diferenciadas con fallback automático:
+    1. **WhatsApp de Atención y Soporte General:** utilizado en el botón flotante con efecto radar y consultas públicas (`whatsapp_contact_phone`).
+    2. **WhatsApp de Ventas, Pedidos y Tienda Virtual:** utilizado por `StoreCartDrawer` al despachar cotizaciones y pedidos (`whatsapp_sales_phone`).
+    3. **Central Telefónica de Planta:** utilizado en el enlace directo de llamada telefónica del pie de página (`company_phone`).
+- [x] **Consola de Configuración para el Administrador (`/admin/settings`):**
+  - En `resources/js/pages/admin/settings.tsx`, rediseñada la tarjeta de telefonía con 3 campos independientes, tips de configuración y botones de previsualización en vivo para probar ambos canales de WhatsApp de inmediato.
+  - `AdminSettingController` actualizado para validar, sanear dígitos E.164 y persistir los 3 canales.
+- [x] **Hook React `useWhatsApp` y Sincronización Reactiva:**
+  - Hook actualizado para retornar `salesPhone`, `contactPhone`, `companyPhone` y `createWhatsAppUrl(msg, channel)`.
+  - Integrado a `booz-layout.tsx` (botón flotante y footer) y a `store-cart-drawer.tsx` (canal `'sales'`).
+- [x] **OpenSpec Formal:**
+  - Actualizada la especificación `openspec/specs/system-settings-and-whatsapp/spec.md` con el requisito de *"Segmentación Multicanal de Líneas Telefónicas y Redes Oficiales"*.
+- [x] **Verificación Técnica:**
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 8.12s**.
+  - Suite de pruebas de regresión: **133 tests pasados en verde (540 assertions)** en PHPUnit 11.
+  - Especificaciones OpenSpec: **12/12 validadas al 100%**.
+
+## 🧬 FASE 25: Remediación de Deuda Técnica, Calculadora Pediátrica Clínica y Desacoplamiento de LiraAiService (30 de Agosto de 2026)
+- [x] **Calculadora de Dosis Pediátrica Clínica (Resolución Hallazgo A13):**
+  - Desincorporada la lógica simulada `"Mock logic: 15mg per kg"` y el temporizador artificial `setTimeout` de `pediatric-calculator.tsx`.
+  - Implementado un motor de cálculo clínico reactivo y determinista que ofrece 3 métodos matemáticos oficiales definidos en `SPEC.md §3`:
+    1. **Regla de Clark:** Cálculo de dosificación pediátrica por peso corporal (\(D_{ped} = (P_{kg} / 70) \times D_{adulto}\)) con advertencia en pesos límite (≥60 kg).
+    2. **Régimen Ponderado (mg/kg/día):** Cálculo de dosis diaria total y dosificación fraccionada por número de tomas (cada 24h, 12h, 8h o 6h), con atajos clínicos para Albemer y analgésicos infantiles.
+    3. **Regla de Young:** Cálculo por edad para niños entre 1 y 12 años (\(D_{ped} = [E_{años} / (E_{años} + 12)] \times D_{adulto}\)).
+  - Añadido desglose paso a paso de la fórmula aritmética y advertencia regulatoria oficial según lineamientos del INH Rafael Rangel.
+- [x] **Creación del Servicio Centralizado `LiraAiService` (Resolución Hallazgos M2, E4, H8, H9, H17):**
+  - Creado `app/Services/LiraAiService.php` para encapsular la interacción con Google Gemini (`gemini-2.5-flash`) y la construcción del contexto RAG (vademécum activo, documentos de entrenamiento y guardrails sanitarios).
+  - Eliminada la duplicación de código entre `ChatbotController.php` y `AdminAiController.php`, unificando la simulación en el playground administrativo y las respuestas públicas.
+  - Rediseñado `ChatbotController` como un controlador delgado (< 30 líneas) que inyecta `LiraAiService`.
+- [x] **Deshardcodeo Dinámico de Datos Corporativos y de Contacto (Resolución Hallazgos H1 a H7):**
+  - En `SettingService.php`, incorporados accesos para `legalDisclaimer()`, `companyInstagram()`, `officeLocation()` y actualización de `publicSettings()`.
+  - `LiraAiService::queryDeterministic` consume en tiempo real el número de WhatsApp de ventas, RIF, Instagram y direcciones de planta y oficina desde la base de datos `system_settings`.
+  - El conteo de productos y líneas terapéuticas se calcula dinámicamente desde Eloquent (`Product::active()->count()` y `ProductLine::count()`).
+  - Las especificaciones de *Bactrocis* (Moxifloxacina) se extraen directamente desde el registro oficial en la tabla `products`.
+- [x] **QA/TDD y Blindaje de Pruebas:**
+  - Creada suite `tests/Feature/LiraAiServiceTest.php` validando la resolución dinámica de telefonía, RIF, Instagram y ensamble del prompt de sistema.
+  - Suite de pruebas de regresión: **138 tests pasados en verde (551 assertions)** en PHPUnit 11.
+  - Especificaciones OpenSpec: **12/12 validadas al 100%**.
+  - Compilación Vite de producción verificada: **2.762 módulos transformados sin errores en 9.34s**.
+
+## 🤖 FASE 26: Diagnóstico de Cuota Gemini, Paridad Total Landing vs Admin y Unificación del Modal Lira (30 de Agosto de 2026)
+- [x] **Diagnóstico Técnico de Comportamiento Divergente:**
+  - Verificada la causa raíz: la API Key de Google Gemini alcanzó el límite de cuota (`HTTP 429 You exceeded your current quota`) en el plan gratuito de Google AI Studio.
+  - Al recibir HTTP 429, la landing page activa el fallback silencioso y resiliente al Motor Determinístico dinámico (nunca deja al usuario sin respuesta), mientras que la consola de pruebas de administración fallaba arrojando error de API.
+- [x] **Paridad Total del Playground Administrativo (`/admin/ai`):**
+  - `AdminAiController@test` refactorizado para invocar directamente `$liraAi->answer($message)`, logrando 100% de paridad con la respuesta que recibe el usuario en la landing page.
+  - Interfaz de prueba en `admin/ai.tsx` actualizada para renderizar formato HTML enriquecido, tarjetas de fármacos vinculados y descargo de responsabilidad ético sanitaria del INH.
+- [x] **Unificación de Instancias en el DOM (Eliminación de Modal Duplicado):**
+  - Eliminada la segunda instancia no coordinada de `<LiraAssistantModal>` que residía en `home.tsx`.
+  - La miniatura interactiva del Bento Grid (`Hola, soy Lira` en `home.tsx`) y el botón flotante circular con efecto radar (`booz-layout.tsx`) ahora comparten exactamente la misma instancia única del modal y el mismo historial de chat mediante el evento desacoplado `window.dispatchEvent(new CustomEvent('booz:open-lira'))`.
+- [x] **Resiliencia de Conexión:**
+  - Elevado el timeout de comunicación HTTP con Google Gemini de 8 a 15 segundos en `LiraAiService.php` para tolerar fluctuaciones de latencia de red.
+- [x] **Verificación Integral:**
+  - 138 tests pasando en verde (551 assertions).
+  - Compilación Vite exitosa (2.762 módulos en 9.71s).
+  - 12/12 especificaciones OpenSpec validadas.
+
+## 📱🖥️ FASE 27: Arquitectura Responsiva Tri-Nivel: Móvil (Tienda App & Consola Táctil), 1080p y 4K Ultra-Wide (30 de Agosto de 2026)
+- [x] **Configuración de Breakpoints y Contenedores Fluidos (`app.css`):**
+  - Añadidos breakpoints `--breakpoint-2xl: 96rem` (1536px), `--breakpoint-3xl: 120rem` (1920px) y `--breakpoint-4k: 160rem` (2560px) en Tailwind v4 `@theme`.
+  - Contenedores globales ampliados de `max-w-7xl` a fluidos: `max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12`.
+- [x] **Tienda Virtual y Bolsa Móvil 100% Ancho de Pantalla (`store-cart-drawer.tsx`):**
+  - Eliminado el margen residual izquierdo en móviles (`pl-0 sm:pl-10` y `w-screen max-w-full sm:max-w-md`), logrando una experiencia de compra a pantalla completa edge-to-edge estilo app móvil nativa.
+- [x] **Catálogo Farmacéutico en Teléfonos & Expansión 4K (`home.tsx`):**
+  - Incorporado selector interactivo en teléfonos: alternancia entre **Tienda Virtual (App Móvil con Cuadrícula de 2 Columnas al 100% de pantalla)** y **Carrusel 3D**.
+  - En modo Tienda Virtual Móvil, los fármacos se despliegan en tarjetas compactas con touch targets óptimos, fotografía en proporción cuadrada, datos de dosificación, precio, enlace a ficha y botón directo `+ Pedido`.
+  - En pantallas 4K / Ultra-wide (`3xl`), el carrusel expande la capacidad visual de 3 a 4 tarjetas simultáneas (`cardWidthPercent: 21.5%`), evitando estiramientos artificiales.
+  - Todas las secciones de la Landing Page (Hero, Líneas, Bento Grid, Catálogo, Autoridad Sanitaria, Aval Clínico y FAQ/Contacto) aprovechan el ancho de monitores 4K.
+- [x] **Consola Administrativa Adaptativa para Teléfonos (`dashboard.tsx`, `admin/products.tsx`, layouts):**
+  - `admin/products.tsx`: Implementada **Vista Móvil de Tarjetas Táctiles** (`block md:hidden`) junto con la tabla tabular de 10 columnas en escritorio (`hidden md:block`), permitiendo a los administradores buscar, activar/desactivar, editar y ver fichas de fármacos desde su teléfono sin desbordamiento horizontal.
+  - En la pestaña de edición de `admin/products.tsx`, añadido selector rápido desplegable para teléfonos (`block lg:hidden`) para cambiar de producto sin desplazarse por una columna vertical de 18 elementos.
+  - `dashboard.tsx`: Grid de KPIs adaptado a 2 columnas en teléfonos (`grid-cols-2 lg:grid-cols-5`), y grid de 4 fichas operativas ampliado a 4 columnas en 4K (`3xl:grid-cols-4`).
+  - `breadcrumbs.tsx`: Prevención de desbordamiento de títulos largos en smartphones mediante truncamiento adaptativo (`truncate max-w-[120px] sm:max-w-none`).
+  - `admin/quotes.tsx`, `admin/reports.tsx`, `admin/messages.tsx`, `admin/users.tsx`, `admin/ai.tsx`, `admin/settings.tsx`: Contenedores expandidos para 4K y márgenes táctiles cómodos en teléfonos.
+- [x] **Ficha Técnica Médica de Producto (`product-detail.tsx`):**
+  - Layout expandido para 4K y márgenes táctiles ajustados para dispositivos móviles.
+- [x] **Corrección de Modo Oscuro en Farmacovigilancia (`farmacovigilancia.tsx`):**
+  - Incorporadas clases `dark:` en toda la vista de Farmacovigilancia (fondo general, tarjeta principal de reporte, notice sanitario del INH, selectores, campos de texto, botones de severidad y modal/tarjeta de ticket generado exitosamente).
+- [x] **Visibilidad Móvil de Farmacovigilancia y Menú Hamburguesa (`booz-layout.tsx`):**
+  - Incorporado botón desplegable de menú hamburguesa (`Menu` / `X`) en la barra de navegación superior en pantallas móviles y tablets (`< lg`), desplegando panel con acceso directo a Líneas, Catálogo, Conocimiento, Farmacovigilancia (con badge "Oficial INH") y Consola.
+  - Añadido enlace permanente a Farmacovigilancia (`ShieldAlert` - "Vigilancia") en la barra de navegación inferior móvil (`md:hidden`).
+  - Botón flotante de WhatsApp habilitado ergonómicamente tanto en móviles (`bottom-20 right-3.5`) como en escritorio (`bottom-6 right-6`).
+- [x] **Navegación Interactiva desde Carrito Vacío al Catálogo (`store-cart-drawer.tsx`):**
+  - La tarjeta de estado vacío de la tienda ("Tu bolsa está vacía...") y su botón de llamada a la acción son 100% interactivos: al hacer clic o tap, cierran la bolsa y navegan/desplazan suavemente la pantalla hasta la sección `#productos`.
+- [x] **Botón de Añadir a la Bolsa en Ficha Médica (`product-detail.tsx`):**
+  - Incorporada tarjeta comercial destacada con precio referencial en USD, indicador de stock en planta y botón llamativo `Añadir a la Bolsa de Pedidos`, complementado con botón táctil directo en la columna de imagen/presentación.
+- [x] **Vademécum Clínico Imprimible en PDF Oficial (`vademecum-pdf.blade.php` y `product-detail.tsx`):**
+  - Desarrollada la vista oficial de Vademécum Clínico y Ficha Técnica Imprimible en PDF bajo el esquema azul corporativo Booz (`#002072`), accesible públicamente vía `/producto/{slug}/vademecum`.
+  - Incluye fotografía oficial del envase, especificaciones farmacológicas completas (principios activos, presentación, posología, indicaciones, precauciones, régimen de dispensación, condiciones de almacenamiento, canal oficial de farmacovigilancia INH y firmas de regencia técnica).
+  - Añadidos botones de descarga e impresión en PDF en la barra de navegación superior de la ficha y en la tarjeta comercial de `product-detail.tsx`.
+- [x] **Verificación Integral y QA:**
+  - `npm run build`: 2.762 módulos transformados sin errores en 8.35s.
+  - `php artisan test`: 139 tests pasando en verde (556 assertions).
+  - OpenSpec: 12/12 especificaciones validadas.
+
+
+
+
+

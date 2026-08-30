@@ -18,7 +18,21 @@ class SystemSettingSeeder extends Seeder
                 'value' => '584148873615',
                 'type' => 'string',
                 'group' => 'whatsapp',
-                'description' => 'Número oficial de WhatsApp para atención y cotizaciones comerciales.',
+                'description' => 'Número oficial de WhatsApp para cotizaciones comerciales y pedidos en bolsa.',
+            ],
+            [
+                'key' => 'whatsapp_contact_phone',
+                'value' => '584148873615',
+                'type' => 'string',
+                'group' => 'whatsapp',
+                'description' => 'Número oficial de WhatsApp para atención al cliente y botón flotante.',
+            ],
+            [
+                'key' => 'company_phone',
+                'value' => '584148873615',
+                'type' => 'string',
+                'group' => 'whatsapp',
+                'description' => 'Número telefónico oficial de la central de planta para llamadas.',
             ],
             [
                 'key' => 'whatsapp_default_message',

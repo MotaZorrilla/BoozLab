@@ -29,3 +29,10 @@ El sistema SHALL restringir el acceso a módulos críticos (`/admin/users`, `/ad
 #### Scenario: Intento de acceso a configuración por rol no autorizado
 - **WHEN** un usuario con rol `oficial_farmacovigilancia` intenta acceder a `/admin/settings` o `/admin/ai`
 - **THEN** el sistema interrumpe la navegación retornando una respuesta HTTP 403 Acceso Denegado
+
+### Requirement: Registro Exclusivo Interno y Restricción de Autoregistro Público
+El sistema SHALL mantener la creación de cuentas como una facultad exclusiva del Super Administrador desde el panel administrativo con `AppLayout`, deshabilitando cualquier enlace de autoregistro público en la pantalla de inicio de sesión (`/login`).
+
+#### Scenario: Pantalla de login sin enlace de autoregistro público
+- **WHEN** un visitante o colaborador accede a la ruta `/login`
+- **THEN** el sistema presenta la barra de navegación oficial de Booz Laboratorio, el formulario seguro de credenciales y no exhibe enlaces para autoregistro público de cuentas

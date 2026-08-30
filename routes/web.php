@@ -13,6 +13,9 @@ use Inertia\Inertia;
 // --- Public Routes ---
 Route::get('/', [ProductController::class, 'home'])->name('home');
 Route::get('/producto/{slug}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/productos/{slug}', [ProductController::class, 'show'])->name('product.show.plural');
+Route::get('/producto/{slug}/vademecum', [ProductController::class, 'printVademecum'])->name('product.vademecum');
+Route::get('/productos/{slug}/vademecum', [ProductController::class, 'printVademecum'])->name('product.vademecum.plural');
 Route::get('/farmacovigilancia', [PharmacovigilanceController::class, 'create'])->name('farmacovigilancia.create');
 
 // API & AJAX Endpoints
@@ -51,6 +54,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::middleware('permission:products.view')->group(function () {
         Route::get('/admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
         Route::post('/admin/products', [AdminProductController::class, 'store'])->name('admin.products.store');
+        Route::post('/admin/products/upload-image', [AdminProductController::class, 'uploadImage'])->name('admin.products.uploadImage');
         Route::put('/admin/products/{product}', [AdminProductController::class, 'update'])->name('admin.products.update');
         Route::post('/admin/products/{product}/toggle', [AdminProductController::class, 'toggleActive'])->name('admin.products.toggle');
         Route::delete('/admin/products/{product}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');

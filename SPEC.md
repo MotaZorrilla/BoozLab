@@ -124,7 +124,7 @@ $$\text{Nivel de Alerta} = \begin{cases}
 
 ### 4.5 `system_settings`
 *   `id` (PK)
-*   `key`: Clave única (ej. `whatsapp_sales_phone`, `gemini_api_key`, `gemini_model`, `lira_system_prompt`, `whatsapp_cart_header`, `whatsapp_cart_footer`).
+*   `key`: Clave única (ej. `whatsapp_sales_phone`, `whatsapp_contact_phone`, `company_phone`, `gemini_api_key`, `gemini_model`, `lira_system_prompt`, `whatsapp_cart_header`, `whatsapp_cart_footer`).
 *   `value`: Valor serializado o cifrado (AES-256 para credenciales).
 *   `type`: `string`, `text`, `boolean`, `integer`, `encrypted`, `json`.
 *   `group`: `general`, `ai`, `commercial`, `legal`.
@@ -185,8 +185,52 @@ Se exige el 100% de éxito en la suite de pruebas de regresión y especificacion
 *   `PharmacovigilanceTest`: Validación de envíos de reportes válidos e inválidos (unhappy paths) y correlativo `BOOZ-RAM`.
 *   `PediatricCalculatorTest`: Verificación matemática de fórmulas de Clark y Young con límites de frontera.
 *   `AdminRbacAuthorizationTest` & `AdminUserManagementTest`: Control estricto de acceso RBAC y asignación de roles.
-*   `DynamicSystemSettingsTest`: Persistencia en base de datos de configuraciones globales y número oficial de WhatsApp.
+*   `DynamicSystemSettingsTest`: Persistencia en base de datos de configuraciones globales y números multicanal de telefonía y WhatsApp.
 *   `AdminAiTrainingAndGuardrailsTest`: Gestión de documentos RAG, carga de archivos, alternancia de guardrails y respuestas entrenadas.
 *   `AdminQuoteManagementTest` & `QuoteSubmissionTest`: Flujo de cotizaciones, creación manual, cálculo de totales y comprobante oficial.
-*   **Métricas Actuales:** **133 tests pasando en verde (536 assertions)** y **12/12 especificaciones OpenSpec validadas**.
+*   `LiraAiServiceTest`: Validación de resolución dinámica de identidad corporativa, telefonía multicanal y ensamble de prompt RAG.
+*   `ProductCatalogTest`: Validación de carga de catálogo, búsqueda de fármacos y renderizado del Vademécum Clínico en PDF.
+*   **Métricas Actuales:** **139 tests pasando en verde (556 assertions)** y **13/13 especificaciones OpenSpec validadas**.
+
+---
+
+## 💻 8. Arquitectura de Interfaz, Navegación y Telefonía Multicanal (Fases 21 a 27)
+
+### 8.1 Carrusel Infinito de Catálogo con Efecto Peek
+*   **Buffer Triple y Reposicionamiento Instantáneo:** Despliega un buffer virtual de 3 copias del catálogo activo. Al alcanzar los límites del viewport, conmuta el índice instantáneamente sin animación (`transition: none`), garantizando un bucle infinito bidireccional continuo sin saltos visibles.
+*   **Cálculo de Peek Lateral Responsivo:**
+    *   *Desktop (`lg` ≥ 1024px):* Ancho de tarjeta al 29.6% con peek lateral del ~5.5% (muestra 3 tarjetas completas y 2 laterales asomadas).
+    *   *Tablet (`sm`/`md`):* Ancho de tarjeta al 46.5% con peek lateral del ~3.5% (muestra 2 tarjetas completas).
+    *   *Mobile (`< 640px`):* Ancho de tarjeta al 74% con peek lateral del ~9% a cada lado.
+*   **Gestos Táctiles Móviles:** Manejo nativo de `onTouchStart`, `onTouchMove` y `onTouchEnd` con umbral de deslizamiento de 40px para navegación táctil sin interferir con el scroll vertical de la página.
+*   **Aislamiento de Eventos de Compra:** El marco global de la tarjeta opera como `<Link href={'/producto/' + slug}>`, mientras que el botón "+ Pedido" utiliza `e.stopPropagation()` y `e.preventDefault()` para agregar fármacos a la bolsa sin disparar la navegación a la PDP.
+
+### 8.2 Navegación Esencial y Command Palette Minimalista
+*   **Navbar Superior:** Limpieza a exactamente 4 accesos directos (*Líneas*, *Catálogo*, *Conocimiento*, *Farmacovigilancia*), con logo simplificado a "BOOZ LABORATORIO" y menú desplegable hamburguesa en móviles.
+*   **Buscador Rápido:** Botón táctil de lupa (`Search`) con atajo de teclado global `Ctrl+K` que abre el modal interactivo de búsqueda de medicamentos por nombre o principio activo.
+*   **Acceso Unificado "Consola":** Botón de administración clínica con icono `ShieldCheck` y pulso activo verde, sincronizado entre desktop y la barra de navegación móvil inferior (`MobileBottomNav`).
+
+### 8.3 Autenticación Corporativa y Flujo RBAC Superadmin
+*   **Inmersión en `BoozLayout`:** Pantalla `/login` envuelta en la cabecera y pie institucionales con selector de tema claro/oscuro.
+*   **Control Estricto de Registro:** Deshabilitación de registros anónimos públicos. Creación exclusiva mediante sesión autenticada de Superadmin desde `/admin/users?create=1`, requiriendo asignación estricta de uno de los 4 roles validados por los middlewares `EnsureAdmin` y `EnsureRole`.
+
+### 8.4 Arquitectura Multicanal de Telefonía y Hook React `useWhatsApp`
+*   **Segmentación en Base de Datos (`system_settings`):**
+    *   `whatsapp_contact_phone`: Canal de soporte general y consultas ciudadanas (utilizado por el botón flotante con radar).
+    *   `whatsapp_sales_phone`: Canal de ventas, distribución y farmacias (utilizado por el drawer de cotizaciones de la tienda).
+    *   `company_phone`: Central telefónica fija institucional de la planta en Valle de Guanape (enlace `tel:` en footer).
+*   **Fallback Jerárquico:** Si alguna línea especializada no está configurada, el servicio `SettingService` deriva automáticamente al número general disponible.
+
+### 8.5 Servicio Desacoplado `LiraAiService` & Calculadora Clínica
+*   **Servicio Maestro de IA (`LiraAiService`):** Orquestación desacoplada de la API de Google Gemini y ensamble en memoria del contexto RAG (vademécum, base de conocimiento y guardrails). Soporte compartido para `ChatbotController` y `AdminAiController`.
+*   **Calculadora Clínica Reactiva:** Eliminación de demoras y valores ficticios. Implementación en React 19 de selector de 3 métodos (Regla de Clark, Régimen Ponderado fraccionado y Regla de Young) con advertencias farmacológicas y descargo sanitario oficial del INH.
+
+### 8.6 Arquitectura Responsiva Tri-Nivel (Móvil, 1080p y 4K)
+*   **Breakpoints Ultra-Wide & 4K (`app.css`):** Definición de `--breakpoint-2xl: 96rem` (1536px) y `--breakpoint-3xl: 120rem` (1920px). Contenedores fluidos `max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px]` que eliminan franjas vacías en monitores 4K.
+*   **Vistas Táctiles en Consola Administrativa (`admin/products.tsx`):** Alternancia automática a Tarjetas Móviles de Gestión en pantallas `< 768px`, permitiendo a los administradores operar el catálogo desde su smartphone sin scroll horizontal.
+*   **Tienda Móvil a Pantalla Completa:** Vista de 2 columnas compactas en móvil y drawer lateral a 100% de ancho con navegación interactiva al catálogo desde el estado vacío.
+
+### 8.7 Ficha Técnica & Vademécum Oficial en PDF Imprimible
+*   **Ruta Imprimible Oficial (`/producto/{slug}/vademecum`):** Plantilla Blade con diseño azul corporativo `#002072`, fotografía del fármaco, especificaciones clínicas completas, posología, contraindicaciones, protocolos INH y firmas técnicas.
+*   **Acciones en Ficha Médica (`product-detail.tsx`):** Botón `Vademécum PDF` en cabecera y en tarjeta comercial, con botones táctiles de compra directa `Añadir a la Bolsa de Pedidos`.
 

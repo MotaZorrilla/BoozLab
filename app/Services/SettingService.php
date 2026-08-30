@@ -7,6 +7,8 @@ use App\Models\SystemSetting;
 class SettingService
 {
     public const DEFAULT_WHATSAPP_PHONE = '584148873615';
+    public const DEFAULT_WHATSAPP_CONTACT_PHONE = '584148873615';
+    public const DEFAULT_COMPANY_PHONE = '584148873615';
     public const DEFAULT_WHATSAPP_MESSAGE = 'Hola Booz Laboratorio, deseo cotizar productos farmacéuticos.';
     public const DEFAULT_WHATSAPP_CART_HEADER = "*HOLA BOOZ LABORATORIO* 🔬\nDeseo solicitar cotización y disponibilidad para el siguiente pedido:";
     public const DEFAULT_WHATSAPP_CART_FOOTER = "_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega oficial._";
@@ -14,11 +16,24 @@ class SettingService
     public const DEFAULT_COMPANY_RIF = 'J-40906185-0';
     public const DEFAULT_COMPANY_NAME = 'Booz Laboratorio VGME, C.A.';
     public const DEFAULT_PLANT_LOCATION = 'Valle de Guanape, Edo. Anzoátegui';
+    public const DEFAULT_OFFICE_LOCATION = 'Puerto Ordaz, Edo. Bolívar';
+    public const DEFAULT_COMPANY_INSTAGRAM = '@booz.laboratorio';
+    public const DEFAULT_LEGAL_DISCLAIMER = '⚠️ Aviso Ético y Sanitario: Booz Laboratorio no promueve la automedicación. Esta respuesta tiene fines estrictamente informativos y educativos. Consulta siempre a tu médico o farmacéutico tratante antes de iniciar cualquier tratamiento farmacológico.';
     public const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
 
     public static function whatsappPhone(): string
     {
         return SystemSetting::get('whatsapp_sales_phone', self::DEFAULT_WHATSAPP_PHONE);
+    }
+
+    public static function whatsappContactPhone(): string
+    {
+        return SystemSetting::get('whatsapp_contact_phone', self::whatsappPhone());
+    }
+
+    public static function companyPhone(): string
+    {
+        return SystemSetting::get('company_phone', self::whatsappContactPhone());
     }
 
     public static function whatsappDefaultMessage(): string
@@ -56,6 +71,21 @@ class SettingService
         return SystemSetting::get('plant_location', self::DEFAULT_PLANT_LOCATION);
     }
 
+    public static function officeLocation(): string
+    {
+        return SystemSetting::get('office_location', self::DEFAULT_OFFICE_LOCATION);
+    }
+
+    public static function companyInstagram(): string
+    {
+        return SystemSetting::get('company_instagram', self::DEFAULT_COMPANY_INSTAGRAM);
+    }
+
+    public static function legalDisclaimer(): string
+    {
+        return SystemSetting::get('legal_disclaimer', self::DEFAULT_LEGAL_DISCLAIMER);
+    }
+
     public static function geminiKey(): ?string
     {
         $key = SystemSetting::get('gemini_api_key');
@@ -83,13 +113,18 @@ class SettingService
     {
         return [
             'whatsapp_sales_phone' => self::whatsappPhone(),
+            'whatsapp_contact_phone' => self::whatsappContactPhone(),
+            'company_phone' => self::companyPhone(),
             'whatsapp_default_message' => self::whatsappDefaultMessage(),
             'whatsapp_cart_header' => self::whatsappCartHeader(),
             'whatsapp_cart_footer' => self::whatsappCartFooter(),
             'whatsapp_cart_customer_types' => self::whatsappCartCustomerTypes(),
             'company_name' => self::companyName(),
             'company_rif' => self::companyRif(),
+            'company_instagram' => self::companyInstagram(),
             'plant_location' => self::plantLocation(),
+            'office_location' => self::officeLocation(),
+            'legal_disclaimer' => self::legalDisclaimer(),
         ];
     }
 }

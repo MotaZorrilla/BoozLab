@@ -51,3 +51,19 @@ El botón de confirmación SHALL registrar la cotización en el servidor y redir
 #### Scenario: Clic en solicitar cotización
 - **WHEN** el usuario presiona "Solicitar Cotización vía WhatsApp"
 - **THEN** se abre la aplicación de WhatsApp con el mensaje estructurado y exacto de los productos agregados
+
+### Requirement: Navegación Interactiva desde Bolsa Vacía al Catálogo
+Cuando la bolsa de pedidos se encuentre vacía, el contenedor y mensaje informativo ("Tu bolsa está vacía...") SHALL ser completamente interactivos y permitir al usuario cerrar el drawer y navegar directamente a la sección de productos del catálogo.
+
+#### Scenario: Clic en estado de bolsa vacía
+- **GIVEN** que el usuario abre el drawer sin tener productos añadidos
+- **WHEN** presiona la tarjeta del estado vacío o el botón "Ver Catálogo de Productos"
+- **THEN** el drawer se cierra de inmediato y el scroll traslada suavemente la pantalla hasta la sección `#productos`
+
+### Requirement: Experiencia de Tienda Móvil a Pantalla Completa
+En dispositivos con resolución móvil (`< 640px`), el drawer de la tienda SHALL ocupar el 100% del ancho del viewport (`w-full`) sin márgenes residuales y adaptar su barra inferior de checkout con padding seguro (`pb-safe`) para pantallas con gestos táctiles.
+
+#### Scenario: Apertura de la bolsa en smartphone
+- **WHEN** el usuario abre el drawer de la bolsa en un teléfono móvil
+- **THEN** el panel cubre el ancho completo de la pantalla y la barra de checkout se sitúa en la parte inferior accesible para el pulgar
+

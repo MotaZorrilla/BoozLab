@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, X, Trash2, Plus, Minus, MessageCircle, Building, User, Hospital, Truck } from 'lucide-react';
+import { ShoppingBag, X, Trash2, Plus, Minus, MessageCircle, Building, User, Hospital, Truck, Sparkles } from 'lucide-react';
 import type { CartItem } from '@/types';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 
@@ -33,6 +33,21 @@ export default function StoreCartDrawer({
 
     const totalUnits = items.reduce((acc, item) => acc + item.quantity, 0);
 
+    const handleNavigateToProducts = () => {
+        onClose();
+        if (typeof window !== 'undefined') {
+            if (window.location.pathname === '/') {
+                const target = document.getElementById('productos');
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    window.history.pushState(null, '', '#productos');
+                    return;
+                }
+            }
+            window.location.href = '/#productos';
+        }
+    };
+
     const generateWhatsAppOrderUrl = () => {
         let text = `${cartHeader}\n\n`;
         text += `🏛️ *Tipo de Solicitante:* ${customerType}\n`;
@@ -55,7 +70,7 @@ export default function StoreCartDrawer({
         });
 
         text += `${cartFooter}`;
-        return createWhatsAppUrl(text);
+        return createWhatsAppUrl(text, 'sales');
     };
 
     const handleCheckout = async () => {
@@ -97,8 +112,8 @@ export default function StoreCartDrawer({
                 aria-label="Cerrar bolsa de pedidos"
             />
 
-            <div className="fixed inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
-                <div className="w-screen max-w-md bg-white dark:bg-[#0A1124] text-slate-900 dark:text-slate-100 shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-800 transition-colors duration-300">
+            <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
+                <div className="w-screen max-w-full sm:max-w-md bg-white dark:bg-[#0A1124] text-slate-900 dark:text-slate-100 shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-800 transition-colors duration-300">
                     {/* Drawer Header */}
                     <div className="px-6 py-5 bg-[#002072] text-white flex items-center justify-between shadow-md">
                         <div className="flex items-center gap-3">
@@ -124,16 +139,32 @@ export default function StoreCartDrawer({
                     {/* Drawer Body: Items List */}
                     <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5">
                         {items.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400">
-                                <div className="h-16 w-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4 text-slate-400">
-                                    <ShoppingBag className="h-8 w-8" />
+                            <div
+                                onClick={handleNavigateToProducts}
+                                className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 cursor-pointer group rounded-3xl hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-all"
+                                title="Presiona para ir al catálogo de productos"
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        handleNavigateToProducts();
+                                    }
+                                }}
+                            >
+                                <div className="h-20 w-20 rounded-2xl bg-blue-50 dark:bg-slate-800/80 text-[#002072] dark:text-cyan-400 flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:bg-blue-100 dark:group-hover:bg-slate-700 shadow-sm">
+                                    <ShoppingBag className="h-10 w-10" />
                                 </div>
-                                <h4 className="font-bold text-slate-700 dark:text-slate-200 text-sm mb-1">
+                                <h4 className="font-bold text-slate-800 dark:text-slate-100 text-base mb-1.5 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors">
                                     Tu bolsa está vacía
                                 </h4>
-                                <p className="text-xs max-w-xs text-slate-400">
+                                <p className="text-xs max-w-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-5">
                                     Explora el vademécum de Booz Laboratorio y añade formulaciones a tu cotización directa.
                                 </p>
+                                <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#002072] dark:bg-blue-600 group-hover:bg-blue-800 dark:group-hover:bg-blue-500 text-white text-xs font-bold shadow-md shadow-blue-900/20 transition-all active:scale-95">
+                                    <Sparkles className="h-4 w-4 text-cyan-300" />
+                                    <span>Ver Catálogo de Productos</span>
+                                </span>
                             </div>
                         ) : (
                             items.map(({ product, quantity }) => (

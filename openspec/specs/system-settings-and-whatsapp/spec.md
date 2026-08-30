@@ -33,3 +33,11 @@ El sistema SHALL permitir configurar desde `/admin/settings` el encabezado, pie 
 - **WHEN** el Super Administrador modifica la plantilla de pedido en Ajustes
 - **THEN** la bolsa de pedidos pública (`store-cart-drawer.tsx`) genera los nuevos pedidos utilizando la cabecera y perfiles personalizados
 
+### Requirement: Segmentación Multicanal de Líneas Telefónicas y Redes Oficiales
+El sistema SHALL permitir configurar de forma independiente o compartida tres canales telefónicos: WhatsApp de Atención General (botón flotante), WhatsApp de Ventas (bolsa de pedidos) y Central Telefónica de Planta (footer oficial y llamadas directas), sincronizándolos reactivamente y mostrando en el pie de página las redes sociales corporativas unificadas bajo el identificador `@booz.laboratorio`.
+
+#### Scenario: Configuración de números diferenciados para soporte y ventas
+- **WHEN** el administrador define un número para WhatsApp de atención y otro para WhatsApp de ventas
+- **THEN** el botón flotante y el pie de página canalizan hacia la línea de atención, mientras que el despacho de cotizaciones desde la bolsa de pedidos se remite a la línea de ventas institucional
+
+

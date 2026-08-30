@@ -51,3 +51,18 @@ El sistema SHALL proveer una sección dedicada (`activeTab === 'editor'`) en `/a
 - **WHEN** el administrador modifica los textos clínicos o fotografía de un fármaco desde el editor integral
 - **THEN** los cambios se persisten en la base de datos y se reflejan inmediatamente en la landing page pública con botón de previsualización directa
 
+### Requirement: Compra Directa desde Ficha Médica de Producto (PDP)
+La ficha médica detallada (`/producto/{slug}`) SHALL disponer de botones interactivos para agregar el fármaco directamente a la bolsa de pedidos sin necesidad de regresar a la página de inicio.
+
+#### Scenario: Añadir producto a la bolsa desde su ficha técnica
+- **WHEN** el visitante presiona el botón "Añadir a la Bolsa de Pedidos" en la tarjeta comercial o en la columna lateral de la ficha
+- **THEN** el sistema despacha el evento `booz:add-to-cart` con el producto activo, persiste la unidad en `localStorage` y despliega automáticamente el drawer de la tienda
+
+### Requirement: Ficha Técnica & Vademécum Oficial Imprimible en PDF
+Cada medicamento activo SHALL contar con una vista técnica imprimible pública accesible bajo `/producto/{slug}/vademecum` que formatea todos los atributos clínicos del fármaco en una plantilla de alta fidelidad para impresión y exportación PDF bajo el formato azul corporativo Booz (`#002072`).
+
+#### Scenario: Generación y descarga de Vademécum en PDF
+- **WHEN** un profesional sanitario o paciente presiona el botón "Vademécum PDF" en la ficha técnica
+- **THEN** se abre la vista imprimible con fotografía del envase, especificaciones completas, advertencias, protocolo INH Rafael Rangel y botón de impresión directa `window.print()`
+
+

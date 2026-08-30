@@ -9,6 +9,8 @@ import AppLayout from '@/layouts/app-layout';
 interface SettingsProps {
     settings: {
         whatsapp_sales_phone: string;
+        whatsapp_contact_phone?: string;
+        company_phone?: string;
         whatsapp_default_message: string;
         whatsapp_cart_header: string;
         whatsapp_cart_footer: string;
@@ -22,6 +24,8 @@ interface SettingsProps {
 export default function AdminSettings({ settings }: SettingsProps) {
     const { data, setData, put, processing, errors, recentlySuccessful } = useForm({
         whatsapp_sales_phone: settings.whatsapp_sales_phone || '584148873615',
+        whatsapp_contact_phone: settings.whatsapp_contact_phone || settings.whatsapp_sales_phone || '584148873615',
+        company_phone: settings.company_phone || settings.whatsapp_sales_phone || '584148873615',
         whatsapp_default_message: settings.whatsapp_default_message || 'Hola Booz Laboratorio, deseo cotizar productos farmacéuticos.',
         whatsapp_cart_header: settings.whatsapp_cart_header || '*HOLA BOOZ LABORATORIO* 🔬\nDeseo solicitar cotización y disponibilidad para el siguiente pedido:',
         whatsapp_cart_footer: settings.whatsapp_cart_footer || '_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega oficial._',
@@ -36,8 +40,10 @@ export default function AdminSettings({ settings }: SettingsProps) {
         put('/admin/settings');
     };
 
-    const cleanPhone = data.whatsapp_sales_phone.replace(/\D/g, '');
-    const previewGeneralUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(data.whatsapp_default_message)}`;
+    const cleanContactPhone = data.whatsapp_contact_phone.replace(/\D/g, '');
+    const cleanSalesPhone = data.whatsapp_sales_phone.replace(/\D/g, '');
+    const previewGeneralUrl = `https://wa.me/${cleanContactPhone}?text=${encodeURIComponent(data.whatsapp_default_message)}`;
+    const previewSalesUrl = `https://wa.me/${cleanSalesPhone}?text=${encodeURIComponent('Hola Booz Laboratorio, deseo cotización de pedido')}`;
 
     // Vista previa dinámica del mensaje de la bolsa de pedidos
     const previewCartMessage = useMemo(() => {
@@ -68,7 +74,7 @@ ${data.whatsapp_cart_footer}`;
         <AppLayout breadcrumbs={[{ title: 'Panel Administrativo Booz', href: '/dashboard' }, { title: 'Ajustes & WhatsApp', href: '/admin/settings' }]}>
             <Head title="Ajustes Generales y WhatsApp | Booz Laboratorio" />
 
-            <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
+            <div className="p-3 sm:p-6 lg:p-8 max-w-5xl 2xl:max-w-6xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
                     <div>
@@ -96,65 +102,130 @@ ${data.whatsapp_cart_footer}`;
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Tarjeta 1: WhatsApp Comercial General */}
+                    {/* Tarjeta 1: Canales Telefónicos y WhatsApp Multi-Departamento */}
                     <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-                        <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">
-                            <Phone className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                            <span>Canal Oficial de WhatsApp para Cotizaciones y Atención</span>
+                        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                            <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                                <Phone className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                                <span>Canales Oficiales de Telefonía y WhatsApp</span>
+                            </div>
+                            <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                                3 Canales Configurables
+                            </span>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-                                    Número Telefónico de WhatsApp (Código de País + Número)
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                            Puedes configurar líneas telefónicas separadas para cada departamento o registrar el mismo número en todos los campos según la logística de tu laboratorio.
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Canal 1: WhatsApp Atención General */}
+                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
+                                <span className="block text-[11px] font-bold text-[#002072] dark:text-cyan-400 uppercase tracking-wider">
+                                    1. Atención y Botón Flotante
+                                </span>
+                                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                                    WhatsApp General
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.whatsapp_contact_phone}
+                                    onChange={(e) => setData('whatsapp_contact_phone', e.target.value)}
+                                    placeholder="584148873615"
+                                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs py-2 px-3 focus:ring-2 focus:ring-blue-600 outline-none transition-colors font-mono"
+                                />
+                                <p className="text-[10px] text-slate-400">
+                                    Abre chats desde el botón flotante y consultas generales.
+                                </p>
+                            </div>
+
+                            {/* Canal 2: WhatsApp Tienda / Pedidos */}
+                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
+                                <span className="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                                    2. Ventas y Pedidos
+                                </span>
+                                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                                    WhatsApp Tienda Virtual
                                 </label>
                                 <input
                                     type="text"
                                     value={data.whatsapp_sales_phone}
                                     onChange={(e) => setData('whatsapp_sales_phone', e.target.value)}
                                     placeholder="584148873615"
-                                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs py-2.5 px-3 focus:ring-2 focus:ring-blue-600 outline-none transition-colors"
+                                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs py-2 px-3 focus:ring-2 focus:ring-blue-600 outline-none transition-colors font-mono"
                                 />
-                                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                                    Ejemplo para Venezuela: <strong>584148873615</strong>. Se eliminan automáticamente símbolos o espacios.
+                                <p className="text-[10px] text-slate-400">
+                                    Recibe los pedidos y cotizaciones desde la bolsa de compras.
                                 </p>
-                                {errors.whatsapp_sales_phone && (
-                                    <p className="text-red-600 dark:text-red-400 text-xs mt-1 font-semibold">{errors.whatsapp_sales_phone}</p>
-                                )}
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-                                    Mensaje General de Bienvenida (Botón Flotante y Footer)
+                            {/* Canal 3: Central Planta */}
+                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
+                                <span className="block text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                                    3. Central Telefónica
+                                </span>
+                                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                                    Llamadas de Planta
                                 </label>
-                                <textarea
-                                    rows={2}
-                                    value={data.whatsapp_default_message}
-                                    onChange={(e) => setData('whatsapp_default_message', e.target.value)}
-                                    placeholder="Hola Booz Laboratorio, deseo cotizar productos farmacéuticos."
-                                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs p-2.5 focus:ring-2 focus:ring-blue-600 outline-none transition-colors"
+                                <input
+                                    type="text"
+                                    value={data.company_phone}
+                                    onChange={(e) => setData('company_phone', e.target.value)}
+                                    placeholder="584148873615"
+                                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs py-2 px-3 focus:ring-2 focus:ring-blue-600 outline-none transition-colors font-mono"
                                 />
-                                {errors.whatsapp_default_message && (
-                                    <p className="text-red-600 dark:text-red-400 text-xs mt-1 font-semibold">{errors.whatsapp_default_message}</p>
-                                )}
+                                <p className="text-[10px] text-slate-400">
+                                    Número institucional visible en el footer oficial.
+                                </p>
                             </div>
                         </div>
 
-                        {/* Previsualización en vivo del enlace general */}
-                        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
-                            <div className="text-xs">
-                                <span className="font-bold text-slate-700 dark:text-slate-300">Enlace directo generado: </span>
-                                <code className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono break-all">{previewGeneralUrl}</code>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                                Mensaje General de Bienvenida (Botón Flotante y Footer)
+                            </label>
+                            <textarea
+                                rows={2}
+                                value={data.whatsapp_default_message}
+                                onChange={(e) => setData('whatsapp_default_message', e.target.value)}
+                                placeholder="Hola Booz Laboratorio, deseo cotizar productos farmacéuticos."
+                                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs p-2.5 focus:ring-2 focus:ring-blue-600 outline-none transition-colors"
+                            />
+                        </div>
+
+                        {/* Previsualizaciones en vivo */}
+                        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
+                            <div className="flex items-center justify-between text-xs">
+                                <div>
+                                    <span className="font-bold text-slate-700 dark:text-slate-300">WhatsApp Atención: </span>
+                                    <code className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono">+{cleanContactPhone}</code>
+                                </div>
+                                <a
+                                    href={previewGeneralUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition-all shrink-0"
+                                >
+                                    <ExternalLink className="h-3 w-3" />
+                                    <span>Probar</span>
+                                </a>
                             </div>
-                            <a
-                                href={previewGeneralUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shrink-0"
-                            >
-                                <ExternalLink className="h-3.5 w-3.5" />
-                                <span>Probar Enlace WhatsApp</span>
-                            </a>
+
+                            <div className="flex items-center justify-between text-xs">
+                                <div>
+                                    <span className="font-bold text-slate-700 dark:text-slate-300">WhatsApp Ventas: </span>
+                                    <code className="text-[11px] text-blue-600 dark:text-cyan-400 font-mono">+{cleanSalesPhone}</code>
+                                </div>
+                                <a
+                                    href={previewSalesUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-bold transition-all shrink-0"
+                                >
+                                    <ExternalLink className="h-3 w-3" />
+                                    <span>Probar</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
 

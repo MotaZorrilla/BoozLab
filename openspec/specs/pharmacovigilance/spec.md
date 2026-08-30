@@ -29,3 +29,19 @@ El panel administrativo `/dashboard` SHALL proporcionar una bandeja para que la 
 #### Scenario: Cambio de estado de reporte
 - **WHEN** un administrador autorizado actualiza el estado y añade notas
 - **THEN** el reporte actualiza sus campos en base de datos conservando la trazabilidad
+
+### Requirement: Soporte Completo de Modo Oscuro en Farmacovigilancia
+La vista oficial `/farmacovigilancia` SHALL soportar al 100% el tema oscuro del sistema mediante clases `dark:` de Tailwind, adaptando el fondo general (`dark:bg-[#070C18]`), tarjeta de formulario (`dark:bg-[#0D172E]`), aviso sanitario del INH, selectores, campos de texto y modal de confirmación de ticket.
+
+#### Scenario: Visualización del canal de farmacovigilancia en modo oscuro
+- **GIVEN** que el usuario tiene activado el Modo Oscuro
+- **WHEN** navega al formulario de reporte en `/farmacovigilancia`
+- **THEN** todos los componentes se adaptan armónicamente sin fondos blancos discordantes garantizando contraste clínico WCAG
+
+### Requirement: Impresión de Acta Oficial Sanitaria INH
+El sistema SHALL permitir imprimir o exportar a PDF el acta oficial sanitaria de cualquier reporte registrado bajo la ruta `/admin/reports/{report}/print` con membrete corporativo, firmas de regencia técnica y protocolo INH.
+
+#### Scenario: Impresión de acta oficial sanitaria
+- **WHEN** un usuario con permisos autorizados presiona "Imprimir Acta" en el panel de reportes
+- **THEN** se renderiza la vista `reports.acta-sanitaria` en formato azul corporativo lista para ser enviada a la impresora o guardada en PDF
+

@@ -1,6 +1,6 @@
 import { Head, useForm, router } from '@inertiajs/react';
 import { Users, UserPlus, Shield, ShieldCheck, Key, Trash2, Edit3, CheckCircle2, AlertTriangle } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '@/components/modal';
 import AppLayout from '@/layouts/app-layout';
 
@@ -32,6 +32,15 @@ export default function AdminUsers({ users, roles, currentUserId }: UsersProps) 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<UserItem | null>(null);
     const [deletingUser, setDeletingUser] = useState<UserItem | null>(null);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('create') === '1') {
+                setIsCreateOpen(true);
+            }
+        }
+    }, []);
 
     // Formulario de creación
     const createForm = useForm({
@@ -112,7 +121,7 @@ export default function AdminUsers({ users, roles, currentUserId }: UsersProps) 
         <AppLayout breadcrumbs={[{ title: 'Panel Administrativo Booz', href: '/dashboard' }, { title: 'Usuarios & Roles', href: '/admin/users' }]}>
             <Head title="Control de Usuarios y Roles | Booz Laboratorio" />
 
-            <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
+            <div className="p-3 sm:p-6 lg:p-8 max-w-7xl 2xl:max-w-[1600px] 3xl:max-w-[1880px] mx-auto space-y-6">
                 {/* Cabecera */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
                     <div className="flex items-center gap-2.5">

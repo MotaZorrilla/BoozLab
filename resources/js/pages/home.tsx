@@ -6,12 +6,15 @@ import {
     ArrowRight,
     MessageCircle,
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
     Microscope,
     ShoppingBag,
     Send,
+    LayoutGrid,
+    SlidersHorizontal,
 } from 'lucide-react';
-import React, { useState, useMemo, useEffect } from 'react';
-import LiraAssistantModal from '@/components/lira-assistant-modal';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import SearchModal from '@/components/search-modal';
 import BoozLayout from '@/layouts/booz-layout';
 import type { Product, ProductLine, Testimonial, Faq } from '@/types';
@@ -30,9 +33,37 @@ export default function Home({
     faqs = [],
 }: HomeProps) {
     const [selectedLineId, setSelectedLineId] = useState<number | null>(null);
+    const [isFadingCategory, setIsFadingCategory] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [openFaqId, setOpenFaqId] = useState<number | null>(null);
-    const [isLiraOpen, setIsLiraOpen] = useState(false);
+
+    // Transición suave animada al alternar líneas terapéuticas o necesidades
+    const handleSelectCategory = (lineId: number | null) => {
+        if (lineId === selectedLineId && !isFadingCategory) return;
+        setIsFadingCategory(true);
+        setTimeout(() => {
+            setSelectedLineId(lineId);
+            setIsFadingCategory(false);
+        }, 220);
+    };
+
+    const handleSelectNeed = (needName: string) => {
+        setIsFadingCategory(true);
+        setTimeout(() => {
+            setSelectedNeed((prev) => (prev === needName ? null : needName));
+            setIsFadingCategory(false);
+        }, 220);
+        const el = document.getElementById('productos');
+        el?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const handleClearNeed = () => {
+        setIsFadingCategory(true);
+        setTimeout(() => {
+            setSelectedNeed(null);
+            setIsFadingCategory(false);
+        }, 220);
+    };
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [selectedNeed, setSelectedNeed] = useState<string | null>(null);
     const [scrollY, setScrollY] = useState(0);
@@ -114,6 +145,179 @@ export default function Home({
             return matchesLine && matchesSearch && matchesNeed;
         });
     }, [products, selectedLineId, searchQuery, selectedNeed]);
+
+    // Detección responsive para configuración del carrusel con peek y 4K Ultra-Wide
+    const [viewportMode, setViewportMode] = useState<'mobile' | 'tablet' | 'desktop' | 'ultrawide'>('desktop');
+    // Vista de catálogo para modo teléfono: 'grid' (Tienda Virtual App 100% ancho) o 'carousel' (Carrusel 3D)
+    const [mobileCatalogView, setMobileCatalogView] = useState<'grid' | 'carousel'>('grid');
+
+    useEffect(() => {
+        const updateViewport = () => {
+            const w = window.innerWidth;
+            if (w >= 1920) {
+                setViewportMode('ultrawide');
+            } else if (w >= 1024) {
+                setViewportMode('desktop');
+            } else if (w >= 640) {
+                setViewportMode('tablet');
+            } else {
+                setViewportMode('mobile');
+            }
+        };
+        updateViewport();
+        window.addEventListener('resize', updateViewport);
+        return () => window.removeEventListener('resize', updateViewport);
+    }, []);
+
+    // Base de productos para carrusel con repetición mínima para bucle infinito perfecto
+    const baseCarouselProducts = useMemo(() => {
+        if (filteredProducts.length === 0) return [];
+        let list = [...filteredProducts];
+        while (list.length < 8) {
+            list = [...list, ...filteredProducts];
+        }
+        return list;
+    }, [filteredProducts]);
+
+    // Buffer de 3 copias para bucle continuo infinito: [Copia 1, Copia 2 (activa), Copia 3]
+    const clonedCarouselProducts = useMemo(() => {
+        if (baseCarouselProducts.length === 0) return [];
+        return [
+            ...baseCarouselProducts,
+            ...baseCarouselProducts,
+            ...baseCarouselProducts,
+        ];
+    }, [baseCarouselProducts]);
+
+    // Estado del carrusel infinito
+    const [carouselIndex, setCarouselIndex] = useState(0);
+    const [isCarouselSliding, setIsCarouselSliding] = useState(false);
+
+    // Inicializar o reiniciar índice al inicio de la segunda copia
+    useEffect(() => {
+        if (baseCarouselProducts.length > 0) {
+            setIsCarouselSliding(false);
+            setCarouselIndex(baseCarouselProducts.length);
+        } else {
+            setCarouselIndex(0);
+        }
+    }, [baseCarouselProducts]);
+
+    // Configuración del carrusel según viewport:
+    // Ultrawide/4K: 4 tarjetas visibles completas + peek suave
+    // Desktop: 3 tarjetas visibles completas + peek lateral izquierdo y derecho
+    // Tablet: 2 tarjetas visibles completas + peek lateral izquierdo y derecho
+    // Mobile: 1 tarjeta central enfocada + peek lateral izquierdo y derecho
+    const carouselConfig = useMemo(() => {
+        if (viewportMode === 'ultrawide') {
+            return {
+                cardWidthPercent: 21.5,
+                gapPercent: 1.5,
+                offsetPercent: 4,
+                stepPercent: 23, // 21.5 + 1.5
+            };
+        }
+        if (viewportMode === 'desktop') {
+            return {
+                cardWidthPercent: 27,
+                gapPercent: 2,
+                offsetPercent: 7.5,
+                stepPercent: 29, // 27 + 2
+            };
+        }
+        if (viewportMode === 'tablet') {
+            return {
+                cardWidthPercent: 42,
+                gapPercent: 3,
+                offsetPercent: 6.5,
+                stepPercent: 45, // 42 + 3
+            };
+        }
+        return {
+            cardWidthPercent: 74,
+            gapPercent: 4,
+            offsetPercent: 13,
+            stepPercent: 78, // 74 + 4
+        };
+    }, [viewportMode]);
+
+    // Desplazamiento acumulado en translateX
+    const trackTranslateX = useMemo(() => {
+        return (
+            carouselConfig.offsetPercent -
+            carouselIndex * carouselConfig.stepPercent
+        );
+    }, [carouselIndex, carouselConfig]);
+
+    // Navegación: Siguiente
+    const handleNextProduct = useCallback(() => {
+        if (baseCarouselProducts.length <= 1) return;
+        setIsCarouselSliding(true);
+        setCarouselIndex((prev) => prev + 1);
+    }, [baseCarouselProducts.length]);
+
+    // Navegación: Anterior
+    const handlePrevProduct = useCallback(() => {
+        if (baseCarouselProducts.length <= 1) return;
+        setIsCarouselSliding(true);
+        setCarouselIndex((prev) => prev - 1);
+    }, [baseCarouselProducts.length]);
+
+    // Fin de transición: reposicionamiento transparente sin animación para bucle infinito
+    const handleCarouselTransitionEnd = () => {
+        setIsCarouselSliding(false);
+        const M = baseCarouselProducts.length;
+        if (M === 0) return;
+        if (carouselIndex >= 2 * M) {
+            setCarouselIndex((prev) => prev - M);
+        } else if (carouselIndex < M) {
+            setCarouselIndex((prev) => prev + M);
+        }
+    };
+
+    // Salto directo a un producto desde los indicadores / dots
+    const handleJumpToProduct = (realIdx: number) => {
+        if (filteredProducts.length === 0 || baseCarouselProducts.length === 0) return;
+        const M = baseCarouselProducts.length;
+        const target = M + (realIdx % M);
+        setIsCarouselSliding(true);
+        setCarouselIndex(target);
+    };
+
+    // Soporte de gestos táctiles (swipe) para celulares y tablets
+    const touchStartX = useRef<number | null>(null);
+    const touchDeltaX = useRef<number>(0);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartX.current = e.touches[0].clientX;
+        touchDeltaX.current = 0;
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (touchStartX.current !== null) {
+            touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+        }
+    };
+
+    const handleTouchEnd = () => {
+        if (Math.abs(touchDeltaX.current) > 35) {
+            if (touchDeltaX.current < 0) {
+                handleNextProduct();
+            } else {
+                handlePrevProduct();
+            }
+        }
+        touchStartX.current = null;
+        touchDeltaX.current = 0;
+    };
+
+    // Índice real activo para dots e indicadores de progreso
+    const activeRealProductIndex = useMemo(() => {
+        if (filteredProducts.length === 0 || baseCarouselProducts.length === 0) return 0;
+        const M = baseCarouselProducts.length;
+        const normalized = ((carouselIndex % M) + M) % M;
+        return normalized % filteredProducts.length;
+    }, [carouselIndex, baseCarouselProducts.length, filteredProducts.length]);
 
     const toggleFaq = (id: number) => {
         setOpenFaqId((prev) => (prev === id ? null : id));
@@ -220,7 +424,7 @@ export default function Home({
                 className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-b from-white via-slate-50 to-blue-50/40 py-10 transition-colors duration-300 sm:py-16 lg:py-20 dark:border-slate-800 dark:from-[#0A1124] dark:via-[#070C18] dark:to-[#0A1124]"
                 id="hero"
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
                     <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
                         {/* Hero Text */}
                         <div className="space-y-4 text-center sm:space-y-6 lg:col-span-7 lg:text-left">
@@ -335,7 +539,7 @@ export default function Home({
                 className="bg-white py-12 transition-colors duration-300 sm:py-16 dark:bg-[#0A1124]"
                 id="lineas"
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
                     <div className="mx-auto mb-10 max-w-3xl space-y-2 text-center sm:mb-14">
                         <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
                             Especialización Terapéutica
@@ -361,7 +565,7 @@ export default function Home({
                                 <div
                                     key={line.id}
                                     onClick={() => {
-                                        setSelectedLineId(
+                                        handleSelectCategory(
                                             isSelected ? null : line.id,
                                         );
                                         const el =
@@ -429,7 +633,7 @@ export default function Home({
                 3. BENTO GRID INTERACTIVO (Lira Animado en Bucle)
             ======================================================== */}
             <section className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-16 dark:border-slate-800 dark:bg-[#070C18]">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
                     <div className="grid grid-cols-1 items-stretch gap-6 sm:gap-8 lg:grid-cols-12">
                         {/* Columna 1: ¿Qué necesitas? Selector de necesidad */}
                         <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-colors sm:rounded-3xl sm:p-8 lg:col-span-4 dark:border-slate-800 dark:bg-[#0D172E]">
@@ -452,20 +656,9 @@ export default function Home({
                                     ].map((need) => (
                                         <button
                                             key={need.name}
-                                            onClick={() => {
-                                                setSelectedNeed(
-                                                    selectedNeed === need.name
-                                                        ? null
-                                                        : need.name,
-                                                );
-                                                const el =
-                                                    document.getElementById(
-                                                        'productos',
-                                                    );
-                                                el?.scrollIntoView({
-                                                    behavior: 'smooth',
-                                                });
-                                            }}
+                                            onClick={() =>
+                                                handleSelectNeed(need.name)
+                                            }
                                             className={`flex cursor-pointer items-center gap-2 rounded-xl border p-2.5 text-xs font-bold transition-all sm:p-3 ${
                                                 selectedNeed === need.name
                                                     ? 'border-[#002072] bg-[#002072] text-white shadow-md'
@@ -485,7 +678,7 @@ export default function Home({
 
                             {selectedNeed && (
                                 <button
-                                    onClick={() => setSelectedNeed(null)}
+                                    onClick={handleClearNeed}
                                     className="mt-4 cursor-pointer text-xs font-bold text-blue-600 underline dark:text-cyan-400"
                                 >
                                     Limpiar filtro ✕
@@ -522,7 +715,7 @@ export default function Home({
                                     Booz Laboratorio.
                                 </p>
                                 <button
-                                    onClick={() => setIsLiraOpen(true)}
+                                    onClick={() => window.dispatchEvent(new CustomEvent('booz:open-lira'))}
                                     className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 sm:px-5 sm:py-2.5"
                                 >
                                     <img
@@ -573,7 +766,7 @@ export default function Home({
                 className="bg-white py-12 transition-colors duration-300 sm:py-20 dark:bg-[#0A1124]"
                 id="productos"
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
                     {/* Header del Catálogo */}
                     <div className="mb-6 flex flex-col justify-between gap-4 sm:mb-8 md:flex-row md:items-end">
                         <div>
@@ -602,11 +795,39 @@ export default function Home({
                         </div>
                     </div>
 
+                    {/* Selector de Vista Táctil para Teléfonos: Tienda Virtual App (100% Ancho) vs Carrusel 3D */}
+                    <div className="flex sm:hidden items-center justify-between gap-1 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl mb-4 border border-slate-200/60 dark:border-slate-700">
+                        <button
+                            type="button"
+                            onClick={() => setMobileCatalogView('grid')}
+                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[38px] ${
+                                mobileCatalogView === 'grid'
+                                    ? 'bg-[#002072] text-white shadow-sm dark:bg-blue-600'
+                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                            }`}
+                        >
+                            <LayoutGrid className="h-3.5 w-3.5" />
+                            <span>Tienda Virtual (App)</span>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setMobileCatalogView('carousel')}
+                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[38px] ${
+                                mobileCatalogView === 'carousel'
+                                    ? 'bg-[#002072] text-white shadow-sm dark:bg-blue-600'
+                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                            }`}
+                        >
+                            <SlidersHorizontal className="h-3.5 w-3.5" />
+                            <span>Carrusel 3D</span>
+                        </button>
+                    </div>
+
                     {/* Botones de Selección por Sección / Línea Terapéutica con Scroll Horizontal Móvil */}
                     <div className="mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 pt-1 border-b border-slate-100 dark:border-slate-800">
                         {/* Botón: Todos los Productos */}
                         <button
-                            onClick={() => setSelectedLineId(null)}
+                            onClick={() => handleSelectCategory(null)}
                             className={`flex-shrink-0 flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all min-h-[38px] ${
                                 selectedLineId === null
                                     ? 'bg-[#002072] text-white shadow-md shadow-blue-900/20'
@@ -638,7 +859,7 @@ export default function Home({
                                 <button
                                     key={line.id}
                                     onClick={() =>
-                                        setSelectedLineId(
+                                        handleSelectCategory(
                                             isSelected ? null : line.id,
                                         )
                                     }
@@ -694,7 +915,7 @@ export default function Home({
                                 </div>
                             </div>
                             <button
-                                onClick={() => setSelectedLineId(null)}
+                                onClick={() => handleSelectCategory(null)}
                                 className="flex-shrink-0 cursor-pointer text-[11px] font-bold text-blue-600 hover:underline dark:text-cyan-400"
                             >
                                 Ver todas las líneas ✕
@@ -702,109 +923,277 @@ export default function Home({
                         </div>
                     )}
 
-                    {/* Products Grid: 2 COLUMNAS EN CELULAR (Mobile First) */}
-                    <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-                        {filteredProducts.map((product) => {
-                            const whatsappUrl = `https://wa.me/584148873615?text=${encodeURIComponent(
-                                `Hola Booz Laboratorio, deseo consultar sobre ${product.name} (${product.presentation})`,
-                            )}`;
-
-                            return (
-                                <div
-                                    key={product.id}
-                                    className="group flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-3 transition-all duration-300 hover:border-blue-300 hover:shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500/50"
+                    {/* Contenedor con Transición Suave entre Categorías */}
+                    <div
+                        className={`transition-all duration-300 ease-out transform ${
+                            isFadingCategory
+                                ? 'opacity-0 translate-y-2 scale-[0.98] blur-[0.5px]'
+                                : 'opacity-100 translate-y-0 scale-100 blur-0'
+                        }`}
+                    >
+                        {filteredProducts.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 py-16 text-center dark:border-slate-800">
+                                <span className="mb-3 text-4xl">🔍</span>
+                                <h3 className="text-base font-bold text-slate-800 dark:text-white">
+                                    No se encontraron medicamentos
+                                </h3>
+                                <p className="mt-1 max-w-sm text-xs text-slate-500 dark:text-slate-400">
+                                    No hay productos que coincidan con la búsqueda o línea seleccionada.
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setSearchQuery('');
+                                        handleSelectCategory(null);
+                                    }}
+                                    className="mt-4 cursor-pointer rounded-xl bg-[#002072] px-4 py-2 text-xs font-bold text-white transition-all hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500"
                                 >
-                                    <div>
-                                        {/* Product Image & Badges */}
-                                        <div className="relative mb-2.5 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-2 transition-colors group-hover:bg-blue-50/50 sm:mb-4 sm:rounded-2xl sm:p-4 dark:bg-slate-800/60 dark:group-hover:bg-slate-800">
-                                            <img
-                                                src={product.image_path}
-                                                alt={product.name}
-                                                className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                                                onError={(e) => {
-                                                    (
-                                                        e.target as HTMLImageElement
-                                                    ).src =
-                                                        '/assets/img/product_1.png';
-                                                }}
-                                            />
-                                            <span className="absolute top-2 left-2 rounded border border-slate-200 bg-white/90 px-1.5 py-0.5 text-[8px] font-bold text-slate-700 shadow-sm sm:text-[10px] dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-300">
-                                                {product.product_line?.name ||
-                                                    'Booz'}
-                                            </span>
-                                            {product.is_prescription_required ? (
-                                                <span className="absolute top-2 right-2 rounded bg-amber-500 px-1.5 py-0.5 text-[7px] font-bold text-white shadow-sm sm:text-[9px]">
-                                                    Récipe
-                                                </span>
-                                            ) : (
-                                                <span className="absolute top-2 right-2 rounded bg-emerald-500 px-1.5 py-0.5 text-[7px] font-bold text-white shadow-sm sm:text-[9px]">
-                                                    Libre
-                                                </span>
-                                            )}
-                                        </div>
+                                    Restablecer filtros
+                                </button>
+                            </div>
+                        ) : (
+                            <div>
+                                {/* VISTA TIENDA VIRTUAL MÓVIL (APP E-COMMERCE 100% ANCHO DE PANTALLA EN TELÉFONOS) */}
+                                {mobileCatalogView === 'grid' && (
+                                    <div className="block sm:hidden grid grid-cols-2 gap-2.5 my-3">
+                                        {filteredProducts.map((product) => (
+                                            <div
+                                                key={`grid-${product.id}`}
+                                                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2.5 shadow-xs transition-all dark:border-slate-800 dark:bg-[#0D172E]"
+                                            >
+                                                <Link href={`/producto/${product.slug}`} className="block">
+                                                    {/* Imagen Cuadrada con Badges */}
+                                                    <div className="relative mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-2 dark:bg-slate-800/60">
+                                                        <img
+                                                            src={product.image_path}
+                                                            alt={product.name}
+                                                            className="h-full w-full object-contain"
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = '/assets/img/product_1.png';
+                                                            }}
+                                                        />
+                                                        <span className="absolute top-1.5 left-1.5 rounded border border-slate-200 bg-white/90 px-1 py-0.5 text-[8px] font-bold text-slate-700 shadow-xs dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-300">
+                                                            {product.product_line?.name || 'Booz'}
+                                                        </span>
+                                                        {product.is_prescription_required ? (
+                                                            <span className="absolute top-1.5 right-1.5 rounded bg-amber-500 px-1 py-0.5 text-[7px] font-bold text-white shadow-xs">
+                                                                Récipe
+                                                            </span>
+                                                        ) : (
+                                                            <span className="absolute top-1.5 right-1.5 rounded bg-emerald-500 px-1 py-0.5 text-[7px] font-bold text-white shadow-xs">
+                                                                Libre
+                                                            </span>
+                                                        )}
+                                                    </div>
 
-                                        {/* Product Details */}
-                                        <h4 className="mb-0.5 line-clamp-1 text-xs font-bold text-slate-900 transition-colors group-hover:text-blue-600 sm:mb-1 sm:text-base dark:text-white dark:group-hover:text-cyan-400">
-                                            {product.name}
-                                        </h4>
+                                                    {/* Información del Fármaco */}
+                                                    <h4 className="line-clamp-1 text-xs font-bold text-slate-900 dark:text-white">
+                                                        {product.name}
+                                                    </h4>
+                                                    <p className="line-clamp-1 text-[10px] font-semibold text-[#002072] dark:text-cyan-400">
+                                                        {product.active_ingredients}
+                                                    </p>
+                                                    <p className="line-clamp-1 text-[10px] text-slate-400 dark:text-slate-500">
+                                                        {product.presentation}
+                                                    </p>
+                                                </Link>
 
-                                        <p className="mb-1 line-clamp-1 text-[10px] font-semibold text-[#002072] sm:mb-2 sm:text-xs dark:text-cyan-400">
-                                            {product.active_ingredients}
-                                        </p>
-
-                                        <p className="mb-2 line-clamp-2 text-[10px] leading-tight text-slate-500 sm:mb-3 sm:text-[11px] sm:leading-relaxed dark:text-slate-400">
-                                            {product.description}
-                                        </p>
+                                                {/* Botón de Añadir a Pedido Fijo al Pie de la Tarjeta */}
+                                                <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-1.5">
+                                                    <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                                                        ${Number(product.price || 0).toFixed(2)}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleAddToCart(product);
+                                                        }}
+                                                        className="flex items-center gap-1 rounded-lg bg-[#002072] px-2 py-1.5 text-[10px] font-bold text-white shadow-xs transition-all hover:bg-blue-800 active:scale-95 min-h-[34px] dark:bg-blue-600"
+                                                        title={`Añadir ${product.name} a la bolsa`}
+                                                        aria-label={`Añadir ${product.name} a la bolsa`}
+                                                    >
+                                                        <ShoppingBag className="h-3 w-3 text-cyan-300" />
+                                                        <span>+ Pedido</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
+                                )}
 
-                                    {/* Action Buttons: Ficha (Full width) + Pedido & WhatsApp (Grid 2 cols con Touch Targets ≥ 36px) */}
-                                    <div className="space-y-2 border-t border-slate-100 pt-2.5 sm:pt-3 dark:border-slate-800">
-                                        <div className="flex items-center justify-between text-[9px] text-slate-400 sm:text-[10px]">
-                                            <span className="truncate">
-                                                {product.presentation}
-                                            </span>
-                                        </div>
+                                {/* Carrusel Infinito con Efecto Peek (Visible en Desktop/Tablet y en Móvil si se elige Carrusel) */}
+                                <div className={mobileCatalogView === 'grid' ? 'hidden sm:block' : 'block'}>
+                                    <div
+                                        className="relative w-full overflow-hidden py-4 -mx-4 px-4 sm:mx-0 sm:px-0"
+                                        onTouchStart={handleTouchStart}
+                                        onTouchMove={handleTouchMove}
+                                        onTouchEnd={handleTouchEnd}
+                                        role="region"
+                                        aria-roledescription="carousel"
+                                        aria-label="Carrusel de catálogo farmacéutico"
+                                    >
+                                    {/* Flecha Izquierda de Navegación */}
+                                    <button
+                                        type="button"
+                                        onClick={handlePrevProduct}
+                                        className="absolute left-1 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 cursor-pointer items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-[#002072] shadow-xl shadow-slate-900/10 backdrop-blur-md transition-all hover:scale-110 hover:bg-white active:scale-95 dark:border-slate-700 dark:bg-slate-900/90 dark:text-cyan-400 dark:hover:bg-slate-800"
+                                        title="Medicamento anterior"
+                                        aria-label="Medicamento anterior"
+                                    >
+                                        <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                                    </button>
 
-                                        {/* Fila 1: Botón Principal Ficha Médica */}
-                                        <Link
-                                            href={`/producto/${product.slug}`}
-                                            className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#002072] px-3 py-2 text-center text-xs font-bold text-white transition-all hover:bg-blue-800 active:scale-[0.98] min-h-[36px] sm:min-h-[40px] dark:bg-blue-600 dark:hover:bg-blue-500 shadow-sm"
-                                            aria-label={`Ver ficha médica completa de ${product.name}`}
-                                        >
-                                            <span>Ficha Técnica</span>
-                                            <ArrowRight className="h-3 w-3" />
-                                        </Link>
+                                    {/* Flecha Derecha de Navegación */}
+                                    <button
+                                        type="button"
+                                        onClick={handleNextProduct}
+                                        className="absolute right-1 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 cursor-pointer items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-[#002072] shadow-xl shadow-slate-900/10 backdrop-blur-md transition-all hover:scale-110 hover:bg-white active:scale-95 dark:border-slate-700 dark:bg-slate-900/90 dark:text-cyan-400 dark:hover:bg-slate-800"
+                                        title="Medicamento siguiente"
+                                        aria-label="Medicamento siguiente"
+                                    >
+                                        <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                                    </button>
 
-                                        {/* Fila 2: Acciones Rápidas (+ Pedido y WhatsApp) */}
-                                        <div className="grid grid-cols-2 gap-1.5">
-                                            <button
-                                                onClick={() =>
-                                                    handleAddToCart(product)
-                                                }
-                                                className="flex cursor-pointer items-center justify-center gap-1 rounded-xl border border-blue-200/80 bg-blue-50/90 px-2 py-2 text-[11px] font-bold text-[#002072] transition-all hover:bg-blue-100 active:scale-[0.97] min-h-[36px] dark:border-slate-700 dark:bg-slate-800 dark:text-cyan-300 dark:hover:bg-slate-700"
-                                                title="Añadir a la bolsa de pedidos"
-                                                aria-label={`Añadir ${product.name} a la bolsa`}
+                                    {/* Pista Dinámica del Carrusel Infinito */}
+                                    <div
+                                        className="flex will-change-transform"
+                                        style={{
+                                            gap: `${carouselConfig.gapPercent}%`,
+                                            transform: `translateX(${trackTranslateX}%)`,
+                                            transition: isCarouselSliding
+                                                ? 'transform 450ms cubic-bezier(0.25, 1, 0.5, 1)'
+                                                : 'none',
+                                        }}
+                                        onTransitionEnd={handleCarouselTransitionEnd}
+                                    >
+                                        {clonedCarouselProducts.map((product, idx) => (
+                                            <div
+                                                key={`${product.id}-${idx}`}
+                                                style={{
+                                                    width: `${carouselConfig.cardWidthPercent}%`,
+                                                    flexShrink: 0,
+                                                }}
+                                                className="py-2"
                                             >
-                                                <ShoppingBag className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-400" />
-                                                <span>+ Pedido</span>
-                                            </button>
+                                                {/* Tarjeta 100% Clickeable hacia la Ficha Técnica */}
+                                                <Link
+                                                    href={`/producto/${product.slug}`}
+                                                    className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-400 hover:shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500/50 dark:hover:shadow-cyan-950/30"
+                                                >
+                                                    {/* Fotografía del Fármaco y Badges */}
+                                                    <div>
+                                                        <div className="relative mb-3 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-2.5 transition-colors group-hover:bg-blue-50/50 sm:mb-4 sm:rounded-2xl sm:p-4 dark:bg-slate-800/60 dark:group-hover:bg-slate-800">
+                                                            <img
+                                                                src={product.image_path}
+                                                                alt={product.name}
+                                                                className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                                                onError={(e) => {
+                                                                    (
+                                                                        e.target as HTMLImageElement
+                                                                    ).src =
+                                                                        '/assets/img/product_1.png';
+                                                                }}
+                                                            />
+                                                            <span className="absolute top-2 left-2 rounded border border-slate-200 bg-white/90 px-1.5 py-0.5 text-[8px] font-bold text-slate-700 shadow-sm sm:text-[10px] dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-300">
+                                                                {product.product_line?.name ||
+                                                                    'Booz'}
+                                                            </span>
+                                                            {product.is_prescription_required ? (
+                                                                <span className="absolute top-2 right-2 rounded bg-amber-500 px-1.5 py-0.5 text-[7px] font-bold text-white shadow-sm sm:text-[9px]">
+                                                                    Récipe
+                                                                </span>
+                                                            ) : (
+                                                                <span className="absolute top-2 right-2 rounded bg-emerald-500 px-1.5 py-0.5 text-[7px] font-bold text-white shadow-sm sm:text-[9px]">
+                                                                    Libre
+                                                                </span>
+                                                            )}
+                                                        </div>
 
-                                            <a
-                                                href={whatsappUrl}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="flex cursor-pointer items-center justify-center gap-1 rounded-xl bg-emerald-600 px-2 py-2 text-[11px] font-bold text-white transition-all hover:bg-emerald-500 active:scale-[0.97] min-h-[36px] shadow-sm shadow-emerald-600/20"
-                                                title={`Consultar ${product.name} por WhatsApp`}
-                                                aria-label={`Consultar ${product.name} por WhatsApp`}
-                                            >
-                                                <MessageCircle className="h-3.5 w-3.5" />
-                                                <span>WhatsApp</span>
-                                            </a>
-                                        </div>
+                                                        {/* Nombre y Fórmula Clínica */}
+                                                        <h4 className="mb-1 line-clamp-1 text-sm font-bold text-slate-900 transition-colors group-hover:text-[#002072] sm:text-base dark:text-white dark:group-hover:text-cyan-400">
+                                                            {product.name}
+                                                        </h4>
+
+                                                        <p className="mb-1 line-clamp-1 text-[11px] font-semibold text-[#002072] dark:text-cyan-400">
+                                                            {product.active_ingredients}
+                                                        </p>
+
+                                                        <p className="mb-2 line-clamp-2 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                                                            {product.description}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Footer de Tarjeta: Presentación, Acceso a Ficha y Botón + Pedido Reubicado */}
+                                                    <div className="mt-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <div className="flex flex-col min-w-0">
+                                                                <span className="truncate text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                                                                    {product.presentation}
+                                                                </span>
+                                                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#002072] transition-colors group-hover:text-blue-600 dark:text-cyan-400">
+                                                                    <span>Ficha Técnica</span>
+                                                                    <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
+                                                                </span>
+                                                            </div>
+
+                                                            {/* Botón + Pedido Reubicado con stopPropagation para no abrir ficha */}
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    handleAddToCart(product);
+                                                                }}
+                                                                className="flex flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-[#002072] px-3 py-2 text-xs font-bold text-white shadow-md shadow-blue-950/20 transition-all hover:bg-blue-800 hover:scale-105 active:scale-95 min-h-[38px] dark:bg-blue-600 dark:hover:bg-blue-500"
+                                                                title={`Añadir ${product.name} a la bolsa de pedidos`}
+                                                                aria-label={`Añadir ${product.name} a la bolsa`}
+                                                            >
+                                                                <ShoppingBag className="h-3.5 w-3.5 text-cyan-300 dark:text-white" />
+                                                                <span>+ Pedido</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            );
-                        })}
+
+                                {/* Indicadores / Dots, Contador de Fármacos y Guía Táctil */}
+                                <div className="mt-6 flex flex-col items-center gap-2 sm:mt-8">
+                                    <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                                        {filteredProducts.map((p, idx) => (
+                                            <button
+                                                key={p.id}
+                                                type="button"
+                                                onClick={() => handleJumpToProduct(idx)}
+                                                className={`h-2 rounded-full cursor-pointer transition-all duration-300 ${
+                                                    idx === activeRealProductIndex
+                                                        ? 'w-7 bg-[#002072] dark:bg-cyan-400'
+                                                        : 'w-2 bg-slate-300 hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600'
+                                                }`}
+                                                title={`Ver ${p.name}`}
+                                                aria-label={`Ir al producto ${idx + 1} de ${filteredProducts.length}: ${p.name}`}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
+                                        <span>
+                                            Producto <strong className="text-slate-700 dark:text-slate-300">{activeRealProductIndex + 1}</strong> de{' '}
+                                            <strong className="text-slate-700 dark:text-slate-300">{filteredProducts.length}</strong>
+                                        </span>
+                                        <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
+                                        <span className="text-[11px] sm:text-xs">
+                                            Desliza o usa las flechas para explorar el vademécum
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     </div>
                 </div>
             </section>
@@ -816,7 +1205,7 @@ export default function Home({
                 className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-20 dark:border-slate-800 dark:bg-[#070C18]"
                 id="conocimiento"
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
                     <div className="grid grid-cols-1 items-center gap-8 sm:gap-12 lg:grid-cols-2">
                         <div className="space-y-4 sm:space-y-6">
                             <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
@@ -889,7 +1278,7 @@ export default function Home({
                 className="bg-white py-12 transition-colors duration-300 sm:py-20 dark:bg-[#0A1124]"
                 id="nosotros"
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
                     <div className="mx-auto mb-10 max-w-2xl space-y-2 text-center sm:mb-16">
                         <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
                             Aval Clínico
@@ -948,7 +1337,7 @@ export default function Home({
                 className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-20 dark:border-slate-800 dark:bg-[#070C18]"
                 id="contacto"
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
                     <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
                         {/* Accordion FAQ */}
                         <div className="space-y-4 lg:col-span-6">
@@ -1208,10 +1597,6 @@ export default function Home({
             <SearchModal
                 isOpen={isSearchOpen}
                 onClose={() => setIsSearchOpen(false)}
-            />
-            <LiraAssistantModal
-                isOpen={isLiraOpen}
-                onClose={() => setIsLiraOpen(false)}
             />
         </BoozLayout>
     );

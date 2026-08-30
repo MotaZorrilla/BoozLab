@@ -17,6 +17,8 @@ class AdminSettingController extends Controller
         return Inertia::render('admin/settings', [
             'settings' => [
                 'whatsapp_sales_phone' => SettingService::whatsappPhone(),
+                'whatsapp_contact_phone' => SettingService::whatsappContactPhone(),
+                'company_phone' => SettingService::companyPhone(),
                 'whatsapp_default_message' => SettingService::whatsappDefaultMessage(),
                 'whatsapp_cart_header' => SettingService::whatsappCartHeader(),
                 'whatsapp_cart_footer' => SettingService::whatsappCartFooter(),
@@ -32,6 +34,8 @@ class AdminSettingController extends Controller
     {
         $validated = $request->validate([
             'whatsapp_sales_phone' => ['required', 'string', 'min:8', 'max:25'],
+            'whatsapp_contact_phone' => ['nullable', 'string', 'min:8', 'max:25'],
+            'company_phone' => ['nullable', 'string', 'min:8', 'max:25'],
             'whatsapp_default_message' => ['required', 'string', 'max:500'],
             'whatsapp_cart_header' => ['required', 'string', 'max:1000'],
             'whatsapp_cart_footer' => ['required', 'string', 'max:1000'],
@@ -42,9 +46,13 @@ class AdminSettingController extends Controller
         ]);
 
         // Clean phone digits for storage
-        $phoneDigits = preg_replace('/\D/', '', $validated['whatsapp_sales_phone']);
+        $salesDigits = preg_replace('/\D/', '', $validated['whatsapp_sales_phone']);
+        $contactDigits = ! empty($validated['whatsapp_contact_phone']) ? preg_replace('/\D/', '', $validated['whatsapp_contact_phone']) : $salesDigits;
+        $companyDigits = ! empty($validated['company_phone']) ? preg_replace('/\D/', '', $validated['company_phone']) : $contactDigits;
 
-        SystemSetting::set('whatsapp_sales_phone', $phoneDigits, 'string', 'whatsapp', 'WhatsApp Comercial Oficial');
+        SystemSetting::set('whatsapp_sales_phone', $salesDigits, 'string', 'whatsapp', 'WhatsApp de Ventas y Tienda Virtual');
+        SystemSetting::set('whatsapp_contact_phone', $contactDigits, 'string', 'whatsapp', 'WhatsApp de Atención y Soporte General');
+        SystemSetting::set('company_phone', $companyDigits, 'string', 'whatsapp', 'Central Telefónica de Planta');
         SystemSetting::set('whatsapp_default_message', $validated['whatsapp_default_message'], 'string', 'whatsapp', 'Mensaje Predeterminado WhatsApp General');
         SystemSetting::set('whatsapp_cart_header', $validated['whatsapp_cart_header'], 'text', 'whatsapp', 'Encabezado del Pedido en Bolsa de Tienda');
         SystemSetting::set('whatsapp_cart_footer', $validated['whatsapp_cart_footer'], 'text', 'whatsapp', 'Pie / Cierre del Pedido en Bolsa de Tienda');

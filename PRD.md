@@ -95,6 +95,51 @@ Este documento especifica los requisitos de producto, diseño y arquitectura té
 *   **Gestor de Guardrails Sanitarios (`AiGuardrail`):** Definición de reglas de contención (*Bloqueo Estricto*, *Advertencia Sanitaria Obligatoria*, *Derivación a Soporte Humano*) con protección de reglas estructurales de sistema.
 *   **Simulador Playground:** Entorno interactivo para validar la inferencia de Lira en milisegundos con el corpus y guardrails activos.
 
+### 4.9 Experiencia de Catálogo en Landing Page (P0 - Crítico)
+*   **Carrusel Infinito con Efecto Peek:** Visualización fluida con vislumbre lateral de tarjetas adyacentes (~5.5% en desktop, ~3.5% en tablet, ~9% en móvil) para orientar al usuario hacia el desplazamiento continuo sin cortes.
+*   **Soporte Gestual Nativo:** Control táctil (swipe) para dispositivos móviles y botones flotantes circulares (`ChevronLeft`/`ChevronRight`) con barra de indicadores numéricos y dots interactivos.
+*   **Tarjeta de Producto 100% Clickeable:** Todo el marco de la tarjeta enlaza directamente a la Ficha Técnica Médica (`/producto/{slug}`) con micro-interacciones sutiles de hover y escalado de fotografía.
+*   **Desincorporación de WhatsApp en Tarjeta & Reubicación de Pedido:** Botón directo a WhatsApp retirado de las tarjetas para descongestionar la vista (canal centralizado en la trinidad flotante y en la bolsa de cotizaciones). Botón "+ Pedido" reposicionado al pie con aislamiento de propagación de eventos (`stopPropagation`).
+*   **Transición Suave entre Filtros:** Desvanecimiento suave (fade de 220ms) al alternar entre líneas terapéuticas y necesidades clínicas para eliminar saltos visuales bruscos.
+
+### 4.10 Navegación Esencial y Experiencia de Usuario Pulcra (P0 - Crítico)
+*   **Navbar Depurado:** Encabezado limpio "BOOZ LABORATORIO" y menú esencial reducido a exactamente 4 accesos directos: *Líneas* (`/#lineas`), *Catálogo* (`/#productos`), *Conocimiento* (`/#conocimiento`) y *Farmacovigilancia* (`/farmacovigilancia`).
+*   **Buscador Minimalista (Lupa):** Conversión de la barra de búsqueda ancha en un botón icónico de lupa (`Search`) con touch target ergonómico que despliega el modal de búsqueda rápida con atajo `Ctrl+K`.
+*   **Reubicación de la Calculadora Pediátrica:** Traslado de la herramienta médica al pie de página (columna "Canal Regulatorio & Herramientas") con icono `Sparkles`, preservando acceso permanente sin recargar la cabecera.
+*   **Acceso a "Consola":** Modernización del botón "Admin" a **"Consola"** con icono `ShieldCheck` y pulso activo verde esmeralda, sincronizado tanto en la barra superior como en la barra inferior móvil.
+
+### 4.11 Autenticación Corporativa y Seguridad Administrativa (P0 - Crítico)
+*   **Login Unificado con `BoozLayout`:** Pantalla de inicio de sesión (`/login`) enmarcada bajo la plantilla institucional `BoozLayout`, con selector de tema claro/oscuro y tarjeta de acceso clínico.
+*   **Supresión de Autoregistro Público:** Eliminación definitiva del enlace público "Sign up" para prevenir registros no autorizados de terceros.
+*   **Alta Interna Exclusiva para Superadmin:** Botón destacado "Nuevo Registro / Usuario" en la cabecera del Dashboard (`/dashboard`) que dirige a `/admin/users?create=1`, desplegando el modal interactivo con asignación obligatoria de los 4 roles oficiales del laboratorio.
+
+### 4.12 Segmentación Multicanal de Telefonía y Presencia Digital (P0 - Crítico)
+*   **Segmentación Multicanal de Contacto:** Gestión diferenciada en `system_settings` y `/admin/settings` para 3 líneas operativas:
+    1. *WhatsApp de Atención General y Consultas:* botón flotante público (`whatsapp_contact_phone`).
+    2. *WhatsApp de Ventas y Pedidos:* despacho automatizado de cotizaciones desde la tienda virtual (`whatsapp_sales_phone`).
+    3. *Central Telefónica de Planta:* enlace directo de llamada telefónica institucional (`company_phone`).
+*   **Redes Sociales Oficiales Unificadas:** Homogeneización de los 4 canales corporativos en el footer bajo el identificador oficial `@booz.laboratorio` (Instagram, Facebook, YouTube y TikTok).
+*   **FAQ Comercial al Mayor:** Incorporación de pregunta frecuente institucional para droguerías, farmacias independientes y clínicas sobre pedidos por volumen y logística desde Valle de Guanape.
+
+### 4.13 Calculadora Pediátrica Clínica & Servicio Desacoplado LiraAiService (P0 - Crítico)
+*   **Motor Pediátrico Clínico:** Sustitución de la lógica simulada "15mg/kg" por un motor reactivo de 3 métodos matemáticos oficiales: Regla de Clark (\(D_{ped} = (P_{kg}/70) \times D_{adulto}\)), Régimen Ponderado diario fraccionado por tomas (\(mg/kg/día\)) y Regla de Young (\(D_{ped} = [E_{años}/(E_{años}+12)] \times D_{adulto}\)).
+*   **Desacoplamiento RAG en `LiraAiService`:** Centralización de las llamadas a Google Gemini (`gemini-2.5-flash`) y construcción dinámica del vademécum, documentos RAG y guardrails sanitarios.
+*   **Deshardcodeo Dinámico de Lira:** Resolución en tiempo real de números de WhatsApp, RIF, redes sociales, direcciones físicas y disclaimer legal desde `SettingService` y base de datos.
+
+### 4.14 Arquitectura Responsiva Tri-Nivel (Móvil, 1080p y 4K) (P0 - Crítico)
+*   **Contenedores Fluidos y Breakpoints Oficiales:** Definición de breakpoints formales en CSS/Tailwind (`2xl` a 1536px y `3xl` a 1920px) con expansión progresiva desde `max-w-7xl` hasta `2xl:max-w-[1536px]` y `3xl:max-w-[1840px]`.
+*   **Consola Administrativa Táctil:** En pantallas móviles (`< 768px`), las tablas complejas de 10 columnas alternan a **Tarjetas Móviles de Gestión**, permitiendo buscar medicamentos, alternar disponibilidad y abrir editores sin desbordamientos horizontales.
+*   **Tienda Móvil a Pantalla Completa:** En smartphones, el catálogo ofrece una vista de tienda virtual en 2 columnas compactas y el drawer de pedidos aprovecha el 100% del ancho del viewport (`w-full`) con margen de seguridad inferior (`pb-safe`).
+
+### 4.15 Ficha Técnica & Vademécum Oficial Imprimible en PDF (P0 - Crítico)
+*   **Ruta Pública Imprimible (`/producto/{slug}/vademecum`):** Documento oficial bajo el esquema cromático azul Booz (`#002072`), con fotografía en alta resolución del medicamento, especificaciones farmacológicas completas, condiciones de almacenamiento, advertencias sanitarias y protocolo oficial de Farmacovigilancia INH.
+*   **Acciones Directas en Ficha Médica (`product-detail.tsx`):** Botón directo "Vademécum PDF" en la cabecera y botón destacado "Descargar Ficha Técnica & Vademécum (PDF Oficial)" en la tarjeta comercial del producto, más botones para añadir a la bolsa en un solo toque.
+
+### 4.16 Farmacovigilancia 100% Dark Mode & Menú Hamburguesa Móvil (P0 - Crítico)
+*   **Soporte Integral de Modo Oscuro en `/farmacovigilancia`:** Adaptación visual de fondos (`dark:bg-[#070C18]`), tarjetas de reporte (`dark:bg-[#0D172E]`), avisos del INH y formulario de ticket de confirmación.
+*   **Menú Móvil Desplegable & Barra Fija con Vigilancia:** Cabecera con menú hamburguesa en smartphones y acceso permanente con icono `ShieldAlert` ("Vigilancia") en la barra inferior móvil.
+*   **Navegación Interactiva desde Bolsa Vacía:** El mensaje de estado vacío de la tienda ("Tu bolsa está vacía...") es interactivo y cierra el panel trasladando suavemente la vista a `#productos`.
+
 ---
 
 ## 🚫 5. Fuera del Alcance (Out of Scope para el MVP)
@@ -106,6 +151,8 @@ Este documento especifica los requisitos de producto, diseño y arquitectura té
 
 ## 📊 6. Métricas Actuales del Sistema
 *   **Vademécum Registrado:** 18 productos clasificados en sus 4 líneas terapéuticas oficiales.
-*   **Aseguramiento de Calidad:** 133 tests automatizados pasando en verde (536 assertions) en PHPUnit 11.
-*   **Especificaciones Formales:** 12 especificaciones OpenSpec en Gherkin BDD 100% validadas.
+*   **Aseguramiento de Calidad:** 139 tests automatizados pasando en verde (556 assertions) en PHPUnit 11.
+*   **Especificaciones Formales:** 13 especificaciones OpenSpec en Gherkin BDD 100% validadas.
+
+
 

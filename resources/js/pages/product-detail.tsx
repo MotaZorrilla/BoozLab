@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { 
     ShieldCheck, ArrowLeft, MessageCircle, AlertTriangle, 
-    Pill, Clock, CheckCircle2, Share2, ArrowRight
+    Pill, Clock, CheckCircle2, Share2, ArrowRight, ShoppingBag, Sparkles, Printer, FileText, Download
 } from 'lucide-react';
 import React from 'react';
 import BoozLayout from '@/layouts/booz-layout';
@@ -32,6 +32,10 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
         }
     };
 
+    const handleAddToCart = () => {
+        window.dispatchEvent(new CustomEvent('booz:add-to-cart', { detail: product }));
+    };
+
     return (
         <BoozLayout>
             <Head>
@@ -43,7 +47,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
             </Head>
 
             <div className="min-h-screen bg-slate-50 dark:bg-[#070C18] text-slate-900 dark:text-slate-100 transition-colors duration-300 py-6 sm:py-10">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-4 sm:px-6 lg:px-8 2xl:px-12">
                     {/* Navigation Bar / Breadcrumb */}
                     <div className="flex items-center justify-between mb-6 sm:mb-8">
                         <Link
@@ -54,14 +58,28 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                             <span>Volver al Catálogo</span>
                         </Link>
 
-                        <button
-                            onClick={handleShare}
-                            className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 dark:text-cyan-300 bg-blue-50 dark:bg-slate-800 px-3.5 py-2.5 rounded-xl border border-blue-200 dark:border-slate-700 hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors shadow-sm min-h-[40px] cursor-pointer"
-                            title="Compartir ficha de producto"
-                        >
-                            <Share2 className="h-3.5 w-3.5" />
-                            <span>Compartir</span>
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <a
+                                href={`/producto/${product.slug}/vademecum`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#002072] dark:text-cyan-300 bg-white dark:bg-[#0D172E] px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm min-h-[40px] cursor-pointer"
+                                title="Descargar o imprimir Vademécum Oficial en PDF"
+                            >
+                                <Printer className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-400" />
+                                <span className="hidden sm:inline">Vademécum</span>
+                                <span>PDF</span>
+                            </a>
+
+                            <button
+                                onClick={handleShare}
+                                className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 dark:text-cyan-300 bg-blue-50 dark:bg-slate-800 px-3.5 py-2.5 rounded-xl border border-blue-200 dark:border-slate-700 hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors shadow-sm min-h-[40px] cursor-pointer"
+                                title="Compartir ficha de producto"
+                            >
+                                <Share2 className="h-3.5 w-3.5" />
+                                <span>Compartir</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Main Product Presentation Grid */}
@@ -98,6 +116,17 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                                     {product.presentation}
                                 </span>
                             </div>
+
+                            {/* Botón Táctil de Añadir a Pedido (Columna Izquierda) */}
+                            <button
+                                type="button"
+                                onClick={handleAddToCart}
+                                className="mt-3 w-full py-3.5 px-4 rounded-2xl bg-[#002072] hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20 active:scale-95 transition-all cursor-pointer"
+                                title={`Añadir ${product.name} a la bolsa`}
+                            >
+                                <ShoppingBag className="h-4 w-4 text-cyan-300" />
+                                <span>Añadir a la Bolsa (${Number(product.price || 0).toFixed(2)})</span>
+                            </button>
                         </div>
 
                         {/* Clinical Datasheet (Right) */}
@@ -130,6 +159,54 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                             <div className="p-5 rounded-2xl bg-white dark:bg-[#0D172E] border-l-4 border-[#002072] dark:border-cyan-400 border border-slate-200 dark:border-slate-800 shadow-sm">
                                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                                     {product.description}
+                                </p>
+                            </div>
+
+                            {/* Card Comercial de Pedido y Bolsa Virtual (Llamativa y Estratégica) */}
+                            <div className="p-6 rounded-3xl bg-white dark:bg-[#0D172E] border-2 border-blue-600/30 dark:border-cyan-500/30 shadow-xl space-y-4 relative overflow-hidden">
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <div>
+                                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
+                                            Precio Referencial Vademécum
+                                        </span>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                                                ${Number(product.price || 0).toFixed(2)}
+                                            </span>
+                                            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                                USD / unidad
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60 flex items-center gap-1.5">
+                                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                                            <span>Disponible en Planta</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={handleAddToCart}
+                                    className="w-full py-4 px-6 rounded-2xl bg-[#002072] dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-500 text-white font-black text-sm sm:text-base text-center flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-xl shadow-blue-900/25 hover:shadow-2xl hover:shadow-blue-900/40 cursor-pointer group ring-2 ring-blue-400/20"
+                                >
+                                    <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-300 group-hover:scale-110 transition-transform" />
+                                    <span>Añadir a la Bolsa de Pedidos</span>
+                                </button>
+
+                                <a
+                                    href={`/producto/${product.slug}/vademecum`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="w-full py-3 px-4 rounded-xl bg-slate-50 hover:bg-blue-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-[#002072] dark:text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-sm group"
+                                >
+                                    <Printer className="h-4 w-4 text-blue-600 dark:text-cyan-400 group-hover:scale-110 transition-transform" />
+                                    <span>Descargar Ficha Técnica & Vademécum (PDF Oficial)</span>
+                                </a>
+
+                                <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center leading-relaxed">
+                                    Al añadir a la bolsa podrás seleccionar tu tipo de solicitante (Paciente, Farmacia o Clínica) y tramitar la cotización formal por WhatsApp.
                                 </p>
                             </div>
 

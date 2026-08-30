@@ -16,13 +16,13 @@ La barra de navegación inferior SHALL renderizarse fija en la parte inferior (`
 - **WHEN** la resolución del dispositivo es igual o superior a 768px
 - **THEN** la barra de navegación inferior permanece oculta (`hidden`)
 
-### Requirement: 5 Puntos de Contacto Ergonómicos
+### Requirement: 5 Puntos de Contacto Ergonómicos en Barra Inferior
 La barra de navegación móvil SHALL ofrecer exactamente 5 acciones directas:
 1. **Líneas:** Enlace ancla reactivo a `/#lineas`
-2. **Tienda:** Disparador del drawer de bolsa de pedidos con indicador visual de unidades
+2. **Vigilancia:** Enlace directo oficial al canal de `/farmacovigilancia` con icono `ShieldAlert`
 3. **Lira IA:** Botón central flotante y elevado con el avatar circular de Lira
-4. **Admin:** Enlace directo a `/dashboard`
-5. **WhatsApp:** Enlace directo a conversación oficial de WhatsApp
+4. **Tienda:** Disparador del drawer de bolsa de pedidos con indicador numérico de unidades
+5. **Consola:** Enlace directo a `/dashboard`
 
 #### Scenario: Badge Reactivo en Botón de Tienda Móvil
 - **GIVEN** que el usuario añade unidades de productos a su bolsa
@@ -32,3 +32,18 @@ La barra de navegación móvil SHALL ofrecer exactamente 5 acciones directas:
 #### Scenario: Apertura de Lira desde el botón central móvil
 - **WHEN** el usuario pulsa el avatar central de Lira en la barra inferior móvil
 - **THEN** se despliega la modal interactiva del Asistente Virtual Lira IA
+
+### Requirement: Menú Móvil Desplegable en Cabecera
+La cabecera del portal público (`BoozLayout`) SHALL proveer un botón de menú hamburguesa (`Menu` / `X`) en pantallas móviles y tablets menores a 1024px (`< lg`), desplegando un panel superior con enlaces completos a Líneas, Catálogo, Conocimiento Clínico, Farmacovigilancia (con badge oficial INH) y Consola.
+
+#### Scenario: Apertura y cierre de menú hamburguesa móvil
+- **WHEN** el usuario pulsa el botón hamburguesa en la barra superior móvil
+- **THEN** se abre el panel animado con todos los accesos directos y permite navegar cerrándose automáticamente al pulsar cualquier opción
+
+### Requirement: Botón Flotante de WhatsApp Multidispositivo
+El botón de contacto directo a WhatsApp SHALL posicionarse por encima de la barra inferior móvil (`bottom-20 right-3.5` en smartphones y `bottom-6 right-6` en escritorio) evitando solapamientos y facilitando la interacción con un solo pulgar.
+
+#### Scenario: Visualización ergonómica de WhatsApp flotante
+- **WHEN** el usuario navega desde un teléfono móvil
+- **THEN** el botón de WhatsApp flota sobre la barra fija inferior sin obstaculizar los botones de navegación
+

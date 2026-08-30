@@ -6,14 +6,18 @@ import {
     Search, 
     Instagram, 
     Facebook, 
+    Youtube,
     Phone, 
     MessageCircle, 
     ArrowUp, 
     Sun, 
     Moon, 
-    LayoutDashboard,
-    ShoppingBag,
-    Sparkles
+    LayoutDashboard, 
+    ShoppingBag, 
+    Sparkles, 
+    ShieldCheck,
+    Menu,
+    X
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import LiraAssistantModal from '@/components/lira-assistant-modal';
@@ -24,14 +28,23 @@ import { useAppearance } from '@/hooks/use-appearance';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 import type { Product } from '@/types';
 
+function TikTokIcon({ className = 'h-4 w-4' }: { className?: string }) {
+    return (
+        <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.86 4.46 6.27 6.27 0 0 0 1.88-4.46V8.71a8.31 8.31 0 0 0 4.85 1.57v-3.59h-1z"/>
+        </svg>
+    );
+}
+
 export default function BoozLayout({ children }: { children: React.ReactNode }) {
     const { resolvedAppearance, updateAppearance } = useAppearance();
-    const { createWhatsAppUrl, phone } = useWhatsApp();
+    const { createWhatsAppUrl, contactPhone, companyPhone, defaultMessage } = useWhatsApp();
     const [isAIOpen, setIsAIOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isLegalOpen, setIsLegalOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showScrollUp, setShowScrollUp] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Cart state persisted in localStorage
     const [cartItems, setCartItems] = useState<CartItem[]>(() => {
@@ -70,6 +83,13 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
 
         window.addEventListener('booz:add-to-cart' as any, handleAddToCart as any);
         return () => window.removeEventListener('booz:add-to-cart' as any, handleAddToCart as any);
+    }, []);
+
+    // Global listener for "booz:open-lira"
+    useEffect(() => {
+        const handleOpenLira = () => setIsAIOpen(true);
+        window.addEventListener('booz:open-lira' as any, handleOpenLira);
+        return () => window.removeEventListener('booz:open-lira' as any, handleOpenLira);
     }, []);
 
     const handleUpdateQuantity = (productId: number, delta: number) => {
@@ -126,34 +146,30 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
             
             {/* Navigation Bar (Compact & Polished) */}
             <nav className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800/90 bg-white/95 dark:bg-[#0A1124]/95 backdrop-blur-md transition-colors duration-300">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-4 sm:px-6 lg:px-8 2xl:px-12">
                     <div className="flex h-16 sm:h-20 items-center justify-between">
-                        {/* Logo Oficial de Booz Laboratorio (Home Link) */}
+                        {/* Logo Oficial de Booz Laboratorio (Home Link - Limpio y Sólido) */}
                         <Link href="/" className="flex items-center gap-2.5 group">
-                            <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-blue-900/10 dark:bg-white/10 p-1 flex items-center justify-center border border-blue-100 dark:border-blue-900/40 group-hover:scale-105 transition-transform">
+                            <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-blue-900/10 dark:bg-white/10 p-1 flex items-center justify-center border border-blue-100 dark:border-blue-900/40 group-hover:scale-105 transition-transform shadow-sm">
                                 <img
                                     src="/assets/img/booz_symbol_icon.png"
                                     alt="Booz Laboratorio"
                                     className="h-full w-full object-contain"
                                 />
                             </div>
-                            <div className="flex flex-col">
+                            <div className="flex items-center">
                                 <span className="text-lg sm:text-xl font-black tracking-tight text-[#002072] dark:text-white uppercase leading-none">
                                     BOOZ <span className="text-blue-600 dark:text-cyan-400 font-light">LABORATORIO</span>
-                                </span>
-                                <span className="text-[9px] sm:text-[10px] tracking-widest text-slate-500 dark:text-slate-400 font-bold uppercase mt-0.5 sm:mt-1">
-                                    Ciencia que transforma el cuidado
                                 </span>
                             </div>
                         </Link>
                         
-                        {/* Desktop Navigation Links */}
-                        <div className="hidden lg:flex items-center space-x-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                        {/* Desktop Navigation Links (Limpio: Líneas, Catálogo, Conocimiento, Farmacovigilancia) */}
+                        <div className="hidden lg:flex items-center space-x-7 text-sm font-semibold text-slate-600 dark:text-slate-300">
                             <a href="/#lineas" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Líneas</a>
                             <a href="/#productos" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Catálogo</a>
-                            <a href="/#ciencia" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Conocimiento</a>
+                            <a href="/#conocimiento" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Conocimiento</a>
                             <Link href="/farmacovigilancia" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Farmacovigilancia</Link>
-                            <Link href="/herramientas" className="hover:text-[#002072] dark:hover:text-cyan-400 transition-colors">Calculadora Pediátrica</Link>
                         </div>
 
                         {/* Actions */}
@@ -168,27 +184,25 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                 {resolvedAppearance === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                             </button>
 
-                            {/* Search Button */}
+                            {/* Search Button Minimalista (Solo Lupa Interactiva) */}
                             <button 
                                 onClick={() => setIsSearchOpen(true)}
-                                className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer min-h-[42px]"
+                                className="flex items-center justify-center p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#002072] dark:hover:text-cyan-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer min-h-[42px] min-w-[42px]"
                                 title="Buscar en vademécum (Ctrl+K)"
                                 aria-label="Buscar medicamento en el vademécum"
                             >
                                 <Search className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
-                                <span>Buscar...</span>
-                                <kbd className="text-[10px] bg-white dark:bg-slate-900 dark:text-slate-300 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">Ctrl K</kbd>
                             </button>
 
-                            {/* Tienda & Bolsa de Pedidos (Oculto en móvil pequeño para evitar overflow, disponible en bottom nav) */}
+                            {/* Tienda & Bolsa de Pedidos */}
                             <button
                                 onClick={() => setIsCartOpen(true)}
-                                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-[#002072] dark:text-cyan-300 hover:bg-blue-100 dark:hover:bg-slate-700 text-xs font-bold border border-blue-200/80 dark:border-slate-700 transition-all cursor-pointer min-h-[42px]"
+                                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-[#002072] dark:text-cyan-300 hover:bg-blue-100 dark:hover:bg-slate-700 text-xs font-bold border border-blue-200/80 dark:border-slate-700 transition-all cursor-pointer min-h-[42px]"
                                 title="Ver Bolsa de Pedidos / Tienda Booz"
                                 aria-label="Ver bolsa de pedidos"
                             >
                                 <ShoppingBag className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
-                                <span>Tienda</span>
+                                <span className="hidden sm:inline">Tienda</span>
                                 {totalCartUnits > 0 && (
                                     <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-white animate-pulse">
                                         {totalCartUnits}
@@ -196,34 +210,94 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                 )}
                             </button>
 
-                            {/* Direct Admin Dashboard Button (Desktop) */}
+                            {/* Acceso a Consola Administrativa (Modernizado con Indicador Activo y ShieldCheck) */}
                             <Link
                                 href="/dashboard"
-                                className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold border border-slate-200 dark:border-slate-700 transition-all cursor-pointer min-h-[42px]"
-                                title="Acceso al Panel de Administración y Auditoría"
-                                aria-label="Ir al panel de administración"
+                                className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 text-white dark:text-slate-100 hover:bg-[#002072] dark:hover:bg-blue-600 text-xs font-bold border border-slate-800 dark:border-slate-700 shadow-sm transition-all hover:shadow-md cursor-pointer min-h-[42px] group"
+                                title="Acceso a la Consola Administrativa y Auditoría Sanitaria"
+                                aria-label="Ir a la consola de administración"
                             >
-                                <LayoutDashboard className="h-3.5 w-3.5 text-[#002072] dark:text-cyan-400" />
-                                <span>Admin</span>
+                                <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                                <ShieldCheck className="h-3.5 w-3.5 text-cyan-400 group-hover:rotate-12 transition-transform" />
+                                <span>Consola</span>
                             </Link>
 
-                            {/* Habla con Lira Button */}
+                            {/* Mobile Hamburger Menu Toggle Button (Solo visible en pantallas < lg) */}
                             <button
-                                onClick={() => setIsAIOpen(true)}
-                                className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-[#002072] via-blue-800 to-blue-700 dark:from-blue-600 dark:to-cyan-600 text-white text-xs font-bold shadow-md shadow-blue-900/20 hover:shadow-lg transition-all cursor-pointer min-h-[42px]"
-                                aria-label="Consultar con Lira Asistente Virtual"
+                                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                                className="flex lg:hidden items-center justify-center p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-[#002072] dark:hover:text-cyan-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer min-h-[42px] min-w-[42px]"
+                                title="Menú de Navegación"
+                                aria-label="Abrir menú de navegación"
                             >
-                                <img
-                                    src="/assets/img/lira_head_avatar.png"
-                                    alt="Lira"
-                                    className="h-5 w-5 rounded-full object-cover ring-1 ring-white/60"
-                                />
-                                <span className="hidden sm:inline">Habla con Lira</span>
-                                <span className="sm:hidden text-xs">Lira IA</span>
+                                {isMobileMenuOpen ? <X className="h-5 w-5 text-red-500" /> : <Menu className="h-5 w-5" />}
                             </button>
                         </div>
                     </div>
                 </div>
+
+                {/* Mobile Menu Dropdown Panel (Para pantallas < lg) */}
+                {isMobileMenuOpen && (
+                    <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-[#0A1124]/98 backdrop-blur-xl shadow-2xl px-4 py-4 space-y-1.5 animate-in slide-in-from-top-2 duration-200">
+                        <a
+                            href="/#lineas"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200 font-semibold text-sm transition-colors"
+                        >
+                            <div className="flex items-center gap-3">
+                                <Sparkles className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
+                                <span>Líneas Terapéuticas</span>
+                            </div>
+                        </a>
+
+                        <a
+                            href="/#productos"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200 font-semibold text-sm transition-colors"
+                        >
+                            <div className="flex items-center gap-3">
+                                <ShoppingBag className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
+                                <span>Catálogo de Productos</span>
+                            </div>
+                        </a>
+
+                        <a
+                            href="/#conocimiento"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200 font-semibold text-sm transition-colors"
+                        >
+                            <div className="flex items-center gap-3">
+                                <FileText className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
+                                <span>Conocimiento Clínico</span>
+                            </div>
+                        </a>
+
+                        {/* Canal Oficial de Farmacovigilancia */}
+                        <Link
+                            href="/farmacovigilancia"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center justify-between p-3 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/50 text-amber-950 dark:text-amber-300 font-bold text-sm transition-colors"
+                        >
+                            <div className="flex items-center gap-3">
+                                <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                                <span>Canal de Farmacovigilancia</span>
+                            </div>
+                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200">
+                                Oficial INH
+                            </span>
+                        </Link>
+
+                        <Link
+                            href="/dashboard"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200 font-semibold text-sm transition-colors"
+                        >
+                            <div className="flex items-center gap-3">
+                                <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                                <span>Consola Administrativa</span>
+                            </div>
+                        </Link>
+                    </div>
+                )}
             </nav>
 
             {/* Main Content con padding inferior para no solapar la barra móvil */}
@@ -232,36 +306,34 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
             </main>
 
             {/* Mobile Bottom Navigation Bar (Compact App Experience con pb-safe) */}
+            {/* Mobile Bottom Navigation Bar (Compact App Experience con pb-safe) */}
             <nav 
                 aria-label="Navegación móvil inferior"
-                className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0A1124]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-3 pt-2 pb-safe flex items-center justify-around shadow-2xl"
+                className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0A1124]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-2 pt-2 pb-safe flex items-center justify-around shadow-2xl"
             >
                 <a 
                     href="/#lineas" 
-                    className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
+                    className="flex flex-col items-center justify-center min-w-[50px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
                 >
                     <Sparkles className="h-4 w-4" />
                     <span>Líneas</span>
                 </a>
-                
-                <button 
-                    onClick={() => setIsCartOpen(true)}
-                    className="relative flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 cursor-pointer transition-colors"
-                    aria-label={`Tienda y pedidos: ${totalCartUnits} unidades`}
-                >
-                    <ShoppingBag className="h-4 w-4" />
-                    <span>Tienda</span>
-                    {totalCartUnits > 0 && (
-                        <span className="absolute top-1 right-3 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-white">
-                            {totalCartUnits}
-                        </span>
-                    )}
-                </button>
 
+                {/* Enlace Directo a Farmacovigilancia en Móvil */}
+                <Link 
+                    href="/farmacovigilancia" 
+                    className="flex flex-col items-center justify-center min-w-[52px] min-h-[44px] gap-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 transition-colors"
+                    title="Canal Oficial de Farmacovigilancia"
+                    aria-label="Canal de Farmacovigilancia"
+                >
+                    <ShieldAlert className="h-4 w-4" />
+                    <span>Vigilancia</span>
+                </Link>
+                
                 {/* Central AI Trigger Floating */}
                 <button 
                     onClick={() => setIsAIOpen(true)}
-                    className="flex flex-col items-center justify-center min-w-[60px] min-h-[48px] gap-0.5 text-[10px] font-bold text-blue-600 dark:text-cyan-400 cursor-pointer -mt-4 transition-transform active:scale-95"
+                    className="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-0.5 text-[10px] font-bold text-blue-600 dark:text-cyan-400 cursor-pointer -mt-4 transition-transform active:scale-95"
                     aria-label="Asistente virtual Lira IA"
                 >
                     <div className="h-12 w-12 rounded-full bg-[#002072] text-white p-0.5 shadow-lg border-2 border-white dark:border-slate-800 overflow-hidden flex items-center justify-center ring-2 ring-cyan-400/40">
@@ -270,43 +342,46 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                     <span>Lira IA</span>
                 </button>
 
+                <button 
+                    onClick={() => setIsCartOpen(true)}
+                    className="relative flex flex-col items-center justify-center min-w-[50px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 cursor-pointer transition-colors"
+                    aria-label={`Tienda y pedidos: ${totalCartUnits} unidades`}
+                >
+                    <ShoppingBag className="h-4 w-4" />
+                    <span>Tienda</span>
+                    {totalCartUnits > 0 && (
+                        <span className="absolute top-1 right-2 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-white">
+                            {totalCartUnits}
+                        </span>
+                    )}
+                </button>
+
                 <Link 
                     href="/dashboard" 
-                    className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
+                    className="flex flex-col items-center justify-center min-w-[50px] min-h-[44px] gap-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
                 >
-                    <LayoutDashboard className="h-4 w-4" />
-                    <span>Admin</span>
+                    <ShieldCheck className="h-4 w-4 text-[#002072] dark:text-cyan-400" />
+                    <span>Consola</span>
                 </Link>
-
-                <a 
-                    href={createWhatsAppUrl("Hola Booz Laboratorio, deseo realizar una consulta")} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-0.5 text-[10px] font-bold text-emerald-600 hover:text-emerald-500 transition-colors"
-                    aria-label="Consultar por WhatsApp oficial"
-                >
-                    <MessageCircle className="h-4 w-4" />
-                    <span>WhatsApp</span>
-                </a>
             </nav>
 
-            {/* Desktop Floating Action Buttons */}
-            <div className="hidden md:flex fixed bottom-6 right-6 flex-col gap-3 z-40">
-                {/* WhatsApp Dedicated Button */}
+            {/* Desktop & Mobile Floating Action Buttons */}
+            <div className="fixed bottom-20 md:bottom-6 right-3.5 sm:right-6 flex flex-col gap-2.5 z-40">
+                {/* WhatsApp Dedicated Button (Accesible tanto en móvil como en escritorio) */}
                 <a 
-                    href={createWhatsAppUrl("Hola Booz Laboratorio, deseo realizar una consulta sobre sus productos")}
+                    href={createWhatsAppUrl(defaultMessage, 'contact')}
                     target="_blank" 
                     rel="noreferrer"
-                    className="flex h-13 w-13 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl hover:bg-emerald-400 hover:scale-110 transition-all group cursor-pointer"
-                    title="Contacto directo por WhatsApp"
+                    className="flex h-12 w-12 sm:h-13 sm:w-13 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl hover:bg-emerald-400 hover:scale-110 active:scale-95 transition-all group cursor-pointer"
+                    title="Contacto directo por WhatsApp oficial"
                 >
-                    <MessageCircle className="h-7 w-7" />
+                    <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" />
                 </a>
 
-                {/* AI Assistant Floating Avatar (Lira) */}
+                {/* AI Assistant Floating Avatar (Lira) - En escritorio se muestra flotante */}
                 <button 
                     onClick={() => setIsAIOpen(true)}
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[#002072] dark:bg-blue-600 text-white shadow-2xl hover:scale-110 transition-all relative group border-2 border-white dark:border-slate-800 overflow-hidden p-1 cursor-pointer"
+                    className="hidden md:flex h-14 w-14 items-center justify-center rounded-full bg-[#002072] dark:bg-blue-600 text-white shadow-2xl hover:scale-110 transition-all relative group border-2 border-white dark:border-slate-800 overflow-hidden p-1 cursor-pointer"
                     title="Consultar con Lira (Asistente Virtual)"
                 >
                     <img
@@ -334,7 +409,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
 
             {/* Official Legal & Clinical Footer */}
             <footer className="bg-slate-950 text-slate-400 py-16 border-t border-slate-900">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-4 sm:px-6 lg:px-8 2xl:px-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                         {/* Col 1: Identity & Authorization */}
                         <div className="space-y-4">
@@ -361,11 +436,18 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                         </div>
 
                         {/* Col 2: Regulatory & Pharmacovigilance */}
+                        {/* Col 2: Regulatory & Clinical Tools */}
                         <div className="space-y-3">
                             <h4 className="text-xs font-bold uppercase tracking-widest text-white">
-                                Canal Regulatorio
+                                Canal Regulatorio & Herramientas
                             </h4>
                             <ul className="space-y-2 text-xs">
+                                <li>
+                                    <Link href="/herramientas" className="hover:text-cyan-400 transition-colors flex items-center gap-2 text-cyan-300 font-semibold">
+                                        <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+                                        <span>Calculadora Pediátrica (Dosis)</span>
+                                    </Link>
+                                </li>
                                 <li>
                                     <Link href="/farmacovigilancia" className="hover:text-cyan-400 transition-colors flex items-center gap-2">
                                         <ShieldAlert className="h-3.5 w-3.5 text-cyan-400" />
@@ -409,10 +491,10 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                             </ul>
                         </div>
 
-                        {/* Col 4: Official Contact & Social */}
+                        {/* Col 4: Official Contact & Social Networks */}
                         <div className="space-y-3">
                             <h4 className="text-xs font-bold uppercase tracking-widest text-white">
-                                Contacto Oficial
+                                Contacto Oficial & Redes
                             </h4>
                             <div className="space-y-2 text-xs">
                                 <a 
@@ -425,17 +507,50 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                     <span>@booz.laboratorio</span>
                                 </a>
                                 <a 
-                                    href="https://facebook.com" 
+                                    href="https://facebook.com/booz.laboratorio" 
                                     target="_blank" 
                                     rel="noreferrer"
                                     className="flex items-center gap-2 hover:text-blue-400 transition-colors"
                                 >
                                     <Facebook className="h-4 w-4 text-blue-400" />
-                                    <span>Booz Laboratorio Oficial</span>
+                                    <span>booz.laboratorio</span>
                                 </a>
-                                <div className="flex items-center gap-2 pt-2 text-slate-300">
-                                    <Phone className="h-4 w-4 text-emerald-400" />
-                                    <span>+{phone}</span>
+                                <a 
+                                    href="https://youtube.com/@booz.laboratorio" 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="flex items-center gap-2 hover:text-red-400 transition-colors"
+                                >
+                                    <Youtube className="h-4 w-4 text-red-500" />
+                                    <span>booz.laboratorio</span>
+                                </a>
+                                <a 
+                                    href="https://tiktok.com/@booz.laboratorio" 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="flex items-center gap-2 hover:text-cyan-400 transition-colors"
+                                >
+                                    <TikTokIcon className="h-4 w-4 text-cyan-400" />
+                                    <span>booz.laboratorio</span>
+                                </a>
+                                
+                                <div className="pt-2 border-t border-slate-900 space-y-1.5">
+                                    <a 
+                                        href={createWhatsAppUrl(defaultMessage, 'contact')}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"
+                                    >
+                                        <MessageCircle className="h-4 w-4 text-emerald-400" />
+                                        <span>+{contactPhone} (WhatsApp)</span>
+                                    </a>
+                                    <a 
+                                        href={`tel:+${companyPhone.replace(/\D/g, '')}`}
+                                        className="flex items-center gap-2 text-slate-300 hover:text-cyan-400 transition-colors"
+                                    >
+                                        <Phone className="h-4 w-4 text-cyan-400" />
+                                        <span>+{companyPhone} (Planta)</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>

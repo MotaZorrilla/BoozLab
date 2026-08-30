@@ -274,7 +274,7 @@ export default function AdminQuotes({
         <AppLayout breadcrumbs={[{ title: 'Panel Administrativo Booz', href: '/dashboard' }, { title: 'Cotizaciones & Tienda Virtual', href: '/admin/quotes' }]}>
             <Head title="Administrador de Tienda Virtual & Cotizaciones | Booz Laboratorio" />
 
-            <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
+            <div className="p-3 sm:p-6 lg:p-8 max-w-7xl 2xl:max-w-[1600px] 3xl:max-w-[1880px] mx-auto space-y-6">
                 {/* Cabecera Principal */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
                     <div className="flex items-center gap-3">

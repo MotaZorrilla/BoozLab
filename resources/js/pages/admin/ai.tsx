@@ -239,7 +239,7 @@ export default function AdminAi({ aiConfig, corpusStats, knowledgeDocuments = []
         <AppLayout breadcrumbs={[{ title: 'Panel Administrativo Booz', href: '/dashboard' }, { title: 'Inteligencia Artificial', href: '/admin/ai' }]}>
             <Head title="Centro de Entrenamiento y Guardrails de IA | Booz Laboratorio" />
 
-            <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
+            <div className="p-3 sm:p-6 lg:p-8 max-w-7xl 2xl:max-w-[1600px] 3xl:max-w-[1880px] mx-auto space-y-6">
                 {/* Cabecera Principal */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
                     <div className="flex items-center gap-2.5">
@@ -641,7 +641,7 @@ export default function AdminAi({ aiConfig, corpusStats, knowledgeDocuments = []
 
                         {/* Resultado de la Prueba */}
                         {testResult && (
-                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
                                 <div className="flex items-center justify-between text-xs font-bold">
                                     <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                                         <CheckCircle2 className="h-4 w-4" />
@@ -649,9 +649,25 @@ export default function AdminAi({ aiConfig, corpusStats, knowledgeDocuments = []
                                     </span>
                                     <span className="text-[10px] text-slate-400 font-mono">{testResult.latency_ms} ms</span>
                                 </div>
-                                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
-                                    {testResult.response || testResult.error}
-                                </div>
+                                <div
+                                    className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 leading-relaxed"
+                                    dangerouslySetInnerHTML={{ __html: testResult.response || testResult.error }}
+                                />
+                                {testResult.suggestedProducts && testResult.suggestedProducts.length > 0 && (
+                                    <div className="pt-1.5 border-t border-slate-200 dark:border-slate-700/60 flex items-center gap-2 flex-wrap">
+                                        <span className="text-[10px] font-bold uppercase text-slate-400">Productos Vinculados:</span>
+                                        {testResult.suggestedProducts.map((p: any) => (
+                                            <span key={p.id} className="px-2 py-0.5 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-cyan-300 text-[10px] font-bold">
+                                                {p.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                                {testResult.disclaimer && (
+                                    <div className="p-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[11px] leading-relaxed">
+                                        {testResult.disclaimer}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

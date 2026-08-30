@@ -27,4 +27,7 @@ yarn-error.log
 /.vscode
 /.zed
 *.zip
+/public/assets/docs/doc_*
+/public/assets/img/uploads/*
+!/public/assets/img/uploads/.gitkeep
 

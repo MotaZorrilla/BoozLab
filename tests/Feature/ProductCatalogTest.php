@@ -67,4 +67,17 @@ class ProductCatalogTest extends TestCase
         $response->assertOk();
         $response->assertJsonFragment(['active_ingredients' => 'Moxifloxacina 0.5%']);
     }
+
+    public function test_product_vademecum_pdf_view_loads_successfully(): void
+    {
+        $product = Product::first();
+        $this->assertNotNull($product);
+
+        $response = $this->get(route('product.vademecum', ['slug' => $product->slug]));
+
+        $response->assertOk();
+        $response->assertSee('VADEMÉCUM CLÍNICO');
+        $response->assertSeeText($product->name);
+        $response->assertSeeText($product->active_ingredients);
+    }
 }
