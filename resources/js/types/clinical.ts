@@ -64,3 +64,21 @@ export interface PharmacovigilanceReport {
     admin_notes: string | null;
     created_at?: string;
 }
+
+export interface CartItem {
+    product: Product;
+    quantity: number;
+}
+
+export interface Message {
+    id: number;
+    name: string;
+    email: string;
+    phone: string | null;
+    message: string;
+    type: 'consulta' | 'comercial' | 'reclamo' | 'general' | 'lira' | string;
+    status: 'Pendiente' | 'En Revisión' | 'Respondido';
+    source: 'web' | 'lira_ai' | 'lira_chatbot' | string;
+    admin_notes: string | null;
+    created_at?: string;
+}

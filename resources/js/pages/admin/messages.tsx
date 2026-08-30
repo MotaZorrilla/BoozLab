@@ -203,7 +203,7 @@ export default function AdminMessages({ messages }: MessagesPageProps) {
                                                     </span>
                                                 </td>
                                                 <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400">
-                                                    {new Date(m.created_at).toLocaleDateString('es-VE')}
+                                                    {m.created_at ? new Date(m.created_at).toLocaleDateString('es-VE') : '-'}
                                                 </td>
                                                 <td className="py-3.5 px-4 text-right space-x-2">
                                                     <button

@@ -191,7 +191,7 @@ export default function AdminReports({ reports }: ReportsPageProps) {
                                                 </span>
                                             </td>
                                             <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400">
-                                                {new Date(r.created_at).toLocaleDateString('es-VE')}
+                                                {r.created_at ? new Date(r.created_at).toLocaleDateString('es-VE') : '-'}
                                             </td>
                                             <td className="py-3.5 px-4 text-right space-x-2">
                                                 <button
