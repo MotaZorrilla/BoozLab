@@ -388,7 +388,30 @@
 - [x] **Verificación Integral y QA:**
   - `npm run build`: 2.762 módulos transformados sin errores en 8.35s.
   - `php artisan test`: 139 tests pasando en verde (556 assertions).
-  - OpenSpec: 12/12 especificaciones validadas.
+  - OpenSpec: 13/13 especificaciones validadas.
+
+---
+
+## 🛰️ Fase 28: Telemetría Fail-Safe & Mirador Clínico de Lira AI (`/admin/analytics`)
+- [x] **Modelo de Datos y Migración (`2026_08_31_000001_create_chat_telemetry_tables.php`):**
+  - Tabla `chat_sessions`: `session_uid` único, `first_query`, `peer_hash`, `url_ref`, `turn_count`, `total_latency_ms`, `last_source`, `action`, `suggested_product_ids` JSON y `converted_to_order`.
+  - Tabla `chat_messages`: `chat_session_id`, `role`, `content`, `source`, `model`, `latency_ms`, `prompt_tokens`, `completion_tokens`, `disclaimer_shown` y `guardrail_triggered`.
+  - Tabla `product_daily_stats`: `product_id`, `date`, `views_count`, `chatbot_mentions_count`, `quote_requests_count` con índice compuesto `UNIQUE(product_id, date)`.
+- [x] **Servicio `ChatTelemetryService` con Fail-Safe Isolation:**
+  - Persistencia aislada de turnos: una contingencia en base de datos jamás interrumpe la respuesta del asistente virtual ni genera errores al usuario.
+  - Medición de latencia de alta resolución y extracción de tokens de Gemini desde `usageMetadata`.
+- [x] **Consola Administrativa & Mirador Clínico (`/admin/analytics`):**
+  - KPIs en tiempo real (sesiones, mensajes, latencia promedio, tasa Gemini vs. determinista, guardrails activos y tasa de conversión).
+  - Gráfico de curvas y tendencias nativo SVG (`TrendChart`) sin librerías externas pesadas.
+  - Embudo de conversión paso a paso (`FunnelView`).
+  - Modal interactivo de auditoría médica (`ConversationTranscriptModal`) para inspeccionar el diálogo turno a turno.
+  - Exportación en streaming a CSV (`/admin/analytics/export-csv`) compatible con Microsoft Excel.
+- [x] **Comando de Consolidación Idempotente (`telemetry:rollup`):**
+  - Agregación diaria de menciones y cotizaciones por fármaco sin duplicar filas.
+- [x] **Verificación Integral y QA:**
+  - `npm run build`: 2.766 módulos transformados sin errores en 9.34s.
+  - `php artisan test`: 144 tests pasando en verde (588 assertions).
+  - OpenSpec: 14/14 especificaciones validadas.
 
 
 

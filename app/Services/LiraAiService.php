@@ -18,13 +18,21 @@ class LiraAiService
      */
     public const CLINICAL_INTENT_PATTERN = '/(dosis|dolor|infecci|herida|tomar|aplicar|tratamiento|receta|r[eé]cipe|s[ií]ntoma|medicamento|pie diab[eé]tico|indicaci[oó]n|posolog[ií]a)/iu';
 
+    protected ?array $lastCallMetadata = null;
+
+    public function getLastCallMetadata(): ?array
+    {
+        return $this->lastCallMetadata;
+    }
+
     /**
      * Process query through Gemini AI with fallback to deterministic knowledge engine.
      *
-     * @return array{reply: string, suggestedProducts: Collection|array, disclaimer: ?string, source: string, action?: string}
+     * @return array{reply: string, suggestedProducts: Collection|array, disclaimer: ?string, source: string, action?: string, latency_ms?: int, model?: string, prompt_tokens?: ?int, completion_tokens?: ?int, guardrail_triggered?: ?string}
      */
     public function answer(string $query): array
     {
+        $startTime = microtime(true);
         $q = trim($query);
 
         if (empty($q)) {
@@ -36,6 +44,11 @@ class LiraAiService
                 'suggestedProducts' => [],
                 'disclaimer' => null,
                 'source' => 'welcome_prompt',
+                'model' => 'system_prompt',
+                'latency_ms' => 0,
+                'prompt_tokens' => null,
+                'completion_tokens' => null,
+                'guardrail_triggered' => null,
             ];
         }
 
@@ -48,12 +61,18 @@ class LiraAiService
                 $aiResponse = $this->callGemini($q, $geminiApiKey);
                 if (! empty($aiResponse)) {
                     $isClinical = (bool) preg_match(self::CLINICAL_INTENT_PATTERN, $q);
+                    $meta = $this->lastCallMetadata ?? [];
 
                     return [
                         'reply' => $aiResponse,
                         'suggestedProducts' => $matchedProducts,
                         'disclaimer' => $isClinical ? SettingService::legalDisclaimer() : null,
                         'source' => 'gemini_api',
+                        'model' => $meta['model'] ?? SettingService::geminiModel(),
+                        'latency_ms' => $meta['latency_ms'] ?? (int) round((microtime(true) - $startTime) * 1000),
+                        'prompt_tokens' => $meta['prompt_tokens'] ?? null,
+                        'completion_tokens' => $meta['completion_tokens'] ?? null,
+                        'guardrail_triggered' => $this->detectTriggeredGuardrail($q),
                     ];
                 }
             } catch (\Throwable $e) {
@@ -62,7 +81,14 @@ class LiraAiService
         }
 
         // 2. Motor Determinístico Dinámico y Deshardcodeado
-        return $this->queryDeterministic($q, $matchedProducts);
+        $result = $this->queryDeterministic($q, $matchedProducts);
+        $result['latency_ms'] = (int) round((microtime(true) - $startTime) * 1000);
+        $result['model'] = 'deterministic-engine';
+        $result['prompt_tokens'] = null;
+        $result['completion_tokens'] = null;
+        $result['guardrail_triggered'] = $this->detectTriggeredGuardrail($q);
+
+        return $result;
     }
 
     /**
@@ -121,21 +147,51 @@ class LiraAiService
             ],
         ];
 
+        $startTime = microtime(true);
         $response = Http::withHeaders([
             'x-goog-api-key' => $apiKey,
         ])->withOptions([
             'verify' => false,
         ])->timeout(15)->post($endpoint, $payload);
 
+        $elapsedMs = (int) round((microtime(true) - $startTime) * 1000);
+
         if ($response->successful()) {
             $data = $response->json();
             $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+            $usage = $data['usageMetadata'] ?? [];
+
+            $this->lastCallMetadata = [
+                'latency_ms' => $elapsedMs,
+                'model' => $model,
+                'prompt_tokens' => $usage['promptTokenCount'] ?? null,
+                'completion_tokens' => $usage['candidatesTokenCount'] ?? null,
+            ];
+
             if (! empty($text)) {
                 $formatted = nl2br(e($text));
                 $formatted = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $formatted);
 
                 return preg_replace('/\* (.*?)(<br \/>|\n|$)/', '• $1$2', $formatted);
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Detect if a user query triggers any active health guardrail or clinical safety boundary.
+     */
+    public function detectTriggeredGuardrail(string $query): ?string
+    {
+        $q = mb_strtolower($query, 'UTF-8');
+
+        if (preg_match('/(cu[aá]ntas pastillas|cuantas pastillas|sobredosis|me quiero morir|intoxicaci[oó]n|veneno)/iu', $q)) {
+            return 'Prevención de Intoxicación y Emergencia';
+        }
+
+        if (preg_match('/(puedo tomar antibi[oó]tico sin receta|rec[eé]tame|qu[eé] me tomo para la neumon[ií]a)/iu', $q)) {
+            return 'Prohibición Estricta de Prescripción Médica';
         }
 
         return null;

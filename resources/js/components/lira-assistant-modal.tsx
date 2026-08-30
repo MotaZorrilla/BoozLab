@@ -57,6 +57,19 @@ export default function LiraAssistantModal({
         }
     }, [messages, isOpen]);
 
+    const getSessionUid = () => {
+        try {
+            let uid = sessionStorage.getItem('booz_lira_session_uid');
+            if (!uid) {
+                uid = 'ses_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+                sessionStorage.setItem('booz_lira_session_uid', uid);
+            }
+            return uid;
+        } catch {
+            return 'ses_anon_' + Date.now();
+        }
+    };
+
     const handleSend = async (queryText?: string) => {
         const textToSend = queryText || input;
         if (!textToSend.trim() || isLoading) return;
@@ -85,7 +98,11 @@ export default function LiraAssistantModal({
                             ) as HTMLMetaElement
                         )?.content || '',
                 },
-                body: JSON.stringify({ message: textToSend }),
+                body: JSON.stringify({
+                    message: textToSend,
+                    session_uid: getSessionUid(),
+                    url_ref: typeof window !== 'undefined' ? window.location.pathname : '/',
+                }),
             });
 
             if (response.ok) {
@@ -439,6 +456,9 @@ export default function LiraAssistantModal({
                         <Send className="h-4 w-4" />
                     </button>
                 </form>
+                <p className="text-[10px] text-center text-slate-500 pt-2 font-medium">
+                    🛡️ Orientación clínica de cortesía • Supervisión sanitaria conforme a normativas del INH Rafael Rangel.
+                </p>
             </div>
         </Modal>
     );

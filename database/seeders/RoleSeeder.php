@@ -29,6 +29,7 @@ class RoleSeeder extends Seeder
                     'reports.view',
                     'reports.manage',
                     'reports.print',
+                    'analytics.view',
                 ],
             ],
             [

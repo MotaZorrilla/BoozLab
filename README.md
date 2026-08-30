@@ -69,17 +69,23 @@ npm run opsx -- validate --specs
 npm run build
 ```
 
-* **Pruebas Automatizadas:** 139 tests pasando (556 assertions) en verde.
-* **OpenSpec:** 13/13 especificaciones validadas sin errores.
-* **Frontend:** 2.762 módulos compilados limpiamente con Vite en ~8.3s.
+* **Pruebas Automatizadas:** 144 tests pasando (588 assertions) en verde.
+* **OpenSpec:** 14/14 especificaciones validadas sin errores.
+* **Frontend:** 2.766 módulos compilados limpiamente con Vite en ~9.3s.
 
 ---
 
 ## 📚 Documentación del Proyecto
 
-* [`MASTER_PLAN.md`](./MASTER_PLAN.md) — Plan maestro exhaustivo con historial acumulado de 27 fases implementadas.
-* [`HISTORY.md`](./HISTORY.md) — Bitácora cronológica aditiva de hitos, commits y métricas.
-* [`PRD.md`](./PRD.md) — Documento formal de requerimientos del producto.
-* [`SPEC.md`](./SPEC.md) — Especificación técnica viva y matemática.
-* [`ROADMAP_AND_DEPLOYMENT_CHECKLIST.md`](./ROADMAP_AND_DEPLOYMENT_CHECKLIST.md) — Checklist de salida a producción y tareas operativas.
-* [`openspec/specs/`](./openspec/specs/) — Catálogo de 13 especificaciones BDD en Gherkin.
+### Documentos Principales en Raíz
+* [`MANUAL_PROPIETARIOS_BOOZLAB.md`](./MANUAL_PROPIETARIOS_BOOZLAB.md) — 📖 **Manual Ejecutivo y Didáctico para Propietarios y Directivos de Booz Laboratorio** (Explicación paso a paso de todo lo que hace el sistema, catálogo, farmacia, tienda, IA y consola sin tecnicismos).
+* [`MASTER_PLAN.md`](./MASTER_PLAN.md) — Plan maestro técnico exhaustivo con trazabilidad de 28 fases ejecutadas.
+
+### Archivo de Ingeniería y Especificaciones (`docs_booz/`)
+* [`docs_booz/HISTORY.md`](./docs_booz/HISTORY.md) — Bitácora cronológica acumulativa de hitos, commits y métricas.
+* [`docs_booz/PRD.md`](./docs_booz/PRD.md) — Documento de requerimientos del producto farmacéutico.
+* [`docs_booz/SPEC.md`](./docs_booz/SPEC.md) — Especificación técnica viva y arquitectura matemática.
+* [`docs_booz/ROADMAP_AND_DEPLOYMENT_CHECKLIST.md`](./docs_booz/ROADMAP_AND_DEPLOYMENT_CHECKLIST.md) — Checklist de salida a producción y tareas operativas.
+* [`docs_booz/tech_debt_audit.md`](./docs_booz/tech_debt_audit.md) — Auditoría de código y refactorización técnica.
+* [`openspec/specs/`](./openspec/specs/) — Catálogo de 14 especificaciones BDD en Gherkin.
+

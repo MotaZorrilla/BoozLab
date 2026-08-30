@@ -10,6 +10,7 @@ import {
     Settings,
     Globe,
     FileText,
+    Activity,
 } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { NavFooter } from '@/components/nav-footer';
@@ -84,7 +85,7 @@ export function AppSidebar() {
                     roles: ['super_admin', 'gestor_comercial'],
                 },
                 {
-                    title: 'Analítica & Cotizaciones',
+                    title: 'Cotizaciones & Pedidos',
                     href: '/admin/quotes',
                     icon: TrendingUp,
                     roles: ['super_admin', 'gestor_comercial'],
@@ -94,6 +95,12 @@ export function AppSidebar() {
         {
             label: 'Sistema & Control',
             items: [
+                {
+                    title: 'Telemetría Lira AI',
+                    href: '/admin/analytics',
+                    icon: Activity,
+                    roles: ['super_admin', 'director_tecnico'],
+                },
                 {
                     title: 'Usuarios & Roles',
                     href: '/admin/users',

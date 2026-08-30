@@ -239,9 +239,19 @@ graph TD
     - En `farmacovigilancia.tsx`, se implementó soporte 100% integral para Modo Oscuro en fondos, avisos sanitarios, inputs, botones de severidad y tarjeta de confirmación de ticket.
     - En `booz-layout.tsx`, se añadió menú hamburguesa superior (`Menu` / `X`) para dispositivos móviles y enlace directo permanente a Farmacovigilancia (`ShieldAlert` - "Vigilancia") en la barra de navegación inferior (`md:hidden`).
     - En `store-cart-drawer.tsx`, se hizo la tarjeta y mensaje de bolsa vacía ("Tu bolsa está vacía...") 100% interactiva con botón para cerrar el drawer y navegar directamente al catálogo de productos (`#productos`).
-    - En `product-detail.tsx`, se implementó la tarjeta de compra y cotización directa con precio en USD, indicador de stock y botón llamativo `Añadir a la Bolsa de Pedidos`, más botón táctil en la columna de imagen.
     - En `vademecum-pdf.blade.php` y `product-detail.tsx`, se diseñó e integró la **Ficha Técnica & Vademécum Clínico Oficial en formato PDF imprimible** (`/producto/{slug}/vademecum`) con diseño corporativo azul `#002072`, fotografía en alta resolución del medicamento, especificaciones clínicas completas, protocolos de farmacovigilancia INH y firmas de regencia técnica.
-  - **Métricas:** 139 tests pasando en verde (556 assertions), compilación Vite exitosa en 8.35s (2.762 módulos) y 12/12 especificaciones OpenSpec validadas.
+  - **Métricas:** 139 tests pasando en verde (556 assertions), compilación Vite exitosa en 8.35s (2.762 módulos) y 13/13 especificaciones OpenSpec validadas.
+
+- **Fase 28: Telemetría Fail-Safe & Mirador Clínico de Lira AI (`/admin/analytics`) (30 de Agosto de 2026):**
+  - **Hitos Implementados:**
+    - Creadas las tablas de telemetría `chat_sessions`, `chat_messages` y `product_daily_stats` con índice compuesto único `(product_id, date)`.
+    - Implementado `ChatTelemetryService` con principio de aislamiento de fallos: la persistencia jamás bloquea ni genera errores 500 al usuario.
+    - Medición de latencia de alta resolución y extracción de tokens de Gemini desde `usageMetadata`.
+    - Desarrollado el Mirador Clínico en `/admin/analytics` con KPIs en vivo, gráficos SVG nativos interactivos (`TrendChart`), embudo de conversión (`FunnelView`), vista táctil móvil de tarjetas y tabla para escritorio.
+    - Modal interactivo de auditoría (`ConversationTranscriptModal`) para inspeccionar el diálogo turno a turno con badges técnicos.
+    - Exportación en streaming de CSV (`/admin/analytics/export-csv`) compatible con Microsoft Excel.
+    - Comando `php artisan telemetry:rollup` idempotente para consolidación diaria por producto.
+  - **Métricas:** 144 tests pasando en verde (588 assertions), compilación Vite exitosa en 9.34s (2.766 módulos) y 14/14 especificaciones OpenSpec validadas.
 
 ---
 
@@ -252,8 +262,8 @@ graph TD
   - *Línea 02 Tratamiento tópico:* Bactrocis (Moxifloxacina - Pie Diabético), Bacumer (Metronidazol + Fluconazol + Dexametasona - Reg. E.F. 240/6), Amikacis, Gentamicis (Reg. E.F. 240/9), Betamer, Betasalicis, Betagemer, Quadrimer, Micosmer, Labicis/Aciclomer.
   - *Línea 03 Salud y bienestar:* Albemer (Suspensión oral 10ml), Cevitmer (Vitamina C), Booz Sport, L-Fortex.
   - *Línea 04 Cuidado especializado:* Bactrocis Regenerativo, Salicis, Cutimer.
-- **Suite de Pruebas Automatizadas:** 138 tests pasados (551 assertions) 100% en verde con PHPUnit 11.
-- **Especificaciones OpenSpec:** 12 especificaciones BDD 100% validadas.
+- **Suite de Pruebas Automatizadas:** 144 tests pasados (588 assertions) 100% en verde con PHPUnit 11.
+- **Especificaciones OpenSpec:** 14 especificaciones BDD 100% validadas.
 
 
 

@@ -115,6 +115,13 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::post('/admin/ai/guardrails/{guardrail}/toggle', [\App\Http\Controllers\Admin\AdminAiController::class, 'toggleGuardrail'])->name('admin.ai.guardrails.toggle');
         Route::delete('/admin/ai/guardrails/{guardrail}', [\App\Http\Controllers\Admin\AdminAiController::class, 'destroyGuardrail'])->name('admin.ai.guardrails.destroy');
     });
+
+    // 6. Lira AI Telemetry & Conversation Monitoring
+    Route::middleware('permission:analytics.view')->group(function () {
+        Route::get('/admin/analytics', [\App\Http\Controllers\Admin\AdminAnalyticsController::class, 'index'])->name('admin.analytics.index');
+        Route::get('/admin/analytics/conversations/{session}', [\App\Http\Controllers\Admin\AdminAnalyticsController::class, 'conversation'])->name('admin.analytics.conversation');
+        Route::get('/admin/analytics/export-csv', [\App\Http\Controllers\Admin\AdminAnalyticsController::class, 'exportCsv'])->name('admin.analytics.exportCsv');
+    });
 });
 
 require __DIR__.'/settings.php';

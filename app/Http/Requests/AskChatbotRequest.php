@@ -15,6 +15,8 @@ class AskChatbotRequest extends FormRequest
     {
         return [
             'message' => ['nullable', 'string', 'max:1000'],
+            'session_uid' => ['nullable', 'string', 'max:64'],
+            'url_ref' => ['nullable', 'string', 'max:255'],
         ];
     }
 
