@@ -19,7 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
-        $middleware->validateCsrfTokens(except: ['api/*']);
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+            'admin/products/upload-image',
+        ]);
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureAdmin::class,

@@ -74,13 +74,17 @@ export default function AdminProducts({ products, productLines, stockImages = []
         setUploadSuccessMessage(null);
         const formData = new FormData();
         formData.append('image', file);
+        const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
+        if (csrfToken) {
+            formData.append('_token', csrfToken);
+        }
 
         try {
-            const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
             const res = await fetch('/admin/products/upload-image', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
                 },
                 body: formData,
