@@ -299,7 +299,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                                     >
                                         <div className="h-10 w-10 rounded-xl bg-gradient-to-b from-white via-white to-blue-50 border-2 border-cyan-300 shadow-md p-0.5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform overflow-hidden ring-2 ring-white/40">
                                             <img
-                                                src="/assets/img/lira_head_avatar.png"
+                                                src="/assets/img/lira_avatar_animated.gif"
                                                 alt="Lira AI"
                                                 className="h-full w-full object-cover rounded-lg"
                                                 onError={(e) => {

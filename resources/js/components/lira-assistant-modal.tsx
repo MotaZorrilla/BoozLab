@@ -214,7 +214,7 @@ export default function LiraAssistantModal({
                 <div className="flex items-center gap-3.5 border-b border-slate-800 pb-3 sm:pb-4">
                     <div className="relative flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-white via-white to-blue-50 p-1 shadow-lg shadow-cyan-500/20 group ring-2 ring-white/20">
                         <img
-                            src="/assets/img/lira_head_avatar.png"
+                            src="/assets/img/lira_avatar_animated.gif"
                             alt="Lira Asistente Virtual Oficial"
                             className="h-full w-full rounded-xl object-cover transition-transform group-hover:scale-105"
                         />
@@ -246,13 +246,13 @@ export default function LiraAssistantModal({
                     aria-live="polite" 
                     className="flex-1 space-y-3.5 overflow-y-auto py-3 pr-1 text-xs sm:text-sm"
                 >
-                    {/* Tarjeta de Bienvenida con Lira Oficial en cuerpo entero cuando el chat recién se abre */}
+                    {/* Tarjeta de Bienvenida con Lira Oficial animada en cuerpo entero cuando el chat recién se abre */}
                     {messages.length === 1 && (
                         <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-blue-950/80 via-indigo-950/70 to-slate-900 border border-blue-500/30 flex items-center gap-3.5 shadow-md">
-                            <div className="relative h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 flex items-center justify-center">
+                            <div className="relative h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 flex items-center justify-center">
                                 <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-white/95 to-cyan-100/90 blur-md opacity-85" />
                                 <img
-                                    src="/assets/img/lira_official_transparent.png"
+                                    src="/assets/img/lira_greeting_animated.gif"
                                     alt="Lira Mascota Oficial"
                                     className="relative z-10 h-full w-full object-contain drop-shadow-md hover:scale-105 transition-transform"
                                 />
@@ -275,7 +275,7 @@ export default function LiraAssistantModal({
                             {msg.sender === 'lira' && (
                                 <div className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 overflow-hidden rounded-full border-2 border-cyan-300 bg-gradient-to-b from-white via-white to-blue-50 p-0.5 shadow-md ring-1 ring-white/30">
                                     <img
-                                        src="/assets/img/lira_head_avatar.png"
+                                        src="/assets/img/lira_avatar_animated.gif"
                                         alt="Lira"
                                         className="h-full w-full object-cover rounded-full"
                                     />

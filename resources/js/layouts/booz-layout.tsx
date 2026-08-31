@@ -339,7 +339,7 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                 >
                     <div className="relative">
                         <div className="h-12 w-12 rounded-full bg-gradient-to-b from-white via-slate-50 to-blue-50 text-slate-900 p-0.5 shadow-xl border-2 border-cyan-400 dark:border-cyan-300 overflow-hidden flex items-center justify-center ring-2 ring-white/90 dark:ring-slate-900/90">
-                            <img src="/assets/img/lira_head_avatar.png" alt="Lira" className="h-full w-full object-cover rounded-full" />
+                            <img src="/assets/img/lira_avatar_animated.gif" alt="Lira" className="h-full w-full object-cover rounded-full" />
                         </div>
                         <span className="absolute -top-1 -right-1 flex h-4 w-4 z-20 pointer-events-none">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80"></span>
@@ -392,10 +392,10 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                     className="hidden md:flex h-14 w-14 items-center justify-center rounded-full shadow-2xl hover:scale-110 transition-all relative group cursor-pointer"
                     title="Consultar con Lira (Asistente Virtual)"
                 >
-                    {/* Contenedor circular recortado con el avatar de Lira */}
-                    <div className="h-full w-full rounded-full bg-gradient-to-b from-white via-white to-blue-50 text-slate-900 border-2 border-cyan-400 dark:border-cyan-300 overflow-hidden p-0.5 ring-2 ring-white/90 dark:ring-blue-900/50">
+                    {/* Contenedor circular recortado con el avatar animado centrado de Lira */}
+                    <div className="h-full w-full rounded-full bg-gradient-to-b from-white via-white to-blue-50 text-slate-900 border-2 border-cyan-400 dark:border-cyan-300 overflow-hidden p-0.5 ring-2 ring-white/90 dark:ring-blue-900/50 flex items-center justify-center">
                         <img
-                            src="/assets/img/lira_head_avatar.png"
+                            src="/assets/img/lira_avatar_animated.gif"
                             alt="Lira"
                             className="h-full w-full object-cover rounded-full"
                         />
@@ -445,8 +445,16 @@ export default function BoozLayout({ children }: { children: React.ReactNode }) 
                                 RIF: <span className="text-white font-mono">J-40906185-0</span><br />
                                 Planta de Fabricación: Av. Hospital cruce con Troncal 11, Valle de Guanape, Edo. Anzoátegui, Venezuela.
                             </p>
-                            <div className="pt-2 text-[11px] text-slate-400">
-                                <span className="text-cyan-400 font-bold">Oficina Comercial:</span> Puerto Ordaz, Edo. Bolívar.
+                            <div className="pt-2 text-[11px] text-slate-400 flex items-center gap-1.5 flex-wrap">
+                                <span>Desarrollo SGCP creado por</span>
+                                <a
+                                    href="https://neobranding.cl"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="font-bold text-cyan-400 hover:text-cyan-300 hover:underline transition-colors inline-flex items-center gap-1"
+                                >
+                                    Neobranding Latam
+                                </a>
                             </div>
                         </div>
 

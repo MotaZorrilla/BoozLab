@@ -686,16 +686,16 @@ export default function Home({
                             )}
                         </div>
 
-                        {/* Columna 2: Hola, soy Lira - Tu asistente virtual (Con Lira Oficial 3D Saludando) */}
+                        {/* Columna 2: Hola, soy Lira - Tu asistente virtual (Con Lira Oficial 3D Saludando Animado) */}
                         <div className="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-xl sm:flex-row sm:gap-6 sm:rounded-3xl sm:p-8 lg:col-span-5 group">
                             {/* Podio / Halo luminoso blanco perla de alto contraste */}
-                            <div className="relative h-36 w-36 flex-shrink-0 sm:h-48 sm:w-48 flex items-center justify-center">
-                                <div className="absolute inset-4 sm:inset-3 rounded-full bg-gradient-to-tr from-white/95 via-cyan-100/90 to-white/90 blur-lg opacity-85 group-hover:opacity-100 transition-opacity" />
-                                <div className="absolute inset-6 sm:inset-4 rounded-full bg-white/40 blur-sm pointer-events-none" />
+                            <div className="relative h-44 w-44 flex-shrink-0 sm:h-52 sm:w-52 flex items-center justify-center">
+                                <div className="absolute inset-4 sm:inset-3 rounded-full bg-gradient-to-tr from-white/95 via-cyan-100/90 to-white/90 blur-xl opacity-85 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-6 sm:inset-4 rounded-full bg-white/40 blur-md pointer-events-none" />
                                 <img
-                                    src="/assets/img/lira_official_transparent.png"
+                                    src="/assets/img/lira_greeting_animated.gif"
                                     alt="Lira Asistente Virtual Saludando"
-                                    className="relative z-10 h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,32,114,0.4)] transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1"
+                                    className="relative z-10 h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,32,114,0.5)] transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
                                             '/assets/img/lira_head_avatar.png';
@@ -719,13 +719,15 @@ export default function Home({
                                 </p>
                                 <button
                                     onClick={() => window.dispatchEvent(new CustomEvent('booz:open-lira'))}
-                                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 sm:px-5 sm:py-2.5"
+                                    className="inline-flex cursor-pointer items-center gap-2.5 rounded-xl bg-white px-4 py-2 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 sm:px-5 sm:py-2.5 group"
                                 >
-                                    <img
-                                        src="/assets/img/lira_head_avatar.png"
-                                        alt="Lira"
-                                        className="h-4 w-4 rounded-full object-cover"
-                                    />
+                                    <div className="h-5 w-5 rounded-full overflow-hidden flex items-center justify-center border border-cyan-400 bg-blue-50 flex-shrink-0">
+                                        <img
+                                            src="/assets/img/lira_avatar_animated.gif"
+                                            alt="Lira"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </div>
                                     <span>Hablar con Lira</span>
                                 </button>
                             </div>
