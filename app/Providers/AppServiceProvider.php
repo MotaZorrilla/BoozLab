@@ -15,7 +15,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // En cPanel la carpeta pública suele ser public_html en vez de public
+        $cpanelPublic = base_path('../public_html');
+        if (is_dir($cpanelPublic)) {
+            $this->app->usePublicPath(realpath($cpanelPublic));
+        }
     }
 
     /**

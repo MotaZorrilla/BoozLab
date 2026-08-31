@@ -166,13 +166,23 @@ class AdminProductController extends Controller
         ]);
 
         $file = $request->file('image');
-        $uploadDir = public_path('assets/img/uploads');
-        if (! file_exists($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
         $filename = 'prod_' . time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-        $file->move($uploadDir, $filename);
+
+        // 1. Directorio público primario (detectado por Laravel)
+        $primaryDir = public_path('assets/img/uploads');
+        if (! file_exists($primaryDir)) {
+            mkdir($primaryDir, 0755, true);
+        }
+        $file->move($primaryDir, $filename);
+
+        // 2. Si existe public_html como carpeta hermana en cPanel, copiar también allí por seguridad
+        $cpanelDir = base_path('../public_html/assets/img/uploads');
+        if (is_dir(base_path('../public_html')) && $primaryDir !== $cpanelDir) {
+            if (! file_exists($cpanelDir)) {
+                mkdir($cpanelDir, 0755, true);
+            }
+            copy($primaryDir . '/' . $filename, $cpanelDir . '/' . $filename);
+        }
 
         return response()->json([
             'success' => true,
