@@ -213,15 +213,35 @@ export default function AdminAi({ aiConfig, corpusStats, knowledgeDocuments = []
         setTestResult(null);
 
         try {
+            // Helper para obtener cookie XSRF-TOKEN si la meta tag no está o desfasada
+            const getXsrfToken = () => {
+                const match = document.cookie.match(new RegExp('(^|;\\s*)XSRF-TOKEN=([^;]*)'));
+                return match ? decodeURIComponent(match[2]) : '';
+            };
+
+            const metaToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '';
+            const xsrfCookie = getXsrfToken();
+
             const res = await fetch('/admin/ai/test', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as any)?.content || '',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
+                    ...(xsrfCookie ? { 'X-XSRF-TOKEN': xsrfCookie } : {}),
                 },
                 body: JSON.stringify({ message: testQuery }),
             });
+
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => null);
+                setTestResult({
+                    success: false,
+                    error: errorData?.message || `Error del servidor (${res.status}): No se pudo procesar la prueba.`,
+                });
+                return;
+            }
 
             const data = await res.json();
             setTestResult(data);
