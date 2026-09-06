@@ -1,4 +1,10 @@
-import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Transition,
+    TransitionChild,
+} from '@headlessui/react';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Fragment } from 'react';
@@ -12,9 +18,18 @@ interface ModalProps {
     maxWidth?: string;
 }
 
-export default function Modal({ isOpen, show, onClose, title, children, maxWidth = 'max-w-2xl' }: ModalProps) {
+export default function Modal({
+    isOpen,
+    show,
+    onClose,
+    title,
+    children,
+    maxWidth = 'max-w-2xl',
+}: ModalProps) {
     const isVisible = Boolean(isOpen ?? show ?? false);
-    const resolvedMaxWidth = maxWidth.startsWith('max-w-') ? maxWidth : `max-w-${maxWidth}`;
+    const resolvedMaxWidth = maxWidth.startsWith('max-w-')
+        ? maxWidth
+        : `max-w-${maxWidth}`;
 
     return (
         <Transition show={isVisible} as={Fragment}>
@@ -28,7 +43,7 @@ export default function Modal({ isOpen, show, onClose, title, children, maxWidth
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-slate-950/60 dark:bg-black/80 backdrop-blur-sm" />
+                    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm dark:bg-black/80" />
                 </TransitionChild>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -42,16 +57,21 @@ export default function Modal({ isOpen, show, onClose, title, children, maxWidth
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <DialogPanel className={`w-full ${resolvedMaxWidth} transform overflow-hidden rounded-3xl bg-white dark:bg-[#0D172E] text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 text-left align-middle shadow-2xl transition-all relative`}>
+                            <DialogPanel
+                                className={`w-full ${resolvedMaxWidth} relative transform overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 text-left align-middle text-slate-900 shadow-2xl transition-all sm:p-8 dark:border-slate-800 dark:bg-[#0D172E] dark:text-slate-100`}
+                            >
                                 {title ? (
-                                    <div className="flex items-center justify-between mb-6">
-                                        <DialogTitle as="h3" className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                                    <div className="mb-6 flex items-center justify-between">
+                                        <DialogTitle
+                                            as="h3"
+                                            className="text-xl font-bold text-slate-900 sm:text-2xl dark:text-white"
+                                        >
                                             {title}
                                         </DialogTitle>
                                         <button
                                             type="button"
                                             onClick={onClose}
-                                            className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                            className="cursor-pointer rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                                             aria-label="Cerrar modal"
                                         >
                                             <X className="h-5 w-5" />
@@ -61,13 +81,13 @@ export default function Modal({ isOpen, show, onClose, title, children, maxWidth
                                     <button
                                         type="button"
                                         onClick={onClose}
-                                        className="absolute top-4 right-4 rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer z-10"
+                                        className="absolute top-4 right-4 z-10 cursor-pointer rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                                         aria-label="Cerrar modal"
                                     >
                                         <X className="h-5 w-5" />
                                     </button>
                                 )}
-                                
+
                                 <div className={title ? 'mt-2' : ''}>
                                     {children}
                                 </div>

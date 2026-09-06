@@ -24,7 +24,7 @@ class AdminAnalyticsController extends Controller
 
         // 0. Selector de Periodo Temporal Dinámico
         $period = $request->input('period', '7d');
-        
+
         switch ($period) {
             case '15d':
                 $startDate = Carbon::today()->subDays(14);
@@ -151,8 +151,8 @@ class AdminAnalyticsController extends Controller
             for ($i = $daysCount - 1; $i >= 0; $i--) {
                 $day = Carbon::today()->subDays($i);
                 $dateStr = $day->toDateString();
-                $label = $period === '7d' 
-                    ? ucfirst($day->locale('es')->isoFormat('ddd D')) 
+                $label = $period === '7d'
+                    ? ucfirst($day->locale('es')->isoFormat('ddd D'))
                     : $day->locale('es')->isoFormat('D MMM');
 
                 $daySessions = ChatSession::whereDate('started_at', $dateStr)->count();
@@ -182,10 +182,10 @@ class AdminAnalyticsController extends Controller
                 $mEnd = $monthDate->copy()->endOfMonth()->toDateString();
                 $label = ucfirst($monthDate->locale('es')->isoFormat('MMM YY'));
 
-                $mSessions = ChatSession::whereBetween('started_at', [$mStart . ' 00:00:00', $mEnd . ' 23:59:59'])->count();
-                $mGemini = ChatMessage::where('source', 'gemini_api')->whereBetween('created_at', [$mStart . ' 00:00:00', $mEnd . ' 23:59:59'])->count();
-                $mDet = ChatMessage::where('source', 'like', 'deterministic_%')->whereBetween('created_at', [$mStart . ' 00:00:00', $mEnd . ' 23:59:59'])->count();
-                $mWa = \App\Models\InteractionEvent::where('event_type', 'whatsapp_click')->whereBetween('created_at', [$mStart . ' 00:00:00', $mEnd . ' 23:59:59'])->count();
+                $mSessions = ChatSession::whereBetween('started_at', [$mStart.' 00:00:00', $mEnd.' 23:59:59'])->count();
+                $mGemini = ChatMessage::where('source', 'gemini_api')->whereBetween('created_at', [$mStart.' 00:00:00', $mEnd.' 23:59:59'])->count();
+                $mDet = ChatMessage::where('source', 'like', 'deterministic_%')->whereBetween('created_at', [$mStart.' 00:00:00', $mEnd.' 23:59:59'])->count();
+                $mWa = \App\Models\InteractionEvent::where('event_type', 'whatsapp_click')->whereBetween('created_at', [$mStart.' 00:00:00', $mEnd.' 23:59:59'])->count();
                 $mViews = (int) (\App\Models\PageView::whereBetween('date', [$mStart, $mEnd])->sum('views_count') ?: 0);
                 $mUniques = (int) (\App\Models\DailyVisitor::whereBetween('date', [$mStart, $mEnd])->count() ?: 0);
 
@@ -355,7 +355,7 @@ class AdminAnalyticsController extends Controller
 
         return response()->stream(function () use ($sessions) {
             $handle = fopen('php://output', 'w');
-            fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM
+            fwrite($handle, "\xEF\xBB\xBF"); // UTF-8 BOM
 
             fputcsv($handle, [
                 'ID Sesión',

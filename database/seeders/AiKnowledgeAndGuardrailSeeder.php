@@ -23,7 +23,7 @@ class AiKnowledgeAndGuardrailSeeder extends Seeder
                 'file_path' => '/assets/docs/Vademecum_Oficial_Booz_Laboratorio_18_Farmacos.txt',
                 'is_active' => true,
                 'order' => 1,
-                'content' => <<<EOT
+                'content' => <<<'EOT'
 ================================================================================
 BOOZ LABORATORIO VGME, C.A. - VADEMÉCUM CLÍNICO MAESTRO (18 PRODUCTOS)
 RIF: J-40906185-0 • Planta: Valle de Guanape, Estado Anzoátegui, Venezuela
@@ -149,7 +149,7 @@ EOT,
                 'file_path' => '/assets/docs/POE_Farmacovigilancia_INH_Rafael_Rangel.txt',
                 'is_active' => true,
                 'order' => 2,
-                'content' => <<<EOT
+                'content' => <<<'EOT'
 ================================================================================
 BOOZ LABORATORIO VGME, C.A. - PROTOCOLO OPERATIVO DE FARMACOVIGILANCIA
 Unidad de Farmacovigilancia Sanitaria • Conforme a Normativa Sanitaria INH
@@ -184,7 +184,7 @@ EOT,
                 'file_path' => '/assets/docs/Manual_Comercial_Cotizaciones_Logistica_Booz.txt',
                 'is_active' => true,
                 'order' => 3,
-                'content' => <<<EOT
+                'content' => <<<'EOT'
 ================================================================================
 BOOZ LABORATORIO VGME, C.A. - MANUAL DE COTIZACIONES Y DESPACHO COMERCIAL
 Departamento de Ventas y Distribución Nacional • Planta Valle de Guanape
@@ -215,7 +215,7 @@ EOT,
                 'file_path' => '/assets/docs/Guia_Comunicacion_Empatia_Lira_BoozLab.txt',
                 'is_active' => true,
                 'order' => 4,
-                'content' => <<<EOT
+                'content' => <<<'EOT'
 ================================================================================
 GUÍA DE COMUNICACIÓN Y PERSONALIDAD DE LIRA ASISTENTE VIRTUAL
 Booz Laboratorio VGME, C.A. • Asistente Científica y Mascota Oficial

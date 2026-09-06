@@ -23,7 +23,7 @@ class TrafficTelemetryService
             }
 
             // 2. Excluir rutas internas, de administración, API y depuración
-            $path = '/' . ltrim($request->path(), '/');
+            $path = '/'.ltrim($request->path(), '/');
 
             if ($this->shouldIgnorePath($path)) {
                 return;
@@ -37,7 +37,7 @@ class TrafficTelemetryService
             $date = now()->toDateString();
             $ip = $request->ip() ?: '127.0.0.1';
             $ua = $request->userAgent() ?: 'unknown';
-            $visitorHash = hash('sha256', $ip . '|' . $ua . '|' . $date);
+            $visitorHash = hash('sha256', $ip.'|'.$ua.'|'.$date);
 
             // 4. Clasificar sección del sitio y resolver producto si aplica
             [$section, $productId] = $this->classifySectionAndProduct($path);
@@ -99,7 +99,7 @@ class TrafficTelemetryService
                 $stat->save();
             }
         } catch (\Throwable $e) {
-            Log::warning('TrafficTelemetryService: Error registrando visita de página: ' . $e->getMessage(), [
+            Log::warning('TrafficTelemetryService: Error registrando visita de página: '.$e->getMessage(), [
                 'path' => $request->path(),
             ]);
         }
@@ -124,7 +124,7 @@ class TrafficTelemetryService
         ];
 
         foreach ($ignoredPrefixes as $prefix) {
-            if ($path === $prefix || str_starts_with($path, $prefix . '/')) {
+            if ($path === $prefix || str_starts_with($path, $prefix.'/')) {
                 return true;
             }
         }
@@ -144,12 +144,14 @@ class TrafficTelemetryService
         if (preg_match('#^/producto/([^/]+)/vademecum$#', $path, $matches)) {
             $slug = $matches[1];
             $product = Product::where('slug', $slug)->first();
+
             return ['vademecum', $product?->id];
         }
 
         if (preg_match('#^/producto/([^/]+)$#', $path, $matches)) {
             $slug = $matches[1];
             $product = Product::where('slug', $slug)->first();
+
             return ['product', $product?->id];
         }
 

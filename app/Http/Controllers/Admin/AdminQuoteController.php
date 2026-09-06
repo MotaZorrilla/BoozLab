@@ -23,7 +23,7 @@ class AdminQuoteController extends Controller
 
         $query = Quote::query()->latest();
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('quote_number', 'like', "%{$search}%")
                     ->orWhere('customer_name', 'like', "%{$search}%")
@@ -32,15 +32,15 @@ class AdminQuoteController extends Controller
             });
         }
 
-        if (!empty($status) && $status !== 'Todos') {
+        if (! empty($status) && $status !== 'Todos') {
             $query->where('status', $status);
         }
 
-        if (!empty($customerType) && $customerType !== 'Todos') {
+        if (! empty($customerType) && $customerType !== 'Todos') {
             $query->where('customer_type', $customerType);
         }
 
-        if (!empty($channel) && $channel !== 'Todos') {
+        if (! empty($channel) && $channel !== 'Todos') {
             $query->where('channel', $channel);
         }
 
@@ -61,6 +61,7 @@ class AdminQuoteController extends Controller
         $quotesPaginated->through(function ($quote) use ($productsById) {
             $formattedItems = collect($quote->items_payload ?? [])->map(function ($item, $idx) use ($quote, $productsById) {
                 $p = $productsById->get($item['product_id'] ?? null);
+
                 return [
                     'id' => $idx + 1,
                     'quote_id' => $quote->id,
@@ -88,7 +89,7 @@ class AdminQuoteController extends Controller
                 'status' => $quote->status,
                 'admin_notes' => $quote->admin_notes,
                 'downloaded_at' => $quote->downloaded_at?->format('d/m/Y H:i'),
-                'is_downloaded' => !is_null($quote->downloaded_at),
+                'is_downloaded' => ! is_null($quote->downloaded_at),
                 'created_at' => $quote->created_at?->format('d/m/Y H:i') ?? '',
                 'items' => $formattedItems,
             ];
@@ -228,7 +229,7 @@ class AdminQuoteController extends Controller
             'admin_notes' => $validated['admin_notes'] ?? null,
         ];
 
-        if (!empty($validated['mark_downloaded']) && !$quote->downloaded_at) {
+        if (! empty($validated['mark_downloaded']) && ! $quote->downloaded_at) {
             $updateData['downloaded_at'] = now();
         }
 
@@ -269,7 +270,7 @@ class AdminQuoteController extends Controller
 
         $callback = function () use ($quotes) {
             $file = fopen('php://output', 'w');
-            fputs($file, "\xEF\xBB\xBF"); // UTF-8 BOM
+            fwrite($file, "\xEF\xBB\xBF"); // UTF-8 BOM
 
             fputcsv($file, [
                 'ID',
@@ -320,6 +321,7 @@ class AdminQuoteController extends Controller
 
         $formattedItems = collect($quote->items_payload)->map(function ($item) use ($products) {
             $p = $products->get($item['product_id']);
+
             return [
                 'name' => $p?->name ?? 'Fármaco Booz',
                 'presentation' => $p?->presentation ?? '',

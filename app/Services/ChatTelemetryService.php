@@ -12,12 +12,11 @@ class ChatTelemetryService
     /**
      * Record a chat interaction turn in a fail-safe, non-blocking manner.
      *
-     * @param string $sessionUid Unique identifier of the client conversation session.
-     * @param string $userQuery Query sent by the user.
-     * @param array $result Result payload returned by LiraAiService.
-     * @param string|null $urlRef Origin page URL pathname.
-     * @param Request|null $request Current HTTP request for anonymous peer hash.
-     * @return ChatSession|null
+     * @param  string  $sessionUid  Unique identifier of the client conversation session.
+     * @param  string  $userQuery  Query sent by the user.
+     * @param  array  $result  Result payload returned by LiraAiService.
+     * @param  string|null  $urlRef  Origin page URL pathname.
+     * @param  Request|null  $request  Current HTTP request for anonymous peer hash.
      */
     public function recordTurn(
         string $sessionUid,
@@ -42,9 +41,9 @@ class ChatTelemetryService
                 if ($request) {
                     $ip = $request->ip() ?: '127.0.0.1';
                     $ua = $request->userAgent() ?: 'unknown';
-                    $session->peer_hash = hash('sha256', $ip . '|' . $ua);
+                    $session->peer_hash = hash('sha256', $ip.'|'.$ua);
                 } else {
-                    $session->peer_hash = hash('sha256', 'cli|' . $sessionUid);
+                    $session->peer_hash = hash('sha256', 'cli|'.$sessionUid);
                 }
 
                 $session->started_at = $now;
@@ -112,7 +111,7 @@ class ChatTelemetryService
 
             return $session;
         } catch (\Throwable $e) {
-            Log::warning('ChatTelemetryService: Excepción silenciosa capturada en telemetría: ' . $e->getMessage(), [
+            Log::warning('ChatTelemetryService: Excepción silenciosa capturada en telemetría: '.$e->getMessage(), [
                 'session_uid' => $sessionUid,
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -131,10 +130,11 @@ class ChatTelemetryService
             $session = ChatSession::where('session_uid', $sessionUid)->first();
             if ($session) {
                 $session->update(['converted_to_order' => true]);
+
                 return true;
             }
         } catch (\Throwable $e) {
-            Log::warning('ChatTelemetryService: Error marcando sesión como convertida: ' . $e->getMessage());
+            Log::warning('ChatTelemetryService: Error marcando sesión como convertida: '.$e->getMessage());
         }
 
         return false;
@@ -174,7 +174,7 @@ class ChatTelemetryService
 
             return $event;
         } catch (\Throwable $e) {
-            Log::warning('ChatTelemetryService: Excepción registrando evento de interacción: ' . $e->getMessage(), [
+            Log::warning('ChatTelemetryService: Excepción registrando evento de interacción: '.$e->getMessage(), [
                 'event_type' => $eventType,
                 'channel' => $channel,
             ]);

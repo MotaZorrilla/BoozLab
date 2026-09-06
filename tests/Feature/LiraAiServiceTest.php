@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Product;
 use App\Models\ProductLine;
 use App\Models\SystemSetting;
 use App\Services\LiraAiService;
-use App\Services\SettingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

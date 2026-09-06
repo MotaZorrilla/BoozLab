@@ -32,6 +32,7 @@ class MakeAdminCommand extends Command
 
         if (! $user) {
             $this->error("Usuario con correo [{$email}] no encontrado.");
+
             return self::FAILURE;
         }
 
@@ -43,6 +44,7 @@ class MakeAdminCommand extends Command
         $user->assignRole('super_admin');
 
         $this->info("¡Éxito! El usuario [{$user->name}] ({$user->email}) ahora tiene rol de Super Administrador activo.");
+
         return self::SUCCESS;
     }
 }

@@ -7,18 +7,31 @@ use App\Models\SystemSetting;
 class SettingService
 {
     public const DEFAULT_WHATSAPP_PHONE = '584148873615';
+
     public const DEFAULT_WHATSAPP_CONTACT_PHONE = '584148873615';
+
     public const DEFAULT_COMPANY_PHONE = '584148873615';
+
     public const DEFAULT_WHATSAPP_MESSAGE = 'Hola Booz Laboratorio, deseo cotizar productos farmacéuticos.';
+
     public const DEFAULT_WHATSAPP_CART_HEADER = "*HOLA BOOZ LABORATORIO* 🔬\nDeseo solicitar cotización y disponibilidad para el siguiente pedido:";
-    public const DEFAULT_WHATSAPP_CART_FOOTER = "_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega oficial._";
+
+    public const DEFAULT_WHATSAPP_CART_FOOTER = '_Por favor confirmar disponibilidad en planta / droguería y tiempos de entrega oficial._';
+
     public const DEFAULT_WHATSAPP_CART_CUSTOMER_TYPES = 'Paciente,Farmacia,Clínica,Distribuidor';
+
     public const DEFAULT_COMPANY_RIF = 'J-40906185-0';
+
     public const DEFAULT_COMPANY_NAME = 'Booz Laboratorio VGME, C.A.';
+
     public const DEFAULT_PLANT_LOCATION = 'Valle de Guanape, Edo. Anzoátegui';
+
     public const DEFAULT_OFFICE_LOCATION = 'Puerto Ordaz, Edo. Bolívar';
+
     public const DEFAULT_COMPANY_INSTAGRAM = '@booz.laboratorio';
+
     public const DEFAULT_LEGAL_DISCLAIMER = '⚠️ Aviso Ético y Sanitario: Booz Laboratorio no promueve la automedicación. Esta respuesta tiene fines estrictamente informativos y educativos. Consulta siempre a tu médico o farmacéutico tratante antes de iniciar cualquier tratamiento farmacológico.';
+
     public const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
 
     public static function whatsappPhone(): string

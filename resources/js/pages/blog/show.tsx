@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { Clock, ArrowLeft, Share2, Printer } from 'lucide-react';
 import BoozLayout from '@/layouts/booz-layout';
 
-export default function BlogPost({ slug }: { slug: string }) {
+export default function BlogPost() {
     // Mock data based on slug (in a real app, this would come from the backend)
     const post = {
         title: 'La Ciencia detrás de la Vitamina C Tópica Estabilizada',
@@ -27,38 +27,55 @@ export default function BlogPost({ slug }: { slug: string }) {
 
             <h2>Evidencia Clínica</h2>
             <p>Estudios doble ciego han demostrado que la aplicación tópica diaria de vitamina C al 15% durante 12 semanas reduce significativamente la profundidad de las arrugas y mejora la luminosidad global de la piel.</p>
-        `
+        `,
     };
 
     return (
         <BoozLayout>
             <Head title={post.title} />
-            
-            <article className="bg-white min-h-screen pb-24">
+
+            <article className="min-h-screen bg-white pb-24">
                 {/* Hero / Header */}
-                <div className="relative h-[60vh] bg-slate-900 w-full overflow-hidden">
-                    <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+                <div className="relative h-[60vh] w-full overflow-hidden bg-slate-900">
+                    <img
+                        src={post.image}
+                        alt={post.title}
+                        className="absolute inset-0 h-full w-full object-cover opacity-60"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
-                    
+
                     <div className="absolute bottom-0 left-0 w-full p-8 md:p-16">
                         <div className="mx-auto max-w-4xl">
-                            <Link href="/blog" className="inline-flex items-center text-blue-400 hover:text-blue-300 mb-6 transition-colors">
-                                <ArrowLeft className="mr-2 h-4 w-4" /> Volver al Blog
+                            <Link
+                                href="/blog"
+                                className="mb-6 inline-flex items-center text-blue-400 transition-colors hover:text-blue-300"
+                            >
+                                <ArrowLeft className="mr-2 h-4 w-4" /> Volver al
+                                Blog
                             </Link>
-                            <div className="flex items-center gap-4 text-sm font-bold text-blue-200 mb-4 uppercase tracking-wider">
-                                <span className="bg-blue-600/20 border border-blue-500/50 px-3 py-1 rounded">{post.category}</span>
-                                <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> {post.readTime}</span>
+                            <div className="mb-4 flex items-center gap-4 text-sm font-bold tracking-wider text-blue-200 uppercase">
+                                <span className="rounded border border-blue-500/50 bg-blue-600/20 px-3 py-1">
+                                    {post.category}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                    <Clock className="h-4 w-4" />{' '}
+                                    {post.readTime}
+                                </span>
                             </div>
-                            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+                            <h1 className="mb-6 text-4xl leading-tight font-bold text-white md:text-6xl">
                                 {post.title}
                             </h1>
                             <div className="flex items-center gap-4 text-slate-300">
-                                <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white border-2 border-slate-900">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-900 bg-blue-600 font-bold text-white">
                                     RM
                                 </div>
                                 <div>
-                                    <div className="font-bold text-white">{post.author}</div>
-                                    <div className="text-xs opacity-70">{post.authorRole}</div>
+                                    <div className="font-bold text-white">
+                                        {post.author}
+                                    </div>
+                                    <div className="text-xs opacity-70">
+                                        {post.authorRole}
+                                    </div>
                                 </div>
                                 <span className="mx-2 text-slate-600">•</span>
                                 <span>{post.date}</span>
@@ -68,18 +85,18 @@ export default function BlogPost({ slug }: { slug: string }) {
                 </div>
 
                 {/* Content */}
-                <div className="mx-auto max-w-3xl px-6 -mt-10 relative z-10">
-                    <div className="bg-white rounded-3xl p-8 md:p-16 shadow-xl border border-slate-100">
-                        <div className="flex justify-end gap-4 mb-8 border-b border-slate-100 pb-8">
-                            <button className="flex items-center gap-2 text-sm text-slate-500 hover:text-blue-600 transition-colors">
+                <div className="relative z-10 mx-auto -mt-10 max-w-3xl px-6">
+                    <div className="rounded-3xl border border-slate-100 bg-white p-8 shadow-xl md:p-16">
+                        <div className="mb-8 flex justify-end gap-4 border-b border-slate-100 pb-8">
+                            <button className="flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-blue-600">
                                 <Share2 className="h-4 w-4" /> Compartir
                             </button>
-                            <button className="flex items-center gap-2 text-sm text-slate-500 hover:text-blue-600 transition-colors">
+                            <button className="flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-blue-600">
                                 <Printer className="h-4 w-4" /> Imprimir
                             </button>
                         </div>
 
-                        <div 
+                        <div
                             className="prose prose-lg prose-slate prose-headings:text-slate-900 prose-a:text-blue-600 hover:prose-a:text-blue-500 prose-blockquote:border-l-blue-600 prose-blockquote:bg-slate-50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:not-italic"
                             dangerouslySetInnerHTML={{ __html: post.content }}
                         />

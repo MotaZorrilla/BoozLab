@@ -27,7 +27,9 @@ const setCookie = (name: string, value: string, days = 365): void => {
 const getStoredAppearance = (): Appearance => {
     if (typeof window === 'undefined') return 'system';
 
-    const stored = localStorage.getItem('appearance') || localStorage.getItem('booz_theme');
+    const stored =
+        localStorage.getItem('appearance') ||
+        localStorage.getItem('booz_theme');
     if (stored === 'light' || stored === 'dark' || stored === 'system') {
         return stored;
     }

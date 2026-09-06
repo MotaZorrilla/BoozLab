@@ -51,11 +51,11 @@ class ChatSession extends Model
 
     public function scopeByDateRange(Builder $query, ?string $from, ?string $to): Builder
     {
-        if (!empty($from)) {
+        if (! empty($from)) {
             $query->whereDate('started_at', '>=', $from);
         }
 
-        if (!empty($to)) {
+        if (! empty($to)) {
             $query->whereDate('started_at', '<=', $to);
         }
 
@@ -70,10 +70,10 @@ class ChatSession extends Model
 
         return $query->where(function (Builder $q) use ($term) {
             $q->where('first_query', 'like', "%{$term}%")
-              ->orWhere('session_uid', 'like', "%{$term}%")
-              ->orWhereHas('messages', function (Builder $mq) use ($term) {
-                  $mq->where('content', 'like', "%{$term}%");
-              });
+                ->orWhere('session_uid', 'like', "%{$term}%")
+                ->orWhereHas('messages', function (Builder $mq) use ($term) {
+                    $mq->where('content', 'like', "%{$term}%");
+                });
         });
     }
 }

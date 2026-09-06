@@ -7,7 +7,7 @@ export function trackInteractionEvent(
     channel: 'whatsapp' | 'lira_ai' | 'web_form' | 'store_cart' = 'whatsapp',
     source: string = 'web',
     productId?: number | null,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, unknown> = {},
 ) {
     if (typeof window === 'undefined') return;
 
@@ -15,7 +15,9 @@ export function trackInteractionEvent(
         let sessionUid = null;
         try {
             sessionUid = sessionStorage.getItem('booz_lira_session_uid');
-        } catch {}
+        } catch {
+            // Ignorar errores de acceso a sessionStorage
+        }
 
         const payload = JSON.stringify({
             event_type: eventType,

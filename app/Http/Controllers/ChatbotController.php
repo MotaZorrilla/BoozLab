@@ -30,7 +30,7 @@ class ChatbotController extends Controller
         try {
             $this->telemetry->recordTurn($sessionUid, $message, $result, $urlRef, $request);
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('ChatbotController: Telemetry failed: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::warning('ChatbotController: Telemetry failed: '.$e->getMessage());
         }
 
         $result['session_uid'] = $sessionUid;

@@ -6,7 +6,6 @@ use App\Models\SystemSetting;
 use App\Models\User;
 use App\Services\SettingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Crypt;
 use Tests\TestCase;
 
 class DynamicSystemSettingsTest extends TestCase

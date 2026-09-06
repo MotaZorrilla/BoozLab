@@ -18,19 +18,19 @@
     --radius-sm: calc(var(--radius) - 4px);
 
     /* BREAKPOINTS RESPONSIVOS PARA PANTALLAS GRANDES Y 4K */
-    --breakpoint-2xl: 96rem;    /* 1536px */
-    --breakpoint-3xl: 120rem;   /* 1920px (Full HD+ / QHD) */
-    --breakpoint-4k: 160rem;    /* 2560px - 3840px (Ultra-Wide / 4K) */
+    --breakpoint-2xl: 96rem; /* 1536px */
+    --breakpoint-3xl: 120rem; /* 1920px (Full HD+ / QHD) */
+    --breakpoint-4k: 160rem; /* 2560px - 3840px (Ultra-Wide / 4K) */
 
     /* PALETA OFICIAL BOOZ LABORATORIO */
-    --color-booz-navy: #002072;          /* PANTONE 2747 C */
-    --color-booz-navy-dark: #00154D;
-    --color-booz-navy-light: #0A369D;
-    --color-booz-burgundy: #842D44;      /* PANTONE 506 C */
+    --color-booz-navy: #002072; /* PANTONE 2747 C */
+    --color-booz-navy-dark: #00154d;
+    --color-booz-navy-light: #0a369d;
+    --color-booz-burgundy: #842d44; /* PANTONE 506 C */
     --color-booz-burgundy-dark: #581827;
-    --color-booz-burgundy-light: #A73856;
-    --color-booz-cyan: #06B6D4;
-    --color-booz-cyan-glow: #22D3EE;
+    --color-booz-burgundy-light: #a73856;
+    --color-booz-cyan: #06b6d4;
+    --color-booz-cyan-glow: #22d3ee;
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);

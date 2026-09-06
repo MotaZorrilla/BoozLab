@@ -7,7 +7,6 @@ use App\Models\AiKnowledgeDocument;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminAiTrainingAndGuardrailsTest extends TestCase
@@ -15,6 +14,7 @@ class AdminAiTrainingAndGuardrailsTest extends TestCase
     use RefreshDatabase;
 
     protected User $superAdmin;
+
     protected User $regularUser;
 
     protected function setUp(): void

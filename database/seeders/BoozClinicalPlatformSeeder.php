@@ -6,9 +6,7 @@ use App\Models\Faq;
 use App\Models\Product;
 use App\Models\ProductLine;
 use App\Models\Testimonial;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class BoozClinicalPlatformSeeder extends Seeder
 {

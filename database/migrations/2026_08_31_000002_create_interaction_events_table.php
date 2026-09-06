@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('updated_at')->nullable();
         });
 
-        if (Schema::hasTable('product_daily_stats') && !Schema::hasColumn('product_daily_stats', 'whatsapp_clicks_count')) {
+        if (Schema::hasTable('product_daily_stats') && ! Schema::hasColumn('product_daily_stats', 'whatsapp_clicks_count')) {
             Schema::table('product_daily_stats', function (Blueprint $table) {
                 $table->unsignedInteger('whatsapp_clicks_count')->default(0)->after('quote_requests_count');
             });

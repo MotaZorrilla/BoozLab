@@ -4,7 +4,6 @@ import {
     Search,
     ShieldCheck,
     ArrowRight,
-    MessageCircle,
     ChevronDown,
     ChevronLeft,
     ChevronRight,
@@ -14,7 +13,13 @@ import {
     LayoutGrid,
     SlidersHorizontal,
 } from 'lucide-react';
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import React, {
+    useState,
+    useMemo,
+    useEffect,
+    useRef,
+    useCallback,
+} from 'react';
 import SearchModal from '@/components/search-modal';
 import BoozLayout from '@/layouts/booz-layout';
 import type { Product, ProductLine, Testimonial, Faq } from '@/types';
@@ -147,9 +152,13 @@ export default function Home({
     }, [products, selectedLineId, searchQuery, selectedNeed]);
 
     // Detección responsive para configuración del carrusel con peek y 4K Ultra-Wide
-    const [viewportMode, setViewportMode] = useState<'mobile' | 'tablet' | 'desktop' | 'ultrawide'>('desktop');
+    const [viewportMode, setViewportMode] = useState<
+        'mobile' | 'tablet' | 'desktop' | 'ultrawide'
+    >('desktop');
     // Vista de catálogo para modo teléfono: 'grid' (Tienda Virtual App 100% ancho) o 'carousel' (Carrusel 3D)
-    const [mobileCatalogView, setMobileCatalogView] = useState<'grid' | 'carousel'>('grid');
+    const [mobileCatalogView, setMobileCatalogView] = useState<
+        'grid' | 'carousel'
+    >('grid');
 
     useEffect(() => {
         const updateViewport = () => {
@@ -277,7 +286,8 @@ export default function Home({
 
     // Salto directo a un producto desde los indicadores / dots
     const handleJumpToProduct = (realIdx: number) => {
-        if (filteredProducts.length === 0 || baseCarouselProducts.length === 0) return;
+        if (filteredProducts.length === 0 || baseCarouselProducts.length === 0)
+            return;
         const M = baseCarouselProducts.length;
         const target = M + (realIdx % M);
         setIsCarouselSliding(true);
@@ -313,7 +323,8 @@ export default function Home({
 
     // Índice real activo para dots e indicadores de progreso
     const activeRealProductIndex = useMemo(() => {
-        if (filteredProducts.length === 0 || baseCarouselProducts.length === 0) return 0;
+        if (filteredProducts.length === 0 || baseCarouselProducts.length === 0)
+            return 0;
         const M = baseCarouselProducts.length;
         const normalized = ((carouselIndex % M) + M) % M;
         return normalized % filteredProducts.length;
@@ -424,7 +435,7 @@ export default function Home({
                 className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-b from-white via-slate-50 to-blue-50/40 py-10 transition-colors duration-300 sm:py-16 lg:py-20 dark:border-slate-800 dark:from-[#0A1124] dark:via-[#070C18] dark:to-[#0A1124]"
                 id="hero"
             >
-                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
                         {/* Hero Text */}
                         <div className="space-y-4 text-center sm:space-y-6 lg:col-span-7 lg:text-left">
@@ -496,7 +507,7 @@ export default function Home({
                         {/* Hero Image Showcase con Inclinación 3D en Scroll */}
                         <div className="relative flex justify-center lg:col-span-5">
                             <div
-                                className="relative flex aspect-square w-full max-w-sm sm:max-w-md items-center justify-center rounded-3xl border border-blue-200/70 bg-gradient-to-tr from-blue-900/10 via-white to-cyan-100/40 p-2 sm:p-3 shadow-2xl shadow-blue-900/15 transition-colors overflow-hidden dark:border-cyan-500/30 dark:from-blue-950/40 dark:via-[#0D172E] dark:to-cyan-950/30 group"
+                                className="group relative flex aspect-square w-full max-w-sm items-center justify-center overflow-hidden rounded-3xl border border-blue-200/70 bg-gradient-to-tr from-blue-900/10 via-white to-cyan-100/40 p-2 shadow-2xl shadow-blue-900/15 transition-colors sm:max-w-md sm:p-3 dark:border-cyan-500/30 dark:from-blue-950/40 dark:via-[#0D172E] dark:to-cyan-950/30"
                                 style={{
                                     transform: `perspective(1000px) rotateX(${tiltRotateX}deg) rotateY(${tiltRotateY}deg) translateY(${tiltTranslateY}px) scale(${tiltScale})`,
                                     transition:
@@ -507,14 +518,14 @@ export default function Home({
                                 <img
                                     src="/assets/img/hero_products.png"
                                     alt="Línea Oficial de Medicamentos y Tratamientos Tópicos Booz Laboratorio"
-                                    className="h-full w-full object-cover rounded-2xl drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                                    className="h-full w-full rounded-2xl object-cover drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
                                             '/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg';
                                     }}
                                 />
-                                <div className="absolute right-3 bottom-3 flex items-center gap-2.5 rounded-2xl border border-slate-100/90 bg-white/95 backdrop-blur-md px-3 py-2 shadow-xl sm:right-4 sm:bottom-4 sm:gap-3 sm:px-4 sm:py-2.5 dark:border-slate-800 dark:bg-[#0D172E]/95">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm shadow-md shadow-emerald-500/20">
+                                <div className="absolute right-3 bottom-3 flex items-center gap-2.5 rounded-2xl border border-slate-100/90 bg-white/95 px-3 py-2 shadow-xl backdrop-blur-md sm:right-4 sm:bottom-4 sm:gap-3 sm:px-4 sm:py-2.5 dark:border-slate-800 dark:bg-[#0D172E]/95">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 text-xs font-bold text-white shadow-md shadow-emerald-500/20 sm:h-9 sm:w-9 sm:text-sm">
                                         ✓
                                     </div>
                                     <div>
@@ -539,7 +550,7 @@ export default function Home({
                 className="bg-white py-12 transition-colors duration-300 sm:py-16 dark:bg-[#0A1124]"
                 id="lineas"
             >
-                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     <div className="mx-auto mb-10 max-w-3xl space-y-2 text-center sm:mb-14">
                         <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
                             Especialización Terapéutica
@@ -580,8 +591,8 @@ export default function Home({
                                         line.id === 1
                                             ? 'bg-gradient-to-br from-[#002072] to-blue-900 hover:from-blue-900 hover:to-indigo-900'
                                             : line.id === 2
-                                              /* CERTIFICADO OFICIAL: PANTONE 506 C Borgoña/Vinotinto Booz */
-                                              ? 'bg-gradient-to-br from-[#581827] via-[#842D44] to-[#3B0E19] hover:from-[#6E1E31] hover:to-[#4A1220]'
+                                              ? /* CERTIFICADO OFICIAL: PANTONE 506 C Borgoña/Vinotinto Booz */
+                                                'bg-gradient-to-br from-[#581827] via-[#842D44] to-[#3B0E19] hover:from-[#6E1E31] hover:to-[#4A1220]'
                                               : line.id === 3
                                                 ? 'bg-gradient-to-br from-cyan-950 to-blue-950 hover:from-cyan-900 hover:to-blue-900'
                                                 : 'bg-gradient-to-br from-slate-900 to-blue-950 hover:from-slate-800 hover:to-blue-900'
@@ -633,7 +644,7 @@ export default function Home({
                 3. BENTO GRID INTERACTIVO (Lira Animado en Bucle)
             ======================================================== */}
             <section className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-16 dark:border-slate-800 dark:bg-[#070C18]">
-                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     <div className="grid grid-cols-1 items-stretch gap-6 sm:gap-8 lg:grid-cols-12">
                         {/* Columna 1: ¿Qué necesitas? Selector de necesidad */}
                         <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-colors sm:rounded-3xl sm:p-8 lg:col-span-4 dark:border-slate-800 dark:bg-[#0D172E]">
@@ -687,15 +698,15 @@ export default function Home({
                         </div>
 
                         {/* Columna 2: Hola, soy Lira - Tu asistente virtual (Con Lira Oficial 3D Saludando Animado) */}
-                        <div className="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-xl sm:flex-row sm:gap-6 sm:rounded-3xl sm:p-8 lg:col-span-5 group">
+                        <div className="group relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-xl sm:flex-row sm:gap-6 sm:rounded-3xl sm:p-8 lg:col-span-5">
                             {/* Podio / Halo luminoso blanco perla de alto contraste */}
-                            <div className="relative h-44 w-44 flex-shrink-0 sm:h-52 sm:w-52 flex items-center justify-center">
-                                <div className="absolute inset-4 sm:inset-3 rounded-full bg-gradient-to-tr from-white/95 via-cyan-100/90 to-white/90 blur-xl opacity-85 group-hover:opacity-100 transition-opacity" />
-                                <div className="absolute inset-6 sm:inset-4 rounded-full bg-white/40 blur-md pointer-events-none" />
+                            <div className="relative flex h-44 w-44 flex-shrink-0 items-center justify-center sm:h-52 sm:w-52">
+                                <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-white/95 via-cyan-100/90 to-white/90 opacity-85 blur-xl transition-opacity group-hover:opacity-100 sm:inset-3" />
+                                <div className="pointer-events-none absolute inset-6 rounded-full bg-white/40 blur-md sm:inset-4" />
                                 <img
                                     src="/assets/img/lira_greeting_animated.gif"
                                     alt="Lira Asistente Virtual Saludando"
-                                    className="relative z-10 h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,32,114,0.5)] transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1"
+                                    className="relative z-10 h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,32,114,0.5)] transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-105"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
                                             '/assets/img/lira_head_avatar.png';
@@ -718,10 +729,14 @@ export default function Home({
                                     Booz Laboratorio.
                                 </p>
                                 <button
-                                    onClick={() => window.dispatchEvent(new CustomEvent('booz:open-lira'))}
-                                    className="inline-flex cursor-pointer items-center gap-2.5 rounded-xl bg-white px-4 py-2 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 sm:px-5 sm:py-2.5 group"
+                                    onClick={() =>
+                                        window.dispatchEvent(
+                                            new CustomEvent('booz:open-lira'),
+                                        )
+                                    }
+                                    className="group inline-flex cursor-pointer items-center gap-2.5 rounded-xl bg-white px-4 py-2 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 sm:px-5 sm:py-2.5"
                                 >
-                                    <div className="h-5 w-5 rounded-full overflow-hidden flex items-center justify-center border border-cyan-400 bg-blue-50 flex-shrink-0">
+                                    <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-cyan-400 bg-blue-50">
                                         <img
                                             src="/assets/img/lira_avatar_animated.gif"
                                             alt="Lira"
@@ -771,7 +786,7 @@ export default function Home({
                 className="bg-white py-12 transition-colors duration-300 sm:py-20 dark:bg-[#0A1124]"
                 id="productos"
             >
-                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     {/* Header del Catálogo */}
                     <div className="mb-6 flex flex-col justify-between gap-4 sm:mb-8 md:flex-row md:items-end">
                         <div>
@@ -801,14 +816,14 @@ export default function Home({
                     </div>
 
                     {/* Selector de Vista Táctil para Teléfonos: Tienda Virtual App (100% Ancho) vs Carrusel 3D */}
-                    <div className="flex sm:hidden items-center justify-between gap-1 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl mb-4 border border-slate-200/60 dark:border-slate-700">
+                    <div className="mb-4 flex items-center justify-between gap-1 rounded-xl border border-slate-200/60 bg-slate-100 p-1 sm:hidden dark:border-slate-700 dark:bg-slate-800/80">
                         <button
                             type="button"
                             onClick={() => setMobileCatalogView('grid')}
-                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[38px] ${
+                            className={`flex min-h-[38px] flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition-all ${
                                 mobileCatalogView === 'grid'
                                     ? 'bg-[#002072] text-white shadow-sm dark:bg-blue-600'
-                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                             }`}
                         >
                             <LayoutGrid className="h-3.5 w-3.5" />
@@ -817,10 +832,10 @@ export default function Home({
                         <button
                             type="button"
                             onClick={() => setMobileCatalogView('carousel')}
-                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[38px] ${
+                            className={`flex min-h-[38px] flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition-all ${
                                 mobileCatalogView === 'carousel'
                                     ? 'bg-[#002072] text-white shadow-sm dark:bg-blue-600'
-                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                             }`}
                         >
                             <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -829,11 +844,11 @@ export default function Home({
                     </div>
 
                     {/* Botones de Selección por Sección / Línea Terapéutica con Scroll Horizontal Móvil */}
-                    <div className="mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 pt-1 border-b border-slate-100 dark:border-slate-800">
+                    <div className="no-scrollbar -mx-4 mb-6 flex items-center gap-2 overflow-x-auto border-b border-slate-100 px-4 pt-1 pb-3 sm:mx-0 sm:px-0 dark:border-slate-800">
                         {/* Botón: Todos los Productos */}
                         <button
                             onClick={() => handleSelectCategory(null)}
-                            className={`flex-shrink-0 flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all min-h-[38px] ${
+                            className={`flex min-h-[38px] flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                                 selectedLineId === null
                                     ? 'bg-[#002072] text-white shadow-md shadow-blue-900/20'
                                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
@@ -868,7 +883,7 @@ export default function Home({
                                             isSelected ? null : line.id,
                                         )
                                     }
-                                    className={`flex-shrink-0 flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all min-h-[38px] ${
+                                    className={`flex min-h-[38px] flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                                         isSelected
                                             ? line.id === 2
                                                 ? 'bg-[#842D44] text-white shadow-md ring-2 ring-rose-300'
@@ -930,10 +945,10 @@ export default function Home({
 
                     {/* Contenedor con Transición Suave entre Categorías */}
                     <div
-                        className={`transition-all duration-300 ease-out transform ${
+                        className={`transform transition-all duration-300 ease-out ${
                             isFadingCategory
-                                ? 'opacity-0 translate-y-2 scale-[0.98] blur-[0.5px]'
-                                : 'opacity-100 translate-y-0 scale-100 blur-0'
+                                ? 'translate-y-2 scale-[0.98] opacity-0 blur-[0.5px]'
+                                : 'blur-0 translate-y-0 scale-100 opacity-100'
                         }`}
                     >
                         {filteredProducts.length === 0 ? (
@@ -943,7 +958,8 @@ export default function Home({
                                     No se encontraron medicamentos
                                 </h3>
                                 <p className="mt-1 max-w-sm text-xs text-slate-500 dark:text-slate-400">
-                                    No hay productos que coincidan con la búsqueda o línea seleccionada.
+                                    No hay productos que coincidan con la
+                                    búsqueda o línea seleccionada.
                                 </p>
                                 <button
                                     type="button"
@@ -960,25 +976,36 @@ export default function Home({
                             <div>
                                 {/* VISTA TIENDA VIRTUAL MÓVIL (APP E-COMMERCE 100% ANCHO DE PANTALLA EN TELÉFONOS) */}
                                 {mobileCatalogView === 'grid' && (
-                                    <div className="block sm:hidden grid grid-cols-2 gap-2.5 my-3">
+                                    <div className="my-3 block grid grid-cols-2 gap-2.5 sm:hidden">
                                         {filteredProducts.map((product) => (
                                             <div
                                                 key={`grid-${product.id}`}
                                                 className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2.5 shadow-xs transition-all dark:border-slate-800 dark:bg-[#0D172E]"
                                             >
-                                                <Link href={`/producto/${product.slug}`} className="block">
+                                                <Link
+                                                    href={`/producto/${product.slug}`}
+                                                    className="block"
+                                                >
                                                     {/* Imagen Cuadrada con Badges */}
                                                     <div className="relative mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-2 dark:bg-slate-800/60">
                                                         <img
-                                                            src={product.image_path}
+                                                            src={
+                                                                product.image_path
+                                                            }
                                                             alt={product.name}
                                                             className="h-full w-full object-contain"
                                                             onError={(e) => {
-                                                                (e.target as HTMLImageElement).src = '/assets/img/product_1.png';
+                                                                (
+                                                                    e.target as HTMLImageElement
+                                                                ).src =
+                                                                    '/assets/img/product_1.png';
                                                             }}
                                                         />
                                                         <span className="absolute top-1.5 left-1.5 rounded border border-slate-200 bg-white/90 px-1 py-0.5 text-[8px] font-bold text-slate-700 shadow-xs dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-300">
-                                                            {product.product_line?.name || 'Booz'}
+                                                            {product
+                                                                .product_line
+                                                                ?.name ||
+                                                                'Booz'}
                                                         </span>
                                                         {product.is_prescription_required ? (
                                                             <span className="absolute top-1.5 right-1.5 rounded bg-amber-500 px-1 py-0.5 text-[7px] font-bold text-white shadow-xs">
@@ -996,7 +1023,9 @@ export default function Home({
                                                         {product.name}
                                                     </h4>
                                                     <p className="line-clamp-1 text-[10px] font-semibold text-[#002072] dark:text-cyan-400">
-                                                        {product.active_ingredients}
+                                                        {
+                                                            product.active_ingredients
+                                                        }
                                                     </p>
                                                     <p className="line-clamp-1 text-[10px] text-slate-400 dark:text-slate-500">
                                                         {product.presentation}
@@ -1004,18 +1033,23 @@ export default function Home({
                                                 </Link>
 
                                                 {/* Botón de Añadir a Pedido Fijo al Pie de la Tarjeta */}
-                                                <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-1.5">
-                                                    <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 font-mono">
-                                                        ${Number(product.price || 0).toFixed(2)}
+                                                <div className="mt-2.5 flex items-center justify-between gap-1.5 border-t border-slate-100 pt-2 dark:border-slate-800">
+                                                    <span className="font-mono text-[11px] font-black text-emerald-600 dark:text-emerald-400">
+                                                        $
+                                                        {Number(
+                                                            product.price || 0,
+                                                        ).toFixed(2)}
                                                     </span>
                                                     <button
                                                         type="button"
                                                         onClick={(e) => {
                                                             e.preventDefault();
                                                             e.stopPropagation();
-                                                            handleAddToCart(product);
+                                                            handleAddToCart(
+                                                                product,
+                                                            );
                                                         }}
-                                                        className="flex items-center gap-1 rounded-lg bg-[#002072] px-2 py-1.5 text-[10px] font-bold text-white shadow-xs transition-all hover:bg-blue-800 active:scale-95 min-h-[34px] dark:bg-blue-600"
+                                                        className="flex min-h-[34px] items-center gap-1 rounded-lg bg-[#002072] px-2 py-1.5 text-[10px] font-bold text-white shadow-xs transition-all hover:bg-blue-800 active:scale-95 dark:bg-blue-600"
                                                         title={`Añadir ${product.name} a la bolsa`}
                                                         aria-label={`Añadir ${product.name} a la bolsa`}
                                                     >
@@ -1029,9 +1063,15 @@ export default function Home({
                                 )}
 
                                 {/* Carrusel Infinito con Efecto Peek (Visible en Desktop/Tablet y en Móvil si se elige Carrusel) */}
-                                <div className={mobileCatalogView === 'grid' ? 'hidden sm:block' : 'block'}>
+                                <div
+                                    className={
+                                        mobileCatalogView === 'grid'
+                                            ? 'hidden sm:block'
+                                            : 'block'
+                                    }
+                                >
                                     <div
-                                        className="relative w-full overflow-hidden py-4 -mx-4 px-4 sm:mx-0 sm:px-0"
+                                        className="relative -mx-4 w-full overflow-hidden px-4 py-4 sm:mx-0 sm:px-0"
                                         onTouchStart={handleTouchStart}
                                         onTouchMove={handleTouchMove}
                                         onTouchEnd={handleTouchEnd}
@@ -1039,166 +1079,208 @@ export default function Home({
                                         aria-roledescription="carousel"
                                         aria-label="Carrusel de catálogo farmacéutico"
                                     >
-                                    {/* Flecha Izquierda de Navegación */}
-                                    <button
-                                        type="button"
-                                        onClick={handlePrevProduct}
-                                        className="absolute left-1 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 cursor-pointer items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-[#002072] shadow-xl shadow-slate-900/10 backdrop-blur-md transition-all hover:scale-110 hover:bg-white active:scale-95 dark:border-slate-700 dark:bg-slate-900/90 dark:text-cyan-400 dark:hover:bg-slate-800"
-                                        title="Medicamento anterior"
-                                        aria-label="Medicamento anterior"
-                                    >
-                                        <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-                                    </button>
+                                        {/* Flecha Izquierda de Navegación */}
+                                        <button
+                                            type="button"
+                                            onClick={handlePrevProduct}
+                                            className="absolute top-1/2 left-1 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-[#002072] shadow-xl shadow-slate-900/10 backdrop-blur-md transition-all hover:scale-110 hover:bg-white active:scale-95 sm:h-12 sm:w-12 dark:border-slate-700 dark:bg-slate-900/90 dark:text-cyan-400 dark:hover:bg-slate-800"
+                                            title="Medicamento anterior"
+                                            aria-label="Medicamento anterior"
+                                        >
+                                            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                                        </button>
 
-                                    {/* Flecha Derecha de Navegación */}
-                                    <button
-                                        type="button"
-                                        onClick={handleNextProduct}
-                                        className="absolute right-1 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 cursor-pointer items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-[#002072] shadow-xl shadow-slate-900/10 backdrop-blur-md transition-all hover:scale-110 hover:bg-white active:scale-95 dark:border-slate-700 dark:bg-slate-900/90 dark:text-cyan-400 dark:hover:bg-slate-800"
-                                        title="Medicamento siguiente"
-                                        aria-label="Medicamento siguiente"
-                                    >
-                                        <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                                    </button>
+                                        {/* Flecha Derecha de Navegación */}
+                                        <button
+                                            type="button"
+                                            onClick={handleNextProduct}
+                                            className="absolute top-1/2 right-1 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-[#002072] shadow-xl shadow-slate-900/10 backdrop-blur-md transition-all hover:scale-110 hover:bg-white active:scale-95 sm:h-12 sm:w-12 dark:border-slate-700 dark:bg-slate-900/90 dark:text-cyan-400 dark:hover:bg-slate-800"
+                                            title="Medicamento siguiente"
+                                            aria-label="Medicamento siguiente"
+                                        >
+                                            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                                        </button>
 
-                                    {/* Pista Dinámica del Carrusel Infinito */}
-                                    <div
-                                        className="flex will-change-transform"
-                                        style={{
-                                            gap: `${carouselConfig.gapPercent}%`,
-                                            transform: `translateX(${trackTranslateX}%)`,
-                                            transition: isCarouselSliding
-                                                ? 'transform 450ms cubic-bezier(0.25, 1, 0.5, 1)'
-                                                : 'none',
-                                        }}
-                                        onTransitionEnd={handleCarouselTransitionEnd}
-                                    >
-                                        {clonedCarouselProducts.map((product, idx) => (
-                                            <div
-                                                key={`${product.id}-${idx}`}
-                                                style={{
-                                                    width: `${carouselConfig.cardWidthPercent}%`,
-                                                    flexShrink: 0,
-                                                }}
-                                                className="py-2"
-                                            >
-                                                {/* Tarjeta 100% Clickeable hacia la Ficha Técnica */}
-                                                <Link
-                                                    href={`/producto/${product.slug}`}
-                                                    className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-400 hover:shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500/50 dark:hover:shadow-cyan-950/30"
-                                                >
-                                                    {/* Fotografía del Fármaco y Badges */}
-                                                    <div>
-                                                        <div className="relative mb-3 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-2.5 transition-colors group-hover:bg-blue-50/50 sm:mb-4 sm:rounded-2xl sm:p-4 dark:bg-slate-800/60 dark:group-hover:bg-slate-800">
-                                                            <img
-                                                                src={product.image_path}
-                                                                alt={product.name}
-                                                                className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                                                                onError={(e) => {
-                                                                    (
-                                                                        e.target as HTMLImageElement
-                                                                    ).src =
-                                                                        '/assets/img/product_1.png';
-                                                                }}
-                                                            />
-                                                            <span className="absolute top-2 left-2 rounded border border-slate-200 bg-white/90 px-1.5 py-0.5 text-[8px] font-bold text-slate-700 shadow-sm sm:text-[10px] dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-300">
-                                                                {product.product_line?.name ||
-                                                                    'Booz'}
-                                                            </span>
-                                                            {product.is_prescription_required ? (
-                                                                <span className="absolute top-2 right-2 rounded bg-amber-500 px-1.5 py-0.5 text-[7px] font-bold text-white shadow-sm sm:text-[9px]">
-                                                                    Récipe
-                                                                </span>
-                                                            ) : (
-                                                                <span className="absolute top-2 right-2 rounded bg-emerald-500 px-1.5 py-0.5 text-[7px] font-bold text-white shadow-sm sm:text-[9px]">
-                                                                    Libre
-                                                                </span>
-                                                            )}
-                                                        </div>
+                                        {/* Pista Dinámica del Carrusel Infinito */}
+                                        <div
+                                            className="flex will-change-transform"
+                                            style={{
+                                                gap: `${carouselConfig.gapPercent}%`,
+                                                transform: `translateX(${trackTranslateX}%)`,
+                                                transition: isCarouselSliding
+                                                    ? 'transform 450ms cubic-bezier(0.25, 1, 0.5, 1)'
+                                                    : 'none',
+                                            }}
+                                            onTransitionEnd={
+                                                handleCarouselTransitionEnd
+                                            }
+                                        >
+                                            {clonedCarouselProducts.map(
+                                                (product, idx) => (
+                                                    <div
+                                                        key={`${product.id}-${idx}`}
+                                                        style={{
+                                                            width: `${carouselConfig.cardWidthPercent}%`,
+                                                            flexShrink: 0,
+                                                        }}
+                                                        className="py-2"
+                                                    >
+                                                        {/* Tarjeta 100% Clickeable hacia la Ficha Técnica */}
+                                                        <Link
+                                                            href={`/producto/${product.slug}`}
+                                                            className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-400 hover:shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500/50 dark:hover:shadow-cyan-950/30"
+                                                        >
+                                                            {/* Fotografía del Fármaco y Badges */}
+                                                            <div>
+                                                                <div className="relative mb-3 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-2.5 transition-colors group-hover:bg-blue-50/50 sm:mb-4 sm:rounded-2xl sm:p-4 dark:bg-slate-800/60 dark:group-hover:bg-slate-800">
+                                                                    <img
+                                                                        src={
+                                                                            product.image_path
+                                                                        }
+                                                                        alt={
+                                                                            product.name
+                                                                        }
+                                                                        className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                                                        onError={(
+                                                                            e,
+                                                                        ) => {
+                                                                            (
+                                                                                e.target as HTMLImageElement
+                                                                            ).src =
+                                                                                '/assets/img/product_1.png';
+                                                                        }}
+                                                                    />
+                                                                    <span className="absolute top-2 left-2 rounded border border-slate-200 bg-white/90 px-1.5 py-0.5 text-[8px] font-bold text-slate-700 shadow-sm sm:text-[10px] dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-300">
+                                                                        {product
+                                                                            .product_line
+                                                                            ?.name ||
+                                                                            'Booz'}
+                                                                    </span>
+                                                                    {product.is_prescription_required ? (
+                                                                        <span className="absolute top-2 right-2 rounded bg-amber-500 px-1.5 py-0.5 text-[7px] font-bold text-white shadow-sm sm:text-[9px]">
+                                                                            Récipe
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="absolute top-2 right-2 rounded bg-emerald-500 px-1.5 py-0.5 text-[7px] font-bold text-white shadow-sm sm:text-[9px]">
+                                                                            Libre
+                                                                        </span>
+                                                                    )}
+                                                                </div>
 
-                                                        {/* Nombre y Fórmula Clínica */}
-                                                        <h4 className="mb-1 line-clamp-1 text-sm font-bold text-slate-900 transition-colors group-hover:text-[#002072] sm:text-base dark:text-white dark:group-hover:text-cyan-400">
-                                                            {product.name}
-                                                        </h4>
+                                                                {/* Nombre y Fórmula Clínica */}
+                                                                <h4 className="mb-1 line-clamp-1 text-sm font-bold text-slate-900 transition-colors group-hover:text-[#002072] sm:text-base dark:text-white dark:group-hover:text-cyan-400">
+                                                                    {
+                                                                        product.name
+                                                                    }
+                                                                </h4>
 
-                                                        <p className="mb-1 line-clamp-1 text-[11px] font-semibold text-[#002072] dark:text-cyan-400">
-                                                            {product.active_ingredients}
-                                                        </p>
+                                                                <p className="mb-1 line-clamp-1 text-[11px] font-semibold text-[#002072] dark:text-cyan-400">
+                                                                    {
+                                                                        product.active_ingredients
+                                                                    }
+                                                                </p>
 
-                                                        <p className="mb-2 line-clamp-2 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
-                                                            {product.description}
-                                                        </p>
-                                                    </div>
-
-                                                    {/* Footer de Tarjeta: Presentación, Acceso a Ficha y Botón + Pedido Reubicado */}
-                                                    <div className="mt-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-                                                        <div className="flex items-center justify-between gap-2">
-                                                            <div className="flex flex-col min-w-0">
-                                                                <span className="truncate text-[10px] font-medium text-slate-400 dark:text-slate-500">
-                                                                    {product.presentation}
-                                                                </span>
-                                                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#002072] transition-colors group-hover:text-blue-600 dark:text-cyan-400">
-                                                                    <span>Ficha Técnica</span>
-                                                                    <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
-                                                                </span>
+                                                                <p className="mb-2 line-clamp-2 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                                                                    {
+                                                                        product.description
+                                                                    }
+                                                                </p>
                                                             </div>
 
-                                                            {/* Botón + Pedido Reubicado con stopPropagation para no abrir ficha */}
-                                                            <button
-                                                                type="button"
-                                                                onClick={(e) => {
-                                                                    e.preventDefault();
-                                                                    e.stopPropagation();
-                                                                    handleAddToCart(product);
-                                                                }}
-                                                                className="flex flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-[#002072] px-3 py-2 text-xs font-bold text-white shadow-md shadow-blue-950/20 transition-all hover:bg-blue-800 hover:scale-105 active:scale-95 min-h-[38px] dark:bg-blue-600 dark:hover:bg-blue-500"
-                                                                title={`Añadir ${product.name} a la bolsa de pedidos`}
-                                                                aria-label={`Añadir ${product.name} a la bolsa`}
-                                                            >
-                                                                <ShoppingBag className="h-3.5 w-3.5 text-cyan-300 dark:text-white" />
-                                                                <span>+ Pedido</span>
-                                                            </button>
-                                                        </div>
+                                                            {/* Footer de Tarjeta: Presentación, Acceso a Ficha y Botón + Pedido Reubicado */}
+                                                            <div className="mt-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+                                                                <div className="flex items-center justify-between gap-2">
+                                                                    <div className="flex min-w-0 flex-col">
+                                                                        <span className="truncate text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                                                                            {
+                                                                                product.presentation
+                                                                            }
+                                                                        </span>
+                                                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#002072] transition-colors group-hover:text-blue-600 dark:text-cyan-400">
+                                                                            <span>
+                                                                                Ficha
+                                                                                Técnica
+                                                                            </span>
+                                                                            <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
+                                                                        </span>
+                                                                    </div>
+
+                                                                    {/* Botón + Pedido Reubicado con stopPropagation para no abrir ficha */}
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(
+                                                                            e,
+                                                                        ) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                            handleAddToCart(
+                                                                                product,
+                                                                            );
+                                                                        }}
+                                                                        className="flex min-h-[38px] flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-[#002072] px-3 py-2 text-xs font-bold text-white shadow-md shadow-blue-950/20 transition-all hover:scale-105 hover:bg-blue-800 active:scale-95 dark:bg-blue-600 dark:hover:bg-blue-500"
+                                                                        title={`Añadir ${product.name} a la bolsa de pedidos`}
+                                                                        aria-label={`Añadir ${product.name} a la bolsa`}
+                                                                    >
+                                                                        <ShoppingBag className="h-3.5 w-3.5 text-cyan-300 dark:text-white" />
+                                                                        <span>
+                                                                            +
+                                                                            Pedido
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </Link>
                                                     </div>
-                                                </Link>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Indicadores / Dots, Contador de Fármacos y Guía Táctil */}
-                                <div className="mt-6 flex flex-col items-center gap-2 sm:mt-8">
-                                    <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
-                                        {filteredProducts.map((p, idx) => (
-                                            <button
-                                                key={p.id}
-                                                type="button"
-                                                onClick={() => handleJumpToProduct(idx)}
-                                                className={`h-2 rounded-full cursor-pointer transition-all duration-300 ${
-                                                    idx === activeRealProductIndex
-                                                        ? 'w-7 bg-[#002072] dark:bg-cyan-400'
-                                                        : 'w-2 bg-slate-300 hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600'
-                                                }`}
-                                                title={`Ver ${p.name}`}
-                                                aria-label={`Ir al producto ${idx + 1} de ${filteredProducts.length}: ${p.name}`}
-                                            />
-                                        ))}
+                                                ),
+                                            )}
+                                        </div>
                                     </div>
 
-                                    <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
-                                        <span>
-                                            Producto <strong className="text-slate-700 dark:text-slate-300">{activeRealProductIndex + 1}</strong> de{' '}
-                                            <strong className="text-slate-700 dark:text-slate-300">{filteredProducts.length}</strong>
-                                        </span>
-                                        <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
-                                        <span className="text-[11px] sm:text-xs">
-                                            Desliza o usa las flechas para explorar el vademécum
-                                        </span>
+                                    {/* Indicadores / Dots, Contador de Fármacos y Guía Táctil */}
+                                    <div className="mt-6 flex flex-col items-center gap-2 sm:mt-8">
+                                        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                                            {filteredProducts.map((p, idx) => (
+                                                <button
+                                                    key={p.id}
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleJumpToProduct(idx)
+                                                    }
+                                                    className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${
+                                                        idx ===
+                                                        activeRealProductIndex
+                                                            ? 'w-7 bg-[#002072] dark:bg-cyan-400'
+                                                            : 'w-2 bg-slate-300 hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600'
+                                                    }`}
+                                                    title={`Ver ${p.name}`}
+                                                    aria-label={`Ir al producto ${idx + 1} de ${filteredProducts.length}: ${p.name}`}
+                                                />
+                                            ))}
+                                        </div>
+
+                                        <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
+                                            <span>
+                                                Producto{' '}
+                                                <strong className="text-slate-700 dark:text-slate-300">
+                                                    {activeRealProductIndex + 1}
+                                                </strong>{' '}
+                                                de{' '}
+                                                <strong className="text-slate-700 dark:text-slate-300">
+                                                    {filteredProducts.length}
+                                                </strong>
+                                            </span>
+                                            <span className="hidden text-slate-300 sm:inline dark:text-slate-700">
+                                                •
+                                            </span>
+                                            <span className="text-[11px] sm:text-xs">
+                                                Desliza o usa las flechas para
+                                                explorar el vademécum
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
                     </div>
                 </div>
             </section>
@@ -1210,7 +1292,7 @@ export default function Home({
                 className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-20 dark:border-slate-800 dark:bg-[#070C18]"
                 id="conocimiento"
             >
-                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     <div className="grid grid-cols-1 items-center gap-8 sm:gap-12 lg:grid-cols-2">
                         <div className="space-y-4 sm:space-y-6">
                             <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
@@ -1283,7 +1365,7 @@ export default function Home({
                 className="bg-white py-12 transition-colors duration-300 sm:py-20 dark:bg-[#0A1124]"
                 id="nosotros"
             >
-                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     <div className="mx-auto mb-10 max-w-2xl space-y-2 text-center sm:mb-16">
                         <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
                             Aval Clínico
@@ -1342,7 +1424,7 @@ export default function Home({
                 className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-20 dark:border-slate-800 dark:bg-[#070C18]"
                 id="contacto"
             >
-                <div className="mx-auto max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1840px] px-3 sm:px-6 lg:px-8 2xl:px-12">
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
                         {/* Accordion FAQ */}
                         <div className="space-y-4 lg:col-span-6">

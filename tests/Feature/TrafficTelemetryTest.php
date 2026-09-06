@@ -5,10 +5,7 @@ namespace Tests\Feature;
 use App\Models\DailyVisitor;
 use App\Models\PageView;
 use App\Models\Product;
-use App\Models\ProductDailyStat;
 use App\Models\User;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\SystemSettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

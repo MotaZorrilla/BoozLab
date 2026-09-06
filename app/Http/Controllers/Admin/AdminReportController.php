@@ -57,7 +57,7 @@ class AdminReportController extends Controller
         return response()->stream(function () use ($reports) {
             $handle = fopen('php://output', 'w');
             // UTF-8 BOM for Microsoft Excel
-            fputs($handle, "\xEF\xBB\xBF");
+            fwrite($handle, "\xEF\xBB\xBF");
 
             fputcsv($handle, [
                 'Nro Ticket INH',

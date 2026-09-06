@@ -73,9 +73,9 @@ class AdminProductController extends Controller
             if (! file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
-            $filename = 'prod_' . time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $filename = 'prod_'.time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
             $file->move($uploadDir, $filename);
-            $validated['image_path'] = '/assets/img/uploads/' . $filename;
+            $validated['image_path'] = '/assets/img/uploads/'.$filename;
         }
 
         if (empty($validated['image_path'])) {
@@ -96,7 +96,7 @@ class AdminProductController extends Controller
         $validated = $request->validate([
             'product_line_id' => 'required|exists:product_lines,id',
             'name' => 'required|string|max:150',
-            'slug' => 'required|string|max:150|unique:products,slug,' . $product->id,
+            'slug' => 'required|string|max:150|unique:products,slug,'.$product->id,
             'active_ingredients' => 'required|string|max:255',
             'presentation' => 'required|string|max:150',
             'description' => 'required|string',
@@ -117,9 +117,9 @@ class AdminProductController extends Controller
             if (! file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
-            $filename = 'prod_' . time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $filename = 'prod_'.time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
             $file->move($uploadDir, $filename);
-            $validated['image_path'] = '/assets/img/uploads/' . $filename;
+            $validated['image_path'] = '/assets/img/uploads/'.$filename;
         }
 
         if (empty($validated['image_path'])) {
@@ -166,7 +166,7 @@ class AdminProductController extends Controller
         ]);
 
         $file = $request->file('image');
-        $filename = 'prod_' . time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+        $filename = 'prod_'.time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
 
         // 1. Directorio público primario (detectado por Laravel)
         $primaryDir = public_path('assets/img/uploads');
@@ -181,12 +181,12 @@ class AdminProductController extends Controller
             if (! file_exists($cpanelDir)) {
                 mkdir($cpanelDir, 0755, true);
             }
-            copy($primaryDir . '/' . $filename, $cpanelDir . '/' . $filename);
+            copy($primaryDir.'/'.$filename, $cpanelDir.'/'.$filename);
         }
 
         return response()->json([
             'success' => true,
-            'url' => '/assets/img/uploads/' . $filename,
+            'url' => '/assets/img/uploads/'.$filename,
         ]);
     }
 }

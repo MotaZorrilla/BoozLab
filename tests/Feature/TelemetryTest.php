@@ -2,16 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\Product;
 use App\Models\ProductDailyStat;
-use App\Models\Role;
 use App\Models\User;
 use App\Services\ChatTelemetryService;
-use Database\Seeders\BoozClinicalPlatformSeeder;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\SystemSettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,7 +22,7 @@ class TelemetryTest extends TestCase
 
     public function test_chatbot_records_telemetry_session_and_messages(): void
     {
-        $sessionUid = 'ses-test-' . uniqid();
+        $sessionUid = 'ses-test-'.uniqid();
 
         $response = $this->postJson('/api/chatbot', [
             'message' => 'hola',
@@ -171,4 +166,3 @@ class TelemetryTest extends TestCase
         $response->assertJsonValidationErrors(['event_type']);
     }
 }
-

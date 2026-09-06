@@ -582,3 +582,27 @@
   - `php artisan test`: 151 tests pasando en verde (619 assertions) en 9.04s (validación detallada sin compactar).
   - `npm run build`: 2.767 módulos transformados con éxito en 8.29s.
   - OpenSpec: 14/14 especificaciones validadas (`npm run opsx -- validate --specs`).
+
+---
+
+## 🧹 Fase 37: Saneamiento Integral de CI/CD, Linters (ESLint & Pint) y Calidad de Código (Septiembre 2026)
+- [x] **Resolución de Errores de Auditoría de Linters Frontend (ESLint 9 + TypeScript-ESLint):**
+  - Auditoría exhaustiva y erradicación de **106 incidencias de linting** en 22 archivos `.tsx` y `.ts` del frontend React.
+  - **`@typescript-eslint/no-unused-vars` (81 casos):** Limpieza sistemática de iconos no renderizados de `lucide-react` y variables huérfanas en `ai.tsx`, `analytics.tsx`, `messages.tsx`, `products.tsx`, `quotes.tsx`, `reports.tsx`, `settings.tsx`, `users.tsx`, `home.tsx`, `product-detail.tsx`, `farmacovigilancia.tsx`, `dashboard.tsx`, `blog/show.tsx`, `store-cart-drawer.tsx`, `conversation-transcript-modal.tsx` y `funnel-view.tsx`.
+  - **`@typescript-eslint/no-explicit-any` (20 casos):** Tipado formal mediante interfaces estrictas (`TestResult`, `AdminPageProps`, `DocCategory`, `GuardrailType`, `QuoteStatus`, `CustomerType`, `Record<string, unknown>` y `EventListener`) en `ai.tsx`, `quotes.tsx`, `app-sidebar.tsx`, `use-whatsapp.ts`, `booz-layout.tsx` y `telemetry.ts`.
+  - **`react-hooks/set-state-in-effect` (1 caso):** Saneamiento de `users.tsx`, transformando la llamada asíncrona de `setIsCreateOpen(true)` en un efecto secundario a una inicialización perezosa de estado (*lazy state initialization* `useState(() => ...)`), erradicando renders en cascada.
+  - **`react-hooks/preserve-manual-memoization` (1 caso):** Saneamiento en `glossary.tsx`, removiendo `useMemo` redundante sobre el arreglo estático `MOCK_GLOSSARY` para cumplir con las directivas del compilador de React 19.
+  - **`no-empty` (2 casos):** Agregados comentarios explicativos intencionales en bloques `catch` de `booz-layout.tsx` y `telemetry.ts`.
+  - **`import/order` (1 caso):** Reordenamiento alfabético de importaciones de tipos en `store-cart-drawer.tsx`.
+- [x] **Ajuste de Alcance de Linters en `eslint.config.js`:**
+  - Inclusión de `.agents/**`, `audios_y_material/**` y `docs_booz/**` en el array de `ignores` para evitar que el linter intente validar librerías minificadas UMD de terceros (`modern-screenshot.umd.js`, `live-browser.js`) o archivos estáticos de respaldo histórico.
+- [x] **Estandarización de Estilo Backend con Laravel Pint:**
+  - Ejecución de `composer lint` con 155 archivos analizados y corrección automática de espaciado, saltos de línea y operadores de PHP.
+- [x] **Formateo Integral de Frontend con Prettier:**
+  - Ejecución de `npm run format` sobre la totalidad de `resources/`.
+- [x] **Verificación Integral y Certificación de CI/CD (100% Verde):**
+  - **`npm run lint`:** **0 errores, 0 warnings (Exit code 0)**.
+  - **`composer lint`:** Conforme y sin desviaciones de PSR-12 / Laravel Code Style.
+  - **`npm run build`:** 2.766 módulos transformados con éxito en 8.46s con 0 errores de compilación.
+  - **`php artisan test`:** **151 tests pasados (619 aserciones)** en 9.32s sin advertencias.
+

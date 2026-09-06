@@ -52,6 +52,7 @@ class AdminDashboardController extends Controller
                 ->get(['id', 'name', 'product_line_id', 'presentation', 'views_count']),
             'line_demand' => ProductLine::all()->map(function ($line) {
                 $lineProducts = Product::where('product_line_id', $line->id)->get();
+
                 return [
                     'id' => $line->id,
                     'name' => $line->name,

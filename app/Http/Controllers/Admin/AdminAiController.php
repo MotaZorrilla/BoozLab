@@ -12,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -29,7 +28,7 @@ class AdminAiController extends Controller
             $len = strlen($realKey);
             $prefix = substr($realKey, 0, 6);
             $suffix = substr($realKey, -4);
-            $maskedKey = $len > 10 ? "{$prefix}..." . str_repeat('*', min(16, $len - 10)) . "...{$suffix}" : '••••••••••••••••';
+            $maskedKey = $len > 10 ? "{$prefix}...".str_repeat('*', min(16, $len - 10))."...{$suffix}" : '••••••••••••••••';
         }
 
         $totalProducts = Product::count();
@@ -107,9 +106,9 @@ class AdminAiController extends Controller
             if (! file_exists($targetDir)) {
                 mkdir($targetDir, 0755, true);
             }
-            $savedName = 'doc_' . time() . '_' . Str::slug(pathinfo($fileName, PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $savedName = 'doc_'.time().'_'.Str::slug(pathinfo($fileName, PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
             $file->move($targetDir, $savedName);
-            $filePath = '/assets/docs/' . $savedName;
+            $filePath = '/assets/docs/'.$savedName;
         }
 
         if (empty(trim((string) $content))) {
@@ -155,6 +154,7 @@ class AdminAiController extends Controller
         Cache::forget('chatbot:ai_knowledge_context');
 
         $status = $document->is_active ? 'activado' : 'desactivado';
+
         return back()->with('success', "Documento \"{$document->title}\" {$status} en el corpus de Lira AI.");
     }
 
@@ -214,6 +214,7 @@ class AdminAiController extends Controller
         Cache::forget('chatbot:ai_guardrails_context');
 
         $status = $guardrail->is_active ? 'activado' : 'desactivado';
+
         return back()->with('success', "Guardrail \"{$guardrail->name}\" {$status} correctamente.");
     }
 

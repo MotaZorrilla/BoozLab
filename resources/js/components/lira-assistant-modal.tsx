@@ -1,5 +1,15 @@
 import { Link } from '@inertiajs/react';
-import { Send, Sparkles, ShieldAlert, ArrowRight, UserCheck, Phone, Mail, CheckCircle2, Loader2 } from 'lucide-react';
+import {
+    Send,
+    Sparkles,
+    ShieldAlert,
+    ArrowRight,
+    UserCheck,
+    Phone,
+    Mail,
+    CheckCircle2,
+    Loader2,
+} from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '@/components/modal';
 
@@ -41,9 +51,13 @@ export default function LiraAssistantModal({
     const [contactName, setContactName] = useState('');
     const [contactPhone, setContactPhone] = useState('');
     const [contactEmail, setContactEmail] = useState('');
-    const [contactMessage, setContactMessage] = useState('Solicito información comercial y contacto con el equipo administrativo de Booz Laboratorio.');
+    const [contactMessage, setContactMessage] = useState(
+        'Solicito información comercial y contacto con el equipo administrativo de Booz Laboratorio.',
+    );
     const [isSubmittingContact, setIsSubmittingContact] = useState(false);
-    const [contactSuccessId, setContactSuccessId] = useState<string | null>(null);
+    const [contactSuccessId, setContactSuccessId] = useState<string | null>(
+        null,
+    );
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +75,11 @@ export default function LiraAssistantModal({
         try {
             let uid = sessionStorage.getItem('booz_lira_session_uid');
             if (!uid) {
-                uid = 'ses_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+                uid =
+                    'ses_' +
+                    Math.random().toString(36).substring(2, 11) +
+                    '_' +
+                    Date.now();
                 sessionStorage.setItem('booz_lira_session_uid', uid);
             }
             return uid;
@@ -74,12 +92,15 @@ export default function LiraAssistantModal({
         const textToSend = queryText || input;
         if (!textToSend.trim() || isLoading) return;
 
-        const isContactIntent = /contactar|administra|hablar con el equipo|hablar con el administrador|dejar mensaje|comprar al mayor/i.test(textToSend);
+        const isContactIntent =
+            /contactar|administra|hablar con el equipo|hablar con el administrador|dejar mensaje|comprar al mayor/i.test(
+                textToSend,
+            );
 
-        const userMsg: ChatMessage = { 
+        const userMsg: ChatMessage = {
             id: `user-${Date.now()}`,
-            sender: 'user', 
-            text: textToSend 
+            sender: 'user',
+            text: textToSend,
         };
         setMessages((prev) => [...prev, userMsg]);
         if (!queryText) setInput('');
@@ -101,7 +122,10 @@ export default function LiraAssistantModal({
                 body: JSON.stringify({
                     message: textToSend,
                     session_uid: getSessionUid(),
-                    url_ref: typeof window !== 'undefined' ? window.location.pathname : '/',
+                    url_ref:
+                        typeof window !== 'undefined'
+                            ? window.location.pathname
+                            : '/',
                 }),
             });
 
@@ -113,7 +137,8 @@ export default function LiraAssistantModal({
                     text: data.reply,
                     suggestedProducts: data.suggestedProducts,
                     disclaimer: data.disclaimer,
-                    isContactForm: data.action === 'show_contact_form' || isContactIntent,
+                    isContactForm:
+                        data.action === 'show_contact_form' || isContactIntent,
                 };
                 setMessages((prev) => [...prev, liraMsg]);
             } else {
@@ -142,7 +167,8 @@ export default function LiraAssistantModal({
 
     const handleContactSubmit = async (e: React.FormEvent, msgId?: string) => {
         e.preventDefault();
-        if (!contactName.trim() || !contactEmail.trim() || isSubmittingContact) return;
+        if (!contactName.trim() || !contactEmail.trim() || isSubmittingContact)
+            return;
 
         setIsSubmittingContact(true);
 
@@ -186,7 +212,9 @@ export default function LiraAssistantModal({
                 setContactPhone('');
                 setContactEmail('');
             } else {
-                alert('No se pudo enviar el mensaje. Por favor verifica los datos e intenta nuevamente.');
+                alert(
+                    'No se pudo enviar el mensaje. Por favor verifica los datos e intenta nuevamente.',
+                );
             }
         } catch {
             alert('Error de conexión al enviar el mensaje.');
@@ -209,60 +237,65 @@ export default function LiraAssistantModal({
             onClose={onClose}
             title="Lira | Asistente Virtual Booz Laboratorio"
         >
-            <div className="-m-6 flex h-[78dvh] sm:h-[580px] flex-col rounded-b-2xl bg-slate-900 p-4 sm:p-6">
+            <div className="-m-6 flex h-[78dvh] flex-col rounded-b-2xl bg-slate-900 p-4 sm:h-[580px] sm:p-6">
                 {/* Lira Header Banner with Official 3D Mascot */}
                 <div className="flex items-center gap-3.5 border-b border-slate-800 pb-3 sm:pb-4">
-                    <div className="relative flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-white via-white to-blue-50 p-1 shadow-lg shadow-cyan-500/20 group ring-2 ring-white/20">
+                    <div className="group relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-white via-white to-blue-50 p-1 shadow-lg ring-2 shadow-cyan-500/20 ring-white/20 sm:h-14 sm:w-14">
                         <img
                             src="/assets/img/lira_avatar_animated.gif"
                             alt="Lira Asistente Virtual Oficial"
                             className="h-full w-full rounded-xl object-cover transition-transform group-hover:scale-105"
                         />
-                        <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-slate-900"></span>
+                        <span className="absolute -right-0.5 -bottom-0.5 flex h-3.5 w-3.5">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-slate-900 bg-emerald-500"></span>
                         </span>
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-1.5">
+                            <h3 className="flex items-center gap-1.5 text-sm font-bold text-white sm:text-base">
                                 Lira
-                                <span className="text-xs text-cyan-400 font-normal">🐾</span>
+                                <span className="text-xs font-normal text-cyan-400">
+                                    🐾
+                                </span>
                             </h3>
                             <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/30 bg-cyan-500/15 px-2 py-0.5 text-[10px] font-bold text-cyan-300">
                                 <Sparkles className="h-2.5 w-2.5" /> Asistente
                                 Inteligente
                             </span>
                         </div>
-                        <p className="text-[11px] sm:text-xs text-slate-400">
-                            Booz Laboratorio VGME, C.A. • Orientación Farmacéutica Oficial
+                        <p className="text-[11px] text-slate-400 sm:text-xs">
+                            Booz Laboratorio VGME, C.A. • Orientación
+                            Farmacéutica Oficial
                         </p>
                     </div>
                 </div>
 
                 {/* Messages Container */}
-                <div 
-                    role="log" 
-                    aria-live="polite" 
+                <div
+                    role="log"
+                    aria-live="polite"
                     className="flex-1 space-y-3.5 overflow-y-auto py-3 pr-1 text-xs sm:text-sm"
                 >
                     {/* Tarjeta de Bienvenida con Lira Oficial animada en cuerpo entero cuando el chat recién se abre */}
                     {messages.length === 1 && (
-                        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-blue-950/80 via-indigo-950/70 to-slate-900 border border-blue-500/30 flex items-center gap-3.5 shadow-md">
-                            <div className="relative h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 flex items-center justify-center">
-                                <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-white/95 to-cyan-100/90 blur-md opacity-85" />
+                        <div className="flex items-center gap-3.5 rounded-2xl border border-blue-500/30 bg-gradient-to-r from-blue-950/80 via-indigo-950/70 to-slate-900 p-3.5 shadow-md sm:p-4">
+                            <div className="relative flex h-20 w-20 flex-shrink-0 items-center justify-center sm:h-24 sm:w-24">
+                                <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-white/95 to-cyan-100/90 opacity-85 blur-md" />
                                 <img
                                     src="/assets/img/lira_greeting_animated.gif"
                                     alt="Lira Mascota Oficial"
-                                    className="relative z-10 h-full w-full object-contain drop-shadow-md hover:scale-105 transition-transform"
+                                    className="relative z-10 h-full w-full object-contain drop-shadow-md transition-transform hover:scale-105"
                                 />
                             </div>
                             <div className="space-y-1">
-                                <span className="text-[11px] font-bold text-cyan-300 uppercase tracking-wider block">
+                                <span className="block text-[11px] font-bold tracking-wider text-cyan-300 uppercase">
                                     Mascota & Asistente Oficial 3D
                                 </span>
-                                <p className="text-xs text-slate-300 leading-relaxed">
-                                    ¡Hola! Conoce nuestro vademécum clínico o conecta con nuestra dirección técnica y comercial.
+                                <p className="text-xs leading-relaxed text-slate-300">
+                                    ¡Hola! Conoce nuestro vademécum clínico o
+                                    conecta con nuestra dirección técnica y
+                                    comercial.
                                 </p>
                             </div>
                         </div>
@@ -273,16 +306,16 @@ export default function LiraAssistantModal({
                             className={`flex gap-2.5 sm:gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                             {msg.sender === 'lira' && (
-                                <div className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 overflow-hidden rounded-full border-2 border-cyan-300 bg-gradient-to-b from-white via-white to-blue-50 p-0.5 shadow-md ring-1 ring-white/30">
+                                <div className="h-7 w-7 flex-shrink-0 overflow-hidden rounded-full border-2 border-cyan-300 bg-gradient-to-b from-white via-white to-blue-50 p-0.5 shadow-md ring-1 ring-white/30 sm:h-8 sm:w-8">
                                     <img
                                         src="/assets/img/lira_avatar_animated.gif"
                                         alt="Lira"
-                                        className="h-full w-full object-cover rounded-full"
+                                        className="h-full w-full rounded-full object-cover"
                                     />
                                 </div>
                             )}
 
-                            <div className="max-w-[88%] sm:max-w-[85%] space-y-2">
+                            <div className="max-w-[88%] space-y-2 sm:max-w-[85%]">
                                 <div
                                     className={`rounded-2xl p-3 sm:p-3.5 ${
                                         msg.sender === 'user'
@@ -296,67 +329,112 @@ export default function LiraAssistantModal({
 
                                 {/* Formulario de Contacto Embebido en Chat si el usuario solicita conectar con Administración */}
                                 {msg.isContactForm && (
-                                    <div className="rounded-2xl border border-blue-500/40 bg-slate-800/90 p-3.5 sm:p-4 text-slate-200 shadow-lg space-y-3">
+                                    <div className="space-y-3 rounded-2xl border border-blue-500/40 bg-slate-800/90 p-3.5 text-slate-200 shadow-lg sm:p-4">
                                         {contactSuccessId === msg.id ? (
-                                            <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs py-2">
+                                            <div className="flex items-center gap-2 py-2 text-xs font-bold text-emerald-400">
                                                 <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
-                                                <span>¡Mensaje transmitido a la administración de Booz Laboratorio!</span>
+                                                <span>
+                                                    ¡Mensaje transmitido a la
+                                                    administración de Booz
+                                                    Laboratorio!
+                                                </span>
                                             </div>
                                         ) : (
-                                            <form onSubmit={(e) => handleContactSubmit(e, msg.id)} className="space-y-2.5">
+                                            <form
+                                                onSubmit={(e) =>
+                                                    handleContactSubmit(
+                                                        e,
+                                                        msg.id,
+                                                    )
+                                                }
+                                                className="space-y-2.5"
+                                            >
                                                 <div className="flex items-center gap-1.5 text-xs font-bold text-blue-300">
                                                     <UserCheck className="h-4 w-4 text-cyan-400" />
-                                                    <span>Formulario de Contacto con Administración Booz</span>
+                                                    <span>
+                                                        Formulario de Contacto
+                                                        con Administración Booz
+                                                    </span>
                                                 </div>
 
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                                     <div>
-                                                        <label className="block text-[10px] text-slate-400 mb-0.5">Nombre Completo *</label>
+                                                        <label className="mb-0.5 block text-[10px] text-slate-400">
+                                                            Nombre Completo *
+                                                        </label>
                                                         <input
                                                             type="text"
                                                             value={contactName}
-                                                            onChange={(e) => setContactName(e.target.value)}
+                                                            onChange={(e) =>
+                                                                setContactName(
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
                                                             placeholder="Ej. Dr. Carlos Mendoza"
                                                             required
                                                             className="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-2.5 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-blue-500"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-[10px] text-slate-400 mb-0.5">Teléfono / WhatsApp</label>
+                                                        <label className="mb-0.5 block text-[10px] text-slate-400">
+                                                            Teléfono / WhatsApp
+                                                        </label>
                                                         <div className="relative">
-                                                            <Phone className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-500" />
+                                                            <Phone className="absolute top-2 left-2.5 h-3.5 w-3.5 text-slate-500" />
                                                             <input
                                                                 type="text"
-                                                                value={contactPhone}
-                                                                onChange={(e) => setContactPhone(e.target.value)}
+                                                                value={
+                                                                    contactPhone
+                                                                }
+                                                                onChange={(e) =>
+                                                                    setContactPhone(
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
                                                                 placeholder="+58 414 0000000"
-                                                                className="w-full rounded-xl border border-slate-700 bg-slate-900/80 pl-8 pr-2.5 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-blue-500"
+                                                                className="w-full rounded-xl border border-slate-700 bg-slate-900/80 py-1.5 pr-2.5 pl-8 text-xs text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-blue-500"
                                                             />
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-[10px] text-slate-400 mb-0.5">Correo Electrónico *</label>
+                                                    <label className="mb-0.5 block text-[10px] text-slate-400">
+                                                        Correo Electrónico *
+                                                    </label>
                                                     <div className="relative">
-                                                        <Mail className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-500" />
+                                                        <Mail className="absolute top-2 left-2.5 h-3.5 w-3.5 text-slate-500" />
                                                         <input
                                                             type="email"
                                                             value={contactEmail}
-                                                            onChange={(e) => setContactEmail(e.target.value)}
+                                                            onChange={(e) =>
+                                                                setContactEmail(
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
                                                             placeholder="correo@ejemplo.com"
                                                             required
-                                                            className="w-full rounded-xl border border-slate-700 bg-slate-900/80 pl-8 pr-2.5 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-blue-500"
+                                                            className="w-full rounded-xl border border-slate-700 bg-slate-900/80 py-1.5 pr-2.5 pl-8 text-xs text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-blue-500"
                                                         />
                                                     </div>
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-[10px] text-slate-400 mb-0.5">Mensaje o Consulta para Administración</label>
+                                                    <label className="mb-0.5 block text-[10px] text-slate-400">
+                                                        Mensaje o Consulta para
+                                                        Administración
+                                                    </label>
                                                     <textarea
                                                         rows={2}
                                                         value={contactMessage}
-                                                        onChange={(e) => setContactMessage(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setContactMessage(
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                         required
                                                         placeholder="Motivo del contacto, pedido al mayor o consulta..."
                                                         className="w-full rounded-xl border border-slate-700 bg-slate-900/80 p-2 text-xs text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-blue-500"
@@ -365,18 +443,29 @@ export default function LiraAssistantModal({
 
                                                 <button
                                                     type="submit"
-                                                    disabled={isSubmittingContact || !contactName || !contactEmail}
-                                                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-bold py-2 shadow-md shadow-blue-600/30 transition-all cursor-pointer min-h-[36px]"
+                                                    disabled={
+                                                        isSubmittingContact ||
+                                                        !contactName ||
+                                                        !contactEmail
+                                                    }
+                                                    className="inline-flex min-h-[36px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 py-2 text-xs font-bold text-white shadow-md shadow-blue-600/30 transition-all hover:bg-blue-500 disabled:opacity-50"
                                                 >
                                                     {isSubmittingContact ? (
                                                         <>
                                                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                                            <span>Enviando notificación al Administrador...</span>
+                                                            <span>
+                                                                Enviando
+                                                                notificación al
+                                                                Administrador...
+                                                            </span>
                                                         </>
                                                     ) : (
                                                         <>
                                                             <Send className="h-3.5 w-3.5" />
-                                                            <span>Enviar Mensaje al Administrador</span>
+                                                            <span>
+                                                                Enviar Mensaje
+                                                                al Administrador
+                                                            </span>
                                                         </>
                                                     )}
                                                 </button>
@@ -399,7 +488,7 @@ export default function LiraAssistantModal({
                                                             key={p.id}
                                                             href={`/producto/${p.slug}`}
                                                             onClick={onClose}
-                                                            className="inline-flex items-center gap-1.5 rounded-xl border border-blue-500/30 bg-slate-800 px-3 py-1.5 text-xs text-blue-300 transition-colors hover:bg-blue-900/60 min-h-[32px]"
+                                                            className="inline-flex min-h-[32px] items-center gap-1.5 rounded-xl border border-blue-500/30 bg-slate-800 px-3 py-1.5 text-xs text-blue-300 transition-colors hover:bg-blue-900/60"
                                                         >
                                                             <span>
                                                                 {p.name}
@@ -425,7 +514,7 @@ export default function LiraAssistantModal({
 
                     {isLoading && (
                         <div className="flex items-center gap-3 text-xs text-slate-400 italic">
-                            <div className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 animate-pulse overflow-hidden rounded-full border border-blue-400/50 bg-blue-950">
+                            <div className="h-7 w-7 flex-shrink-0 animate-pulse overflow-hidden rounded-full border border-blue-400/50 bg-blue-950 sm:h-8 sm:w-8">
                                 <img
                                     src="/assets/img/lira_head_avatar.png"
                                     alt="Lira"
@@ -433,7 +522,8 @@ export default function LiraAssistantModal({
                                 />
                             </div>
                             <span className="animate-pulse">
-                                Lira está consultando el vademécum de Booz Laboratorio...
+                                Lira está consultando el vademécum de Booz
+                                Laboratorio...
                             </span>
                         </div>
                     )}
@@ -441,13 +531,13 @@ export default function LiraAssistantModal({
                 </div>
 
                 {/* Quick Chips */}
-                <div className="flex gap-1.5 overflow-x-auto no-scrollbar pt-2 pb-2">
+                <div className="no-scrollbar flex gap-1.5 overflow-x-auto pt-2 pb-2">
                     {quickChips.map((chip, idx) => (
                         <button
                             key={idx}
                             type="button"
                             onClick={() => handleSend(chip)}
-                            className="flex-shrink-0 cursor-pointer rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-[11px] text-slate-300 transition-colors hover:border-blue-400/40 hover:bg-blue-900/50 min-h-[32px]"
+                            className="min-h-[32px] flex-shrink-0 cursor-pointer rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-[11px] text-slate-300 transition-colors hover:border-blue-400/40 hover:bg-blue-900/50"
                         >
                             {chip}
                         </button>
@@ -472,14 +562,15 @@ export default function LiraAssistantModal({
                     <button
                         type="submit"
                         disabled={!input.trim() || isLoading}
-                        className="absolute right-2 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/30 transition-all hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+                        className="absolute right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/30 transition-all hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
                         title="Enviar consulta a Lira"
                     >
                         <Send className="h-4 w-4" />
                     </button>
                 </form>
-                <p className="text-[10px] text-center text-slate-500 pt-2 font-medium">
-                    🛡️ Orientación clínica de cortesía • Supervisión sanitaria conforme a normativas del INH Rafael Rangel.
+                <p className="pt-2 text-center text-[10px] font-medium text-slate-500">
+                    🛡️ Orientación clínica de cortesía • Supervisión sanitaria
+                    conforme a normativas del INH Rafael Rangel.
                 </p>
             </div>
         </Modal>

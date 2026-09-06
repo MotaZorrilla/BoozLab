@@ -38,6 +38,7 @@ class CatalogIntegrityTest extends TestCase
         $response->assertOk();
         $response->assertInertia(function ($page) use ($inactiveProduct) {
             $products = collect($page->toArray()['props']['products']);
+
             return ! $products->contains('id', $inactiveProduct->id);
         });
     }

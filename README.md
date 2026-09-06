@@ -1,8 +1,9 @@
 # 🔬 Booz Laboratorio — Clinical AI Platform
 ### Plataforma Integral Farmacéutica, Vademécum Clínico & Asistente IA Lira
 
-[![PHPUnit Tests](https://img.shields.io/badge/PHPUnit-139%20passed%20(556%20assertions)-brightgreen.svg)](tests/)
-[![OpenSpec](https://img.shields.io/badge/OpenSpec-13%2F13%20validated-blue.svg)](openspec/)
+[![PHPUnit Tests](https://img.shields.io/badge/PHPUnit-151%20passed%20(619%20assertions)-brightgreen.svg)](tests/)
+[![CI/CD Linters](https://img.shields.io/badge/Linters-ESLint%20%2B%20Pint%20100%25%20Clean-brightgreen.svg)](eslint.config.js)
+[![OpenSpec](https://img.shields.io/badge/OpenSpec-14%2F14%20validated-blue.svg)](openspec/)
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-red.svg)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19.x%20%2B%20Inertia.js%20v2-61dafb.svg)](https://inertiajs.com)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4%20Tri--Tier%20(4K%2F1080p%2FMóvil)-38bdf8.svg)](https://tailwindcss.com)
@@ -62,6 +63,10 @@ La plataforma cuenta con una suite completa de pruebas automatizadas y especific
 # Ejecutar suite completa de pruebas unitarias y de integración
 php artisan test --compact
 
+# Ejecutar auditoría de linters (Frontend ESLint + Backend Pint)
+npm run lint
+composer lint
+
 # Validar especificaciones BDD OpenSpec
 npm run opsx -- validate --specs
 
@@ -69,9 +74,10 @@ npm run opsx -- validate --specs
 npm run build
 ```
 
-* **Pruebas Automatizadas:** 144 tests pasando (588 assertions) en verde.
+* **Pruebas Automatizadas:** 151 tests pasando (619 assertions) en verde con PHPUnit 11.
+* **Control de Calidad y Linters:** 100% limpio (0 errores, 0 advertencias).
 * **OpenSpec:** 14/14 especificaciones validadas sin errores.
-* **Frontend:** 2.766 módulos compilados limpiamente con Vite en ~9.3s.
+* **Frontend:** 2.766 módulos compilados limpiamente con Vite en ~8.4s.
 
 ---
 

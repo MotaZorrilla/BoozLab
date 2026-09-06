@@ -8,12 +8,12 @@ $error_msg = '';
 if (isset($_POST['login'])) {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
-    
-    if (!empty($username) && !empty($password)) {
-        $stmt = $pdo->prepare("SELECT * FROM `users` WHERE `username` = :username");
+
+    if (! empty($username) && ! empty($password)) {
+        $stmt = $pdo->prepare('SELECT * FROM `users` WHERE `username` = :username');
         $stmt->execute(['username' => $username]);
         $user = $stmt->fetch();
-        
+
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['admin_logged'] = true;
             $_SESSION['admin_username'] = $user['username'];
@@ -39,25 +39,25 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 if (isset($_SESSION['admin_logged']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['api'])) {
     header('Content-Type: application/json');
     $api_action = $_GET['api'];
-    
+
     try {
         if ($api_action === 'save_product') {
-            $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+            $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
             $name = trim($_POST['name']);
-            $line_id = (int)$_POST['line_id'];
+            $line_id = (int) $_POST['line_id'];
             $description = trim($_POST['description']);
             $active_ingredients = trim($_POST['active_ingredients']);
-            $price = (float)$_POST['price'];
-            $stock = (int)$_POST['stock'];
-            
+            $price = (float) $_POST['price'];
+            $stock = (int) $_POST['stock'];
+
             // Handle image path/upload
             $image_path = isset($_POST['image_path_txt']) ? trim($_POST['image_path_txt']) : 'assets/img/product_1.png';
             if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
                 $file_tmp = $_FILES['image_file']['tmp_name'];
                 $file_name = preg_replace('/[^a-zA-Z0-9_.-]/', '', $_FILES['image_file']['name']);
-                $dest = '../assets/img/' . $file_name;
+                $dest = '../assets/img/'.$file_name;
                 if (move_uploaded_file($file_tmp, $dest)) {
-                    $image_path = 'assets/img/' . $file_name;
+                    $image_path = 'assets/img/'.$file_name;
                 }
             }
 
@@ -66,25 +66,25 @@ if (isset($_SESSION['admin_logged']) && $_SERVER['REQUEST_METHOD'] === 'POST' &&
                 1 => 'Cuidado de la piel',
                 2 => 'Tratamiento tópico',
                 3 => 'Salud y bienestar',
-                4 => 'Cuidado especializado'
+                4 => 'Cuidado especializado',
             ];
             $line_name = isset($line_names[$line_id]) ? $line_names[$line_id] : 'General';
 
             if ($id > 0) {
                 // Update
-                $stmt = $pdo->prepare("UPDATE `products` SET `name` = :name, `line_id` = :line_id, `line_name` = :line_name, `description` = :description, `active_ingredients` = :active_ingredients, `price` = :price, `stock` = :stock, `image_path` = :image_path WHERE `id` = :id");
+                $stmt = $pdo->prepare('UPDATE `products` SET `name` = :name, `line_id` = :line_id, `line_name` = :line_name, `description` = :description, `active_ingredients` = :active_ingredients, `price` = :price, `stock` = :stock, `image_path` = :image_path WHERE `id` = :id');
                 $stmt->execute([
                     'name' => $name, 'line_id' => $line_id, 'line_name' => $line_name,
                     'description' => $description, 'active_ingredients' => $active_ingredients,
-                    'price' => $price, 'stock' => $stock, 'image_path' => $image_path, 'id' => $id
+                    'price' => $price, 'stock' => $stock, 'image_path' => $image_path, 'id' => $id,
                 ]);
             } else {
                 // Create
-                $stmt = $pdo->prepare("INSERT INTO `products` (`name`, `line_id`, `line_name`, `description`, `active_ingredients`, `price`, `stock`, `image_path`) VALUES (:name, :line_id, :line_name, :description, :active_ingredients, :price, :stock, :image_path)");
+                $stmt = $pdo->prepare('INSERT INTO `products` (`name`, `line_id`, `line_name`, `description`, `active_ingredients`, `price`, `stock`, `image_path`) VALUES (:name, :line_id, :line_name, :description, :active_ingredients, :price, :stock, :image_path)');
                 $stmt->execute([
                     'name' => $name, 'line_id' => $line_id, 'line_name' => $line_name,
                     'description' => $description, 'active_ingredients' => $active_ingredients,
-                    'price' => $price, 'stock' => $stock, 'image_path' => $image_path
+                    'price' => $price, 'stock' => $stock, 'image_path' => $image_path,
                 ]);
             }
             echo json_encode(['status' => 'success']);
@@ -92,25 +92,25 @@ if (isset($_SESSION['admin_logged']) && $_SERVER['REQUEST_METHOD'] === 'POST' &&
         }
 
         if ($api_action === 'delete_product') {
-            $id = (int)$_POST['id'];
-            $stmt = $pdo->prepare("DELETE FROM `products` WHERE `id` = :id");
+            $id = (int) $_POST['id'];
+            $stmt = $pdo->prepare('DELETE FROM `products` WHERE `id` = :id');
             $stmt->execute(['id' => $id]);
             echo json_encode(['status' => 'success']);
             exit;
         }
 
         if ($api_action === 'save_testimonial') {
-            $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+            $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
             $quote = trim($_POST['quote']);
             $author_name = trim($_POST['author_name']);
             $author_role = trim($_POST['author_role']);
             $avatar_path = isset($_POST['avatar_path']) ? trim($_POST['avatar_path']) : 'assets/img/avatar_doctor.png';
 
             if ($id > 0) {
-                $stmt = $pdo->prepare("UPDATE `testimonials` SET `quote` = :quote, `author_name` = :author_name, `author_role` = :author_role, `avatar_path` = :avatar_path WHERE `id` = :id");
+                $stmt = $pdo->prepare('UPDATE `testimonials` SET `quote` = :quote, `author_name` = :author_name, `author_role` = :author_role, `avatar_path` = :avatar_path WHERE `id` = :id');
                 $stmt->execute(['quote' => $quote, 'author_name' => $author_name, 'author_role' => $author_role, 'avatar_path' => $avatar_path, 'id' => $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO `testimonials` (`quote`, `author_name`, `author_role`, `avatar_path`) VALUES (:quote, :author_name, :author_role, :avatar_path)");
+                $stmt = $pdo->prepare('INSERT INTO `testimonials` (`quote`, `author_name`, `author_role`, `avatar_path`) VALUES (:quote, :author_name, :author_role, :avatar_path)');
                 $stmt->execute(['quote' => $quote, 'author_name' => $author_name, 'author_role' => $author_role, 'avatar_path' => $avatar_path]);
             }
             echo json_encode(['status' => 'success']);
@@ -118,23 +118,23 @@ if (isset($_SESSION['admin_logged']) && $_SERVER['REQUEST_METHOD'] === 'POST' &&
         }
 
         if ($api_action === 'delete_testimonial') {
-            $id = (int)$_POST['id'];
-            $stmt = $pdo->prepare("DELETE FROM `testimonials` WHERE `id` = :id");
+            $id = (int) $_POST['id'];
+            $stmt = $pdo->prepare('DELETE FROM `testimonials` WHERE `id` = :id');
             $stmt->execute(['id' => $id]);
             echo json_encode(['status' => 'success']);
             exit;
         }
 
         if ($api_action === 'save_faq') {
-            $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+            $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
             $question = trim($_POST['question']);
             $answer = trim($_POST['answer']);
 
             if ($id > 0) {
-                $stmt = $pdo->prepare("UPDATE `faqs` SET `question` = :question, `answer` = :answer WHERE `id` = :id");
+                $stmt = $pdo->prepare('UPDATE `faqs` SET `question` = :question, `answer` = :answer WHERE `id` = :id');
                 $stmt->execute(['question' => $question, 'answer' => $answer, 'id' => $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO `faqs` (`question`, `answer`) VALUES (:question, :answer)");
+                $stmt = $pdo->prepare('INSERT INTO `faqs` (`question`, `answer`) VALUES (:question, :answer)');
                 $stmt->execute(['question' => $question, 'answer' => $answer]);
             }
             echo json_encode(['status' => 'success']);
@@ -142,39 +142,39 @@ if (isset($_SESSION['admin_logged']) && $_SERVER['REQUEST_METHOD'] === 'POST' &&
         }
 
         if ($api_action === 'delete_faq') {
-            $id = (int)$_POST['id'];
-            $stmt = $pdo->prepare("DELETE FROM `faqs` WHERE `id` = :id");
+            $id = (int) $_POST['id'];
+            $stmt = $pdo->prepare('DELETE FROM `faqs` WHERE `id` = :id');
             $stmt->execute(['id' => $id]);
             echo json_encode(['status' => 'success']);
             exit;
         }
 
         if ($api_action === 'update_message') {
-            $id = (int)$_POST['id'];
+            $id = (int) $_POST['id'];
             $status = trim($_POST['status']);
-            $stmt = $pdo->prepare("UPDATE `messages` SET `status` = :status WHERE `id` = :id");
+            $stmt = $pdo->prepare('UPDATE `messages` SET `status` = :status WHERE `id` = :id');
             $stmt->execute(['status' => $status, 'id' => $id]);
             echo json_encode(['status' => 'success']);
             exit;
         }
 
         if ($api_action === 'delete_message') {
-            $id = (int)$_POST['id'];
-            $stmt = $pdo->prepare("DELETE FROM `messages` WHERE `id` = :id");
+            $id = (int) $_POST['id'];
+            $stmt = $pdo->prepare('DELETE FROM `messages` WHERE `id` = :id');
             $stmt->execute(['id' => $id]);
             echo json_encode(['status' => 'success']);
             exit;
         }
 
         if ($api_action === 'update_order') {
-            $id = (int)$_POST['id'];
+            $id = (int) $_POST['id'];
             $status = trim($_POST['status']);
-            $stmt = $pdo->prepare("UPDATE `orders` SET `status` = :status WHERE `id` = :id");
+            $stmt = $pdo->prepare('UPDATE `orders` SET `status` = :status WHERE `id` = :id');
             $stmt->execute(['status' => $status, 'id' => $id]);
             echo json_encode(['status' => 'success']);
             exit;
         }
-        
+
     } catch (Exception $e) {
         echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         exit;
@@ -182,7 +182,7 @@ if (isset($_SESSION['admin_logged']) && $_SERVER['REQUEST_METHOD'] === 'POST' &&
 }
 
 // --- RENDER LOGIN PAGE IF NOT LOGGED IN ---
-if (!isset($_SESSION['admin_logged'])) {
+if (! isset($_SESSION['admin_logged'])) {
     ?>
     <!DOCTYPE html>
     <html lang="es">
@@ -242,9 +242,9 @@ if (!isset($_SESSION['admin_logged'])) {
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Acceso al panel interno del laboratorio</p>
             </div>
             
-            <?php if (!empty($error_msg)): ?>
+            <?php if (! empty($error_msg)) { ?>
                 <div class="error-box"><?php echo $error_msg; ?></div>
-            <?php endif; ?>
+            <?php } ?>
 
             <form action="index.php" method="POST" class="contact-form">
                 <div class="form-group">
@@ -352,13 +352,13 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
     <!-- Main Content Panel -->
     <div class="admin-main">
         
-        <?php if ($page === 'dashboard'): ?>
+        <?php if ($page === 'dashboard') { ?>
             <!-- DASHBOARD VIEW -->
             <?php
             // Fetch stats
-            $p_count = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+            $p_count = $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn();
             $o_pending = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'Pendiente'")->fetchColumn();
-            $o_total = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
+            $o_total = $pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn();
             $m_pending = $pdo->query("SELECT COUNT(*) FROM messages WHERE status = 'Pendiente'")->fetchColumn();
             ?>
             <div class="admin-header">
@@ -422,12 +422,13 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                         </thead>
                         <tbody>
                             <?php
-                            $stmt = $pdo->query("SELECT * FROM orders ORDER BY id DESC LIMIT 5");
-                            $recent_orders = $stmt->fetchAll();
-                            if (count($recent_orders) == 0):
-                            ?>
+                            $stmt = $pdo->query('SELECT * FROM orders ORDER BY id DESC LIMIT 5');
+            $recent_orders = $stmt->fetchAll();
+            if (count($recent_orders) == 0) {
+                ?>
                                 <tr><td colspan="5" style="text-align:center; color: var(--text-muted);">No hay pedidos registrados aún.</td></tr>
-                            <?php else: foreach ($recent_orders as $ord): ?>
+                            <?php } else {
+                                foreach ($recent_orders as $ord) { ?>
                                 <tr>
                                     <td>#<?php echo $ord['id']; ?></td>
                                     <td><?php echo htmlspecialchars($ord['customer_name']); ?></td>
@@ -435,7 +436,8 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                                     <td><span class="status-badge status-<?php echo strtolower($ord['status']); ?>"><?php echo $ord['status']; ?></span></td>
                                     <td><?php echo date('d-m-Y H:i', strtotime($ord['created_at'])); ?></td>
                                 </tr>
-                            <?php endforeach; endif; ?>
+                            <?php }
+                                } ?>
                         </tbody>
                     </table>
                 </div>
@@ -456,24 +458,26 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                         </thead>
                         <tbody>
                             <?php
-                            $stmt = $pdo->query("SELECT * FROM messages ORDER BY id DESC LIMIT 5");
-                            $recent_msgs = $stmt->fetchAll();
-                            if (count($recent_msgs) == 0):
-                            ?>
+                                $stmt = $pdo->query('SELECT * FROM messages ORDER BY id DESC LIMIT 5');
+            $recent_msgs = $stmt->fetchAll();
+            if (count($recent_msgs) == 0) {
+                ?>
                                 <tr><td colspan="3" style="text-align:center; color: var(--text-muted);">No hay mensajes.</td></tr>
-                            <?php else: foreach ($recent_msgs as $msg): ?>
+                            <?php } else {
+                                foreach ($recent_msgs as $msg) { ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($msg['name']); ?></td>
                                     <td style="text-transform: capitalize;"><?php echo $msg['type']; ?></td>
                                     <td><span class="status-badge status-<?php echo strtolower($msg['status']); ?>"><?php echo $msg['status']; ?></span></td>
                                 </tr>
-                            <?php endforeach; endif; ?>
+                            <?php }
+                                } ?>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-        <?php elseif ($page === 'products'): ?>
+        <?php } elseif ($page === 'products') { ?>
             <!-- PRODUCTS CRUD VIEW -->
             <div class="admin-header">
                 <div>
@@ -498,10 +502,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $pdo->query("SELECT * FROM products ORDER BY id ASC");
-                        $products = $stmt->fetchAll();
-                        foreach ($products as $p):
-                        ?>
+                        $stmt = $pdo->query('SELECT * FROM products ORDER BY id ASC');
+            $products = $stmt->fetchAll();
+            foreach ($products as $p) {
+                ?>
                             <tr id="prod-row-<?php echo $p['id']; ?>">
                                 <td><img src="../<?php echo $p['image_path']; ?>" style="width: 44px; height: 44px; object-fit: contain;"></td>
                                 <td style="font-weight: 600;"><?php echo htmlspecialchars($p['name']); ?></td>
@@ -516,7 +520,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                                     </div>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>
@@ -574,7 +578,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                 </div>
             </div>
 
-        <?php elseif ($page === 'testimonials'): ?>
+        <?php } elseif ($page === 'testimonials') { ?>
             <!-- TESTIMONIALS CRUD VIEW -->
             <div class="admin-header">
                 <div>
@@ -596,10 +600,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $pdo->query("SELECT * FROM testimonials ORDER BY id DESC");
-                        $testimonials = $stmt->fetchAll();
-                        foreach ($testimonials as $t):
-                        ?>
+                $stmt = $pdo->query('SELECT * FROM testimonials ORDER BY id DESC');
+            $testimonials = $stmt->fetchAll();
+            foreach ($testimonials as $t) {
+                ?>
                             <tr id="test-row-<?php echo $t['id']; ?>">
                                 <td style="font-weight: 600;"><?php echo htmlspecialchars($t['author_name']); ?></td>
                                 <td><?php echo htmlspecialchars($t['author_role']); ?></td>
@@ -611,7 +615,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                                     </div>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>
@@ -649,7 +653,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                 </div>
             </div>
 
-        <?php elseif ($page === 'faqs'): ?>
+        <?php } elseif ($page === 'faqs') { ?>
             <!-- FAQS CRUD VIEW -->
             <div class="admin-header">
                 <div>
@@ -670,10 +674,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $pdo->query("SELECT * FROM faqs ORDER BY id ASC");
-                        $faqs = $stmt->fetchAll();
-                        foreach ($faqs as $f):
-                        ?>
+                $stmt = $pdo->query('SELECT * FROM faqs ORDER BY id ASC');
+            $faqs = $stmt->fetchAll();
+            foreach ($faqs as $f) {
+                ?>
                             <tr id="faq-row-<?php echo $f['id']; ?>">
                                 <td style="font-weight: 600; width: 30%;"><?php echo htmlspecialchars($f['question']); ?></td>
                                 <td style="font-size: 0.85rem;"><?php echo htmlspecialchars($f['answer']); ?></td>
@@ -684,7 +688,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                                     </div>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>
@@ -711,7 +715,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                 </div>
             </div>
 
-        <?php elseif ($page === 'messages'): ?>
+        <?php } elseif ($page === 'messages') { ?>
             <!-- MESSAGES AND REPORTS LOG -->
             <div class="admin-header">
                 <div>
@@ -734,12 +738,13 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $pdo->query("SELECT * FROM messages ORDER BY id DESC");
-                        $messages = $stmt->fetchAll();
-                        if (count($messages) == 0):
-                        ?>
+                $stmt = $pdo->query('SELECT * FROM messages ORDER BY id DESC');
+            $messages = $stmt->fetchAll();
+            if (count($messages) == 0) {
+                ?>
                             <tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No se han recibido mensajes aún.</td></tr>
-                        <?php else: foreach ($messages as $m): ?>
+                        <?php } else {
+                            foreach ($messages as $m) { ?>
                             <tr id="msg-row-<?php echo $m['id']; ?>">
                                 <td style="font-weight: 600;"><?php echo htmlspecialchars($m['name']); ?></td>
                                 <td style="text-transform: uppercase; font-size: 0.75rem; font-weight:700; color: var(--primary);">
@@ -755,19 +760,20 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                                 </td>
                                 <td>
                                     <div class="admin-actions">
-                                        <?php if ($m['status'] === 'Pendiente'): ?>
+                                        <?php if ($m['status'] === 'Pendiente') { ?>
                                             <button class="admin-btn admin-btn-view" onclick="resolveMessage(<?php echo $m['id']; ?>, 'Resuelto')">Resolver</button>
-                                        <?php endif; ?>
+                                        <?php } ?>
                                         <button class="admin-btn admin-btn-delete" onclick="deleteMessage(<?php echo $m['id']; ?>)">Eliminar</button>
                                     </div>
                                 </td>
                             </tr>
-                        <?php endforeach; endif; ?>
+                        <?php }
+                            } ?>
                     </tbody>
                 </table>
             </div>
 
-        <?php elseif ($page === 'orders'): ?>
+        <?php } elseif ($page === 'orders') { ?>
             <!-- ORDERS LOG -->
             <div class="admin-header">
                 <div>
@@ -790,18 +796,19 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $pdo->query("SELECT * FROM orders ORDER BY id DESC");
-                        $orders = $stmt->fetchAll();
-                        
-                        if (count($orders) == 0):
-                        ?>
+                            $stmt = $pdo->query('SELECT * FROM orders ORDER BY id DESC');
+            $orders = $stmt->fetchAll();
+
+            if (count($orders) == 0) {
+                ?>
                             <tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No hay pedidos realizados aún.</td></tr>
-                        <?php else: foreach ($orders as $o):
-                            // Fetch items for this order
-                            $item_stmt = $pdo->prepare("SELECT * FROM order_items WHERE order_id = :order_id");
-                            $item_stmt->execute(['order_id' => $o['id']]);
-                            $items = $item_stmt->fetchAll();
-                        ?>
+                        <?php } else {
+                            foreach ($orders as $o) {
+                                // Fetch items for this order
+                                $item_stmt = $pdo->prepare('SELECT * FROM order_items WHERE order_id = :order_id');
+                                $item_stmt->execute(['order_id' => $o['id']]);
+                                $items = $item_stmt->fetchAll();
+                                ?>
                             <tr id="ord-row-<?php echo $o['id']; ?>">
                                 <td style="font-weight: 700; color: var(--primary);">#<?php echo $o['id']; ?></td>
                                 <td style="font-weight: 600;"><?php echo htmlspecialchars($o['customer_name']); ?></td>
@@ -812,9 +819,9 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                                 </td>
                                 <td style="font-size: 0.85rem;">
                                     <ul style="list-style-type: disc; padding-left: 16px;">
-                                        <?php foreach ($items as $item): ?>
+                                        <?php foreach ($items as $item) { ?>
                                             <li><?php echo htmlspecialchars($item['product_name']); ?> x<?php echo $item['quantity']; ?></li>
-                                        <?php endforeach; ?>
+                                        <?php } ?>
                                     </ul>
                                 </td>
                                 <td style="font-weight: 700; color: var(--primary); font-size:1rem;">$<?php echo $o['total_price']; ?></td>
@@ -827,12 +834,13 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                                     </select>
                                 </td>
                             </tr>
-                        <?php endforeach; endif; ?>
+                        <?php }
+                            } ?>
                     </tbody>
                 </table>
             </div>
 
-        <?php endif; ?>
+        <?php } ?>
 
     </div>
 </div>
