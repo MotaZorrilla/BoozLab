@@ -435,7 +435,7 @@ export default function Home({
 
                             <h1 className="text-3xl leading-[1.15] font-black tracking-tight text-blue-950 sm:text-5xl lg:text-6xl dark:text-white">
                                 La ciencia que <br />
-                                <span className="bg-gradient-to-r from-[#002072] via-blue-700 to-cyan-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-cyan-400 dark:to-teal-300">
+                                <span className="text-[#002072] dark:text-cyan-400">
                                     transforma el cuidado
                                 </span>
                             </h1>
@@ -662,7 +662,7 @@ export default function Home({
                                             className={`flex cursor-pointer items-center gap-2 rounded-xl border p-2.5 text-xs font-bold transition-all sm:p-3 ${
                                                 selectedNeed === need.name
                                                     ? 'border-[#002072] bg-[#002072] text-white shadow-md'
-                                                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-blue-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
+                                                    : 'border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100 hover:text-slate-950 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-white'
                                             }`}
                                         >
                                             <span className="text-sm">

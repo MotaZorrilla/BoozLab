@@ -41,7 +41,7 @@ export default function BlogIndex() {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
                     <span className="text-blue-400 font-bold uppercase tracking-widest text-sm">Publicaciones Científicas</span>
                     <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-6xl">
-                        Ciencia de la <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">Piel</span>
+                        Ciencia de la <span className="text-cyan-400">Piel</span>
                     </h1>
                     <p className="mt-6 max-w-2xl text-lg text-slate-300">
                         Artículos técnicos, revisiones de literatura y novedades en farmacología dermatológica para el profesional moderno.

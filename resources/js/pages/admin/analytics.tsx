@@ -283,17 +283,17 @@ export default function Analytics({
 
                 {/* Métricas de Tráfico del Servidor (Zero-Latency) */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                    <div className="bg-gradient-to-br from-purple-50 to-indigo-50/50 dark:from-purple-950/20 dark:to-indigo-950/20 p-4 rounded-xl border border-purple-200 dark:border-purple-900/50 shadow-sm">
+                    <div className="bg-gradient-to-br from-blue-50 to-slate-50 dark:from-blue-950/30 dark:to-slate-900/40 p-4 rounded-xl border border-blue-200 dark:border-blue-900/50 shadow-sm">
                         <div className="flex items-center justify-between">
-                            <span className="text-[11px] font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider">
+                            <span className="text-[11px] font-bold text-[#002072] dark:text-cyan-300 uppercase tracking-wider">
                                 Páginas Vistas
                             </span>
-                            <Globe className="w-4 h-4 text-purple-500" />
+                            <Globe className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
                         </div>
                         <div className="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">
                             {kpis.total_page_views || 0}
                         </div>
-                        <span className="text-[10px] text-purple-600 dark:text-purple-400 font-medium">
+                        <span className="text-[10px] text-blue-700 dark:text-cyan-300 font-medium">
                             +{kpis.today_page_views || 0} servidas hoy
                         </span>
                     </div>
@@ -314,7 +314,7 @@ export default function Analytics({
                         <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                             Fichas de Fármacos
                         </span>
-                        <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1 font-mono">
+                        <div className="text-2xl font-black text-[#002072] dark:text-cyan-400 mt-1 font-mono">
                             {kpis.catalog_views || 0}
                         </div>
                         <span className="text-[10px] text-slate-400 block">
@@ -368,10 +368,10 @@ export default function Analytics({
                         <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                             Cotizaciones BD
                         </span>
-                        <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1 font-mono">
+                        <div className="text-2xl font-black text-blue-700 dark:text-cyan-400 mt-1 font-mono">
                             {kpis.total_quotes || kpis.converted_sessions}
                         </div>
-                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 block">
+                        <span className="text-[10px] text-blue-700 dark:text-cyan-300 block">
                             Bolsa de pedidos formal
                         </span>
                     </div>
@@ -591,7 +591,7 @@ export default function Analytics({
                                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                                     Vistas en Periodo ({selectedPeriod.toUpperCase()})
                                 </span>
-                                <div className="text-3xl font-black text-purple-600 dark:text-purple-400 mt-2 font-mono">
+                                <div className="text-3xl font-black text-[#002072] dark:text-cyan-400 mt-2 font-mono">
                                     {kpis.period_page_views || kpis.today_page_views || 0}
                                 </div>
                                 <span className="text-[11px] text-slate-400 mt-1 block">
@@ -615,7 +615,7 @@ export default function Analytics({
                                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                                     Vistas Fichas Fármacos
                                 </span>
-                                <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400 mt-2 font-mono">
+                                <div className="text-3xl font-black text-blue-700 dark:text-cyan-400 mt-2 font-mono">
                                     {kpis.period_catalog_views || kpis.catalog_views || 0}
                                 </div>
                                 <span className="text-[11px] text-slate-400 mt-1 block">

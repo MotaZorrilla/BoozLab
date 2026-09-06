@@ -814,7 +814,7 @@ export default function AdminAi({ aiConfig, corpusStats, knowledgeDocuments = []
                                     type="file"
                                     accept=".txt,.md,.csv,.json"
                                     onChange={(e) => createDocForm.setData('file', e.target.files?.[0] || null)}
-                                    className="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 dark:file:bg-slate-800 dark:file:text-cyan-400"
+                                    className="w-full text-xs text-slate-600 dark:text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-800 hover:file:bg-slate-200 dark:file:bg-slate-800 dark:file:text-cyan-400"
                                 />
                             </div>
                         </div>

@@ -556,7 +556,29 @@
 - [x] **Verificación Integral y QA:**
   - `npm run build`: 2.767 módulos transformados con éxito en 8.71s.
 
+---
 
-
-
-
+## 🎨 Fase 36: Estandarización Visual Impeccable & Saneamiento Anti-Slop Clínico
+- [x] **Integración y Configuración del Ecosistema Impeccable:**
+  - Instalación del skill oficial en `.agents/skills/impeccable`, `.gemini/skills/impeccable` y `.claude/skills/impeccable`.
+  - Configuración del binario nativo y scripts de automatización CLI (`impeccable.cmd`).
+- [x] **Formalización de Autoridad de Diseño (`PRODUCT.md` & `DESIGN.md`):**
+  - Creación de `PRODUCT.md`: Definición de usuarios (médicos, pacientes, reguladores INH), posicionamiento biofarmacéutico, modos de superficie y principios de producto.
+  - Creación de `DESIGN.md`: Especificación de tokens oficiales (Azul Marino Booz `#002072` PANTONE 2747 C, Borgoña Clínico `#842D44` PANTONE 506 C, Cyan Médico `#06B6D4`), tipografía `Instrument Sans`, componentes clínicos y lista estricta de Do's y Don'ts (erradicación de degradados violetas IA, tarjetas anidadas y texto con degradado).
+- [x] **Saneamiento Quirúrgico de Vistas Públicas (Home, PDP & Blog):**
+  - Refinamiento de `resources/js/Pages/home.tsx`: reemplazo de `bg-clip-text` artificial en el título del Hero por el azul marino oficial sólido `#002072` / cyan oscuro y corrección de contraste en botones de filtros de necesidades clínicas.
+  - Refinamiento de `resources/js/Pages/product-detail.tsx`: eliminación del anti-patrón `border-l-4` side-tab en la caja descriptiva en favor de una tarjeta clínica perimetral sobria `rounded-2xl border-slate-200/80`.
+  - Refinamiento de `resources/js/Pages/blog/index.tsx`: sustitución de texto con gradiente por acento biotecnológico sólido `text-cyan-400`.
+  - Detección de anti-patrones en vistas públicas reducida a cero (0 anti-patterns).
+- [x] **Estabilidad de Testing & Cronología de Migraciones:**
+  - Corregido el timestamp de la migración de extensión de telemetría a `2026_08_31_000004_enhance_daily_visitors_table.php` para asegurar su ejecución secuencial tras la creación de `daily_visitors` en bases de datos SQLite en memoria.
+- [x] **Saneamiento Quirúrgico del Panel Administrativo y Operativo (Frente B):**
+  - Refinamiento de `resources/js/Pages/admin/analytics.tsx`: erradicación de 10 incidencias de paleta violeta/índigo de IA en las tarjetas de KPIs de tráfico, cotizaciones en BD y vistas en periodo, sustituyéndolas por el Azul Marino Booz `#002072` y Cyan Biotecnológico `#06B6D4`.
+  - Refinamiento de `resources/js/Pages/dashboard.tsx`: normalización de botones de acción de las 4 fichas operativas con colores institucionales sólidos de alto contraste y texto blanco nítido (`text-white`), eliminando contrastes grises sobre color.
+  - Refinamiento de `resources/js/Pages/admin/ai.tsx` y `admin/users.tsx`: saneamiento de botones de acción y carga documental con fondos y textos de alto contraste WCAG.
+  - Refinamiento de `resources/js/Pages/cases.tsx`: botón de protocolo clínico actualizado a azul marino Booz oficial.
+  - **Detector Anti-Slop en todo el proyecto:** Reducido a exactamente **0 anti-patterns** en la totalidad de las vistas de `resources/js/Pages`.
+- [x] **Verificación Integral y QA:**
+  - `php artisan test`: 151 tests pasando en verde (619 assertions) en 9.04s (validación detallada sin compactar).
+  - `npm run build`: 2.767 módulos transformados con éxito en 8.29s.
+  - OpenSpec: 14/14 especificaciones validadas (`npm run opsx -- validate --specs`).

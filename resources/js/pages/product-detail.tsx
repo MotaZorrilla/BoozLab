@@ -207,7 +207,7 @@ export default function ProductDetail({ product, relatedProducts = [] }: Product
                             </div>
 
                             {/* Description Box */}
-                            <div className="p-5 rounded-2xl bg-white dark:bg-[#0D172E] border-l-4 border-[#002072] dark:border-cyan-400 border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div className="p-5 rounded-2xl bg-slate-50/70 dark:bg-[#0D172E] border border-slate-200/80 dark:border-slate-800 shadow-xs">
                                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                                     {product.description}
                                 </p>

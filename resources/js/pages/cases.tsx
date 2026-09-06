@@ -70,7 +70,7 @@ export default function Cases() {
                                         {item.description}
                                     </p>
                                     
-                                    <button className="mt-8 flex items-center justify-between w-full p-4 rounded-2xl bg-slate-50 border border-slate-100 font-bold text-slate-900 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                    <button className="mt-8 flex items-center justify-between w-full p-4 rounded-2xl bg-[#002072] text-white hover:bg-blue-800 font-bold transition-all shadow-sm cursor-pointer">
                                         Ver Protocolo Completo
                                         <ArrowRight className="h-5 w-5" />
                                     </button>

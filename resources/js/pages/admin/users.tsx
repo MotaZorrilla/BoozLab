@@ -209,7 +209,7 @@ export default function AdminUsers({ users, roles, currentUserId }: UsersProps) 
                                                     <button
                                                         type="button"
                                                         onClick={() => setDeletingUser(u)}
-                                                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 cursor-pointer transition-colors"
+                                                        className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-slate-800 cursor-pointer transition-colors"
                                                         title="Eliminar usuario"
                                                     >
                                                         <Trash2 className="h-4 w-4" />

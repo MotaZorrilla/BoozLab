@@ -230,7 +230,7 @@ export default function Dashboard({
                             <div className="pt-6">
                                 <Link
                                     href="/admin/products"
-                                    className="w-full inline-flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 hover:bg-[#002072] hover:text-white dark:hover:bg-blue-600 text-slate-700 dark:text-slate-200 font-bold text-xs transition-all group-hover:shadow-md"
+                                    className="w-full inline-flex items-center justify-between px-4 py-3 rounded-2xl bg-[#002072] text-white hover:bg-blue-800 font-bold text-xs transition-all shadow-sm"
                                 >
                                     <span>Ir a Gestión de Catálogo</span>
                                     <ChevronRight className="h-4 w-4" />
@@ -277,7 +277,7 @@ export default function Dashboard({
                             <div className="pt-6">
                                 <Link
                                     href="/admin/reports"
-                                    className="w-full inline-flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-600 text-slate-700 dark:text-slate-200 font-bold text-xs transition-all group-hover:shadow-md"
+                                    className="w-full inline-flex items-center justify-between px-4 py-3 rounded-2xl bg-amber-700 text-white hover:bg-amber-800 font-bold text-xs transition-all shadow-sm"
                                 >
                                     <span>Ir a Farmacovigilancia INH</span>
                                     <ChevronRight className="h-4 w-4" />
@@ -323,12 +323,12 @@ export default function Dashboard({
                             </div>
                             <div className="pt-6">
                                 <Link
-                                    href="/admin/messages"
-                                    className="w-full inline-flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 hover:bg-rose-600 hover:text-white dark:hover:bg-rose-600 text-slate-700 dark:text-slate-200 font-bold text-xs transition-all group-hover:shadow-md"
+                                     href="/admin/messages"
+                                     className="w-full inline-flex items-center justify-between px-4 py-3 rounded-2xl bg-rose-700 text-white hover:bg-rose-800 font-bold text-xs transition-all shadow-sm"
                                 >
-                                    <span>Ir a Bandeja de Mensajes</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                </Link>
+                                     <span>Ir a Bandeja de Mensajes</span>
+                                     <ChevronRight className="h-4 w-4" />
+                                 </Link>
                             </div>
                         </div>
 
@@ -364,12 +364,12 @@ export default function Dashboard({
                             </div>
                             <div className="pt-6">
                                 <Link
-                                    href="/admin/quotes"
-                                    className="w-full inline-flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 font-bold text-xs transition-all group-hover:shadow-md"
+                                     href="/admin/quotes"
+                                     className="w-full inline-flex items-center justify-between px-4 py-3 rounded-2xl bg-emerald-700 text-white hover:bg-emerald-800 font-bold text-xs transition-all shadow-sm"
                                 >
-                                    <span>Ir a Cotizaciones & Demanda</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                </Link>
+                                     <span>Ir a Cotizaciones & Demanda</span>
+                                     <ChevronRight className="h-4 w-4" />
+                                 </Link>
                             </div>
                         </div>
                     </div>
