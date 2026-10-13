@@ -9,7 +9,6 @@ import {
     CheckCircle2,
     Share2,
     ArrowRight,
-    ShoppingBag,
     Sparkles,
     Printer,
 } from 'lucide-react';
@@ -46,12 +45,6 @@ export default function ProductDetail({
             navigator.clipboard.writeText(window.location.href);
             alert('¡Enlace de la ficha médica copiado al portapapeles!');
         }
-    };
-
-    const handleAddToCart = () => {
-        window.dispatchEvent(
-            new CustomEvent('booz:add-to-cart', { detail: product }),
-        );
     };
 
     const handleOpenLira = () => {
@@ -257,22 +250,16 @@ export default function ProductDetail({
                                 </p>
                             </div>
 
-                            {/* Card Comercial de Pedido y Bolsa Virtual (Llamativa y Estratégica) */}
-                            <div className="relative space-y-4 overflow-hidden rounded-3xl border-2 border-blue-600/30 bg-white p-6 shadow-xl dark:border-cyan-500/30 dark:bg-[#0D172E]">
+                            {/* Card Comercial de Cotización Institucional B2B */}
+                            <div className="relative space-y-4 overflow-hidden rounded-3xl border-2 border-emerald-600/30 bg-white p-6 shadow-xl dark:border-emerald-500/30 dark:bg-[#0D172E]">
                                 <div className="flex flex-wrap items-center justify-between gap-3">
                                     <div>
                                         <span className="mb-0.5 block text-[11px] font-bold tracking-wider text-slate-400 uppercase dark:text-slate-500">
-                                            Precio Referencial Vademécum
+                                            Distribución y Suministro Farmacéutico
                                         </span>
                                         <div className="flex items-baseline gap-2">
-                                            <span className="font-mono text-3xl font-black text-emerald-600 sm:text-4xl dark:text-emerald-400">
-                                                $
-                                                {Number(
-                                                    product.price || 0,
-                                                ).toFixed(2)}
-                                            </span>
-                                            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                                                USD / unidad
+                                            <span className="text-xl font-black text-slate-900 sm:text-2xl dark:text-white">
+                                                Cotización Directa de Planta
                                             </span>
                                         </div>
                                     </div>
@@ -284,14 +271,17 @@ export default function ProductDetail({
                                     </div>
                                 </div>
 
-                                <button
-                                    type="button"
-                                    onClick={handleAddToCart}
-                                    className="group flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-[#002072] px-6 py-4 text-center text-sm font-black text-white shadow-xl ring-2 shadow-blue-900/25 ring-blue-400/20 transition-all hover:bg-blue-800 hover:shadow-2xl hover:shadow-blue-900/40 active:scale-[0.98] sm:text-base dark:bg-blue-600 dark:hover:bg-blue-500"
+                                <a
+                                    href={createWhatsAppUrl(
+                                        `Hola Booz Laboratorio, solicito cotización formal y disponibilidad de lote para: ${product.name} (${product.presentation}) - Registro Sanitario: ${product.sanitary_registration || 'En trámite'}.`,
+                                    )}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="group flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-emerald-600 px-6 py-4 text-center text-sm font-black text-white shadow-xl ring-2 shadow-emerald-950/25 ring-emerald-400/20 transition-all hover:bg-emerald-700 hover:shadow-2xl hover:shadow-emerald-900/40 active:scale-[0.98] sm:text-base"
                                 >
-                                    <ShoppingBag className="h-5 w-5 text-cyan-300 transition-transform group-hover:scale-110 sm:h-6 sm:w-6" />
-                                    <span>Añadir a la Bolsa de Pedidos</span>
-                                </button>
+                                    <MessageCircle className="h-5 w-5 text-white transition-transform group-hover:scale-110 sm:h-6 sm:w-6" />
+                                    <span>Cotizar Lote Institucional (WhatsApp)</span>
+                                </a>
 
                                 <a
                                     href={`/producto/${product.slug}/vademecum`}
@@ -301,16 +291,12 @@ export default function ProductDetail({
                                 >
                                     <Printer className="h-4 w-4 text-blue-600 transition-transform group-hover:scale-110 dark:text-cyan-400" />
                                     <span>
-                                        Descargar Ficha Técnica & Vademécum (PDF
-                                        Oficial)
+                                        Descargar Ficha Técnica & Vademécum (PDF Oficial)
                                     </span>
                                 </a>
 
                                 <p className="text-center text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">
-                                    Al añadir a la bolsa podrás seleccionar tu
-                                    tipo de solicitante (Paciente, Farmacia o
-                                    Clínica) y tramitar la cotización formal por
-                                    WhatsApp.
+                                    Canal exclusivo para Droguerías, Cadenas de Farmacias e Instituciones de Salud. Despachos y acuerdos comerciales directos de laboratorio.
                                 </p>
                             </div>
 

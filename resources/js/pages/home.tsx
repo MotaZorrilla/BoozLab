@@ -8,10 +8,10 @@ import {
     ChevronLeft,
     ChevronRight,
     Microscope,
-    ShoppingBag,
     Send,
     LayoutGrid,
     SlidersHorizontal,
+    MessageCircle,
 } from 'lucide-react';
 import React, {
     useState,
@@ -21,6 +21,7 @@ import React, {
     useCallback,
 } from 'react';
 import SearchModal from '@/components/search-modal';
+import { useWhatsApp } from '@/hooks/use-whatsapp';
 import BoozLayout from '@/layouts/booz-layout';
 import type { Product, ProductLine, Testimonial, Faq } from '@/types';
 
@@ -37,6 +38,7 @@ export default function Home({
     testimonials = [],
     faqs = [],
 }: HomeProps) {
+    const { createWhatsAppUrl } = useWhatsApp();
     const [selectedLineId, setSelectedLineId] = useState<number | null>(null);
     const [isFadingCategory, setIsFadingCategory] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -334,12 +336,6 @@ export default function Home({
         setOpenFaqId((prev) => (prev === id ? null : id));
     };
 
-    const handleAddToCart = (product: Product) => {
-        window.dispatchEvent(
-            new CustomEvent('booz:add-to-cart', { detail: product }),
-        );
-    };
-
     const getCsrfToken = () =>
         (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)
             ?.content || '';
@@ -441,7 +437,7 @@ export default function Home({
                         <div className="space-y-4 text-center sm:space-y-6 lg:col-span-7 lg:text-left">
                             <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-100/80 px-3 py-1 text-[11px] font-black tracking-wider text-[#002072] uppercase sm:text-xs dark:border-blue-800 dark:bg-blue-900/40 dark:text-cyan-300">
                                 <Sparkles className="h-3 w-3 text-blue-600 dark:text-cyan-400" />{' '}
-                                Vademécum Clínico Oficial
+                                Vademécum Farmacológico
                             </span>
 
                             <h1 className="text-3xl leading-[1.15] font-black tracking-tight text-blue-950 sm:text-5xl lg:text-6xl dark:text-white">
@@ -453,9 +449,9 @@ export default function Home({
 
                             <p className="mx-auto max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base lg:mx-0 lg:text-lg dark:text-slate-300">
                                 Desarrollamos soluciones farmacéuticas y
-                                dermatológicas de máxima pureza para el
-                                bienestar integral, la salud familiar y la
-                                cicatrización tisular avanzada.
+                                dermatológicas avanzadas para el
+                                bienestar integral, la salud dérmica y la
+                                terapéutica clínica especializada.
                             </p>
 
                             <div className="flex flex-wrap items-center justify-center gap-3 pt-1 lg:justify-start">
@@ -475,19 +471,19 @@ export default function Home({
                                 </button>
                             </div>
 
-                            {/* Badges */}
+                            {/* Badges Oficiales Acordados */}
                             <div className="grid grid-cols-3 gap-2 border-t border-slate-200/80 pt-4 sm:gap-4 sm:pt-6 dark:border-slate-800">
                                 <div>
                                     <span className="block text-xl font-black text-[#002072] sm:text-2xl dark:text-cyan-400">
-                                        18+
+                                        27+
                                     </span>
                                     <span className="text-[10px] font-medium text-slate-500 sm:text-xs dark:text-slate-400">
-                                        Registrados
+                                        Formulaciones
                                     </span>
                                 </div>
                                 <div>
                                     <span className="block text-xl font-black text-[#002072] sm:text-2xl dark:text-cyan-400">
-                                        4
+                                        3
                                     </span>
                                     <span className="text-[10px] font-medium text-slate-500 sm:text-xs dark:text-slate-400">
                                         Líneas Clínicas
@@ -498,7 +494,7 @@ export default function Home({
                                         100%
                                     </span>
                                     <span className="text-[10px] font-medium text-slate-500 sm:text-xs dark:text-slate-400">
-                                        Aprobado INH
+                                        Apego Regulatorio
                                     </span>
                                 </div>
                             </div>
@@ -556,16 +552,16 @@ export default function Home({
                             Especialización Terapéutica
                         </span>
                         <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl lg:text-4xl dark:text-white">
-                            Nuestras 4 Líneas de Productos
+                            Nuestras 3 Líneas de Productos
                         </h2>
                         <p className="text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-slate-300">
                             Formulaciones científicas de alta biodisponibilidad
-                            desarrolladas para cubrir integralmente la salud
-                            dérmica y el bienestar familiar.
+                            desarrolladas para cubrir integralmente la terapéutica ética,
+                            la salud dérmica y el bienestar familiar.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
                         {productLines.map((line) => {
                             const isSelected = selectedLineId === line.id;
                             const count = products.filter(
@@ -589,13 +585,13 @@ export default function Home({
                                     }}
                                     className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-5 text-white transition-all duration-300 sm:rounded-3xl sm:p-6 ${
                                         line.id === 1
-                                            ? 'bg-gradient-to-br from-[#002072] to-blue-900 hover:from-blue-900 hover:to-indigo-900'
+                                            ? /* CERTIFICADO OFICIAL: PANTONE 506 C Borgoña/Vinotinto Booz Ética */
+                                              'bg-gradient-to-br from-[#581827] via-[#842D44] to-[#3B0E19] hover:from-[#6E1E31] hover:to-[#4A1220]'
                                             : line.id === 2
-                                              ? /* CERTIFICADO OFICIAL: PANTONE 506 C Borgoña/Vinotinto Booz */
-                                                'bg-gradient-to-br from-[#581827] via-[#842D44] to-[#3B0E19] hover:from-[#6E1E31] hover:to-[#4A1220]'
-                                              : line.id === 3
-                                                ? 'bg-gradient-to-br from-cyan-950 to-blue-950 hover:from-cyan-900 hover:to-blue-900'
-                                                : 'bg-gradient-to-br from-slate-900 to-blue-950 hover:from-slate-800 hover:to-blue-900'
+                                              ? /* Azul Corporativo Booz Dermocosmética */
+                                                'bg-gradient-to-br from-[#002072] via-blue-900 to-indigo-950 hover:from-blue-900 hover:to-indigo-900'
+                                              : /* Esmeralda / Verde Natural & Bienestar */
+                                                'bg-gradient-to-br from-emerald-950 via-teal-950 to-slate-950 hover:from-emerald-900 hover:to-teal-900'
                                     } ${isSelected ? 'scale-[1.02] shadow-2xl ring-4 ring-cyan-400' : 'shadow-lg hover:scale-[1.02]'}`}
                                 >
                                     <div>
@@ -605,12 +601,10 @@ export default function Home({
                                             </span>
                                             <span className="text-2xl">
                                                 {line.id === 1
-                                                    ? '🧴'
+                                                    ? '💊'
                                                     : line.id === 2
-                                                      ? '💊'
-                                                      : line.id === 3
-                                                        ? '🌿'
-                                                        : '🔬'}
+                                                      ? '🧴'
+                                                      : '🌿'}
                                             </span>
                                         </div>
 
@@ -748,31 +742,38 @@ export default function Home({
                             </div>
                         </div>
 
-                        {/* Columna 3: ¿Ya sabes lo que buscas? */}
+                        {/* Columna 3: Distribución B2B y Cotización Institucional */}
                         <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-colors sm:rounded-3xl sm:p-8 lg:col-span-3 dark:border-slate-800 dark:bg-[#0D172E]">
                             <div>
-                                <h3 className="mb-1.5 text-lg font-bold text-blue-950 sm:text-xl dark:text-white">
-                                    Bolsa & Tienda
+                                <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-black tracking-wider text-emerald-800 uppercase dark:bg-emerald-950/60 dark:text-emerald-300">
+                                    Canal B2B Farma
+                                </span>
+                                <h3 className="mt-1 mb-1.5 text-lg font-bold text-blue-950 sm:text-xl dark:text-white">
+                                    Distribución B2B
                                 </h3>
-                                <p className="mb-5 text-xs text-slate-500 dark:text-slate-400">
-                                    Arma tu lista de pedidos y solicita
-                                    cotización directa por WhatsApp para tu
-                                    droguería o farmacia.
+                                <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
+                                    Atención directa para droguerías aliadas (Cobeca, Grupo Farma y canal independiente). Solicita vademécum y condiciones comerciales por WhatsApp.
                                 </p>
-                                <div className="flex items-center justify-center rounded-2xl border border-blue-100 bg-blue-50 p-3 dark:border-blue-900/40 dark:bg-blue-950/40">
+                                <div className="flex items-center justify-center rounded-2xl border border-emerald-100 bg-emerald-50/50 p-2.5 dark:border-emerald-900/40 dark:bg-emerald-950/30">
                                     <img
-                                        src="/assets/img/product_3.png"
-                                        alt="Catálogo"
-                                        className="h-20 object-contain sm:h-24"
+                                        src="/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg"
+                                        alt="Portafolio Booz Distribución B2B"
+                                        className="h-20 rounded-xl object-contain sm:h-24"
                                     />
                                 </div>
                             </div>
 
                             <a
-                                href="#productos"
-                                className="mt-4 block w-full rounded-xl bg-slate-100 py-2.5 text-center text-xs font-bold text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                                href={createWhatsAppUrl(
+                                    'Hola Booz Laboratorio, solicito información y cotización institucional de productos para droguería / farmacia.',
+                                    'commercial',
+                                )}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl bg-emerald-600 py-2.5 text-center text-xs font-bold text-white shadow-md shadow-emerald-900/20 transition-all hover:bg-emerald-500"
                             >
-                                Ver catálogo completo →
+                                <MessageCircle className="h-4 w-4" />
+                                <span>Cotizar por WhatsApp →</span>
                             </a>
                         </div>
                     </div>
@@ -794,11 +795,11 @@ export default function Home({
                                 Portafolio Clínico Oficial
                             </span>
                             <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl dark:text-white">
-                                Catálogo Farmacéutico & Tienda
+                                Vademécum Farmacológico
                             </h2>
                             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                Mostrando {filteredProducts.length} productos
-                                registrados ante las autoridades sanitarias.
+                                Mostrando {filteredProducts.length} formulaciones
+                                registradas ante las autoridades sanitarias (INH).
                             </p>
                         </div>
 
@@ -815,7 +816,7 @@ export default function Home({
                         </div>
                     </div>
 
-                    {/* Selector de Vista Táctil para Teléfonos: Tienda Virtual App (100% Ancho) vs Carrusel 3D */}
+                    {/* Selector de Vista Táctil para Teléfonos: Cuadrícula vs Carrusel 3D */}
                     <div className="mb-4 flex items-center justify-between gap-1 rounded-xl border border-slate-200/60 bg-slate-100 p-1 sm:hidden dark:border-slate-700 dark:bg-slate-800/80">
                         <button
                             type="button"
@@ -827,7 +828,7 @@ export default function Home({
                             }`}
                         >
                             <LayoutGrid className="h-3.5 w-3.5" />
-                            <span>Tienda Virtual (App)</span>
+                            <span>Cuadrícula</span>
                         </button>
                         <button
                             type="button"
@@ -860,7 +861,7 @@ export default function Home({
                             </span>
                         </button>
 
-                        {/* 4 Botones de Líneas de Producto Directas */}
+                        {/* 3 Botones de Líneas de Producto Directas */}
                         {productLines.map((line) => {
                             const isSelected = selectedLineId === line.id;
                             const count = products.filter(
@@ -868,12 +869,10 @@ export default function Home({
                             ).length;
                             const icon =
                                 line.id === 1
-                                    ? '🧴'
+                                    ? '💊'
                                     : line.id === 2
-                                      ? '💊'
-                                      : line.id === 3
-                                        ? '🌿'
-                                        : '🔬';
+                                      ? '🧴'
+                                      : '🌿';
 
                             return (
                                 <button
@@ -885,9 +884,11 @@ export default function Home({
                                     }
                                     className={`flex min-h-[38px] flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                                         isSelected
-                                            ? line.id === 2
+                                            ? line.id === 1
                                                 ? 'bg-[#842D44] text-white shadow-md ring-2 ring-rose-300'
-                                                : 'bg-[#002072] text-white shadow-md ring-2 shadow-blue-900/20 ring-cyan-400'
+                                                : line.id === 2
+                                                  ? 'bg-[#002072] text-white shadow-md ring-2 shadow-blue-900/20 ring-cyan-400'
+                                                  : 'bg-emerald-700 text-white shadow-md ring-2 ring-emerald-300'
                                             : 'border border-slate-200/60 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                                     }`}
                                 >
@@ -1032,30 +1033,30 @@ export default function Home({
                                                     </p>
                                                 </Link>
 
-                                                {/* Botón de Añadir a Pedido Fijo al Pie de la Tarjeta */}
+                                                {/* Enlace a Ficha y Cotización Institucional */}
                                                 <div className="mt-2.5 flex items-center justify-between gap-1.5 border-t border-slate-100 pt-2 dark:border-slate-800">
-                                                    <span className="font-mono text-[11px] font-black text-emerald-600 dark:text-emerald-400">
-                                                        $
-                                                        {Number(
-                                                            product.price || 0,
-                                                        ).toFixed(2)}
-                                                    </span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            e.stopPropagation();
-                                                            handleAddToCart(
-                                                                product,
-                                                            );
-                                                        }}
-                                                        className="flex min-h-[34px] items-center gap-1 rounded-lg bg-[#002072] px-2 py-1.5 text-[10px] font-bold text-white shadow-xs transition-all hover:bg-blue-800 active:scale-95 dark:bg-blue-600"
-                                                        title={`Añadir ${product.name} a la bolsa`}
-                                                        aria-label={`Añadir ${product.name} a la bolsa`}
+                                                    <Link
+                                                        href={`/producto/${product.slug}`}
+                                                        className="text-[10px] font-bold text-[#002072] hover:underline dark:text-cyan-400"
                                                     >
-                                                        <ShoppingBag className="h-3 w-3 text-cyan-300" />
-                                                        <span>+ Pedido</span>
-                                                    </button>
+                                                        Ver Ficha
+                                                    </Link>
+                                                    <a
+                                                        href={createWhatsAppUrl(
+                                                            `Hola Booz Laboratorio, solicito cotización para el producto: ${product.name} (${product.presentation}).`,
+                                                        )}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                        }}
+                                                        className="flex min-h-[30px] items-center gap-1 rounded-lg bg-emerald-600 px-2 py-1 text-[10px] font-bold text-white shadow-xs transition-all hover:bg-emerald-700 active:scale-95"
+                                                        title={`Cotizar ${product.name} por WhatsApp`}
+                                                        aria-label={`Cotizar ${product.name}`}
+                                                    >
+                                                        <MessageCircle className="h-3 w-3 text-white" />
+                                                        <span>Cotizar</span>
+                                                    </a>
                                                 </div>
                                             </div>
                                         ))}
@@ -1205,28 +1206,27 @@ export default function Home({
                                                                         </span>
                                                                     </div>
 
-                                                                    {/* Botón + Pedido Reubicado con stopPropagation para no abrir ficha */}
-                                                                    <button
-                                                                        type="button"
+                                                                    {/* Botón Cotizar por WhatsApp con stopPropagation para no abrir ficha */}
+                                                                    <a
+                                                                        href={createWhatsAppUrl(
+                                                                            `Hola Booz Laboratorio, solicito cotización para: ${product.name} (${product.presentation}).`,
+                                                                        )}
+                                                                        target="_blank"
+                                                                        rel="noreferrer"
                                                                         onClick={(
                                                                             e,
                                                                         ) => {
-                                                                            e.preventDefault();
                                                                             e.stopPropagation();
-                                                                            handleAddToCart(
-                                                                                product,
-                                                                            );
                                                                         }}
-                                                                        className="flex min-h-[38px] flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-[#002072] px-3 py-2 text-xs font-bold text-white shadow-md shadow-blue-950/20 transition-all hover:scale-105 hover:bg-blue-800 active:scale-95 dark:bg-blue-600 dark:hover:bg-blue-500"
-                                                                        title={`Añadir ${product.name} a la bolsa de pedidos`}
-                                                                        aria-label={`Añadir ${product.name} a la bolsa`}
+                                                                        className="flex min-h-[36px] flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-md shadow-emerald-950/20 transition-all hover:scale-105 hover:bg-emerald-700 active:scale-95"
+                                                                        title={`Cotizar ${product.name} por WhatsApp`}
+                                                                        aria-label={`Cotizar ${product.name}`}
                                                                     >
-                                                                        <ShoppingBag className="h-3.5 w-3.5 text-cyan-300 dark:text-white" />
+                                                                        <MessageCircle className="h-3.5 w-3.5 text-white" />
                                                                         <span>
-                                                                            +
-                                                                            Pedido
+                                                                            Cotizar
                                                                         </span>
-                                                                    </button>
+                                                                    </a>
                                                                 </div>
                                                             </div>
                                                         </Link>
@@ -1358,64 +1358,6 @@ export default function Home({
                 </div>
             </section>
 
-            {/* ========================================================
-                6. NOSOTROS & TESTIMONIOS MÉDICOS
-            ======================================================== */}
-            <section
-                className="bg-white py-12 transition-colors duration-300 sm:py-20 dark:bg-[#0A1124]"
-                id="nosotros"
-            >
-                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
-                    <div className="mx-auto mb-10 max-w-2xl space-y-2 text-center sm:mb-16">
-                        <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
-                            Aval Clínico
-                        </span>
-                        <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl dark:text-white">
-                            La Confianza de los Especialistas
-                        </h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3">
-                        {testimonials.map((t) => {
-                            const authorName = t.author_name || '';
-                            const quoteText = t.quote || '';
-                            const roleText =
-                                t.author_role || 'Profesional de la Salud';
-                            const initials = authorName
-                                .split(' ')
-                                .filter(Boolean)
-                                .map((n: string) => n[0])
-                                .slice(0, 2)
-                                .join('')
-                                .toUpperCase();
-
-                            return (
-                                <div
-                                    key={t.id}
-                                    className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-slate-50 p-6 shadow-sm transition-colors sm:rounded-3xl sm:p-8 dark:border-slate-800 dark:bg-[#0D172E]"
-                                >
-                                    <p className="mb-6 text-xs leading-relaxed text-slate-600 italic dark:text-slate-300">
-                                        "{quoteText}"
-                                    </p>
-                                    <div className="flex items-center gap-3 border-t border-slate-200/60 pt-4 dark:border-slate-800">
-                                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#002072] text-xs font-black text-white shadow-md">
-                                            {initials || 'BZ'}
-                                        </div>
-                                        <div>
-                                            <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                                                {authorName}
-                                            </h4>
-                                            <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                                                {roleText}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
 
             {/* ========================================================
                 7. CONTACTO & FARMACOVIGILANCIA (Fiel al Mockup Oficial)
