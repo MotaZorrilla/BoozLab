@@ -135,7 +135,7 @@ export default function Dashboard({
                         <p className="mt-1 max-w-2xl text-xs text-slate-500 sm:text-sm dark:text-slate-400">
                             Centro de mando y monitoreo en tiempo real de
                             operaciones clínicas, catálogo vademécum,
-                            farmacovigilancia INH y gestión de demanda.
+                            farmacovigilancia sanitaria y gestión de demanda.
                         </p>
                     </div>
 
@@ -167,65 +167,77 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* Métricas y KPIs Superiores */}
+                {/* Métricas y KPIs Superiores (Tarjetas Clickeables) */}
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
-                    <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm transition-colors sm:p-5 dark:border-slate-800 dark:bg-[#0D172E]">
+                    <Link
+                        href="/admin/products"
+                        className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:border-blue-400 hover:shadow-md sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-blue-600"
+                    >
                         <div>
                             <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
                                 Total Productos
                             </span>
-                            <h3 className="mt-0.5 text-2xl font-black text-slate-900 dark:text-white">
+                            <h3 className="mt-0.5 text-2xl font-black text-slate-900 group-hover:text-[#002072] dark:text-white dark:group-hover:text-cyan-400">
                                 {stats.total_products}
                             </h3>
                             <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
                                 {stats.active_products} activos
                             </span>
                         </div>
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-[#002072] dark:bg-blue-950/60 dark:text-cyan-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-[#002072] transition-transform group-hover:scale-110 dark:bg-blue-950/60 dark:text-cyan-400">
                             <Package className="h-5 w-5" />
                         </div>
-                    </div>
+                    </Link>
 
-                    <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors sm:p-5 dark:border-slate-800 dark:bg-[#0D172E]">
+                    <Link
+                        href="/admin/products"
+                        className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-indigo-400 hover:shadow-md sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-indigo-600"
+                    >
                         <div>
                             <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
                                 Líneas Oficiales
                             </span>
-                            <h3 className="mt-0.5 text-2xl font-black text-slate-900 dark:text-white">
+                            <h3 className="mt-0.5 text-2xl font-black text-slate-900 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400">
                                 {stats.total_lines}
                             </h3>
                             <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
                                 Clasificación
                             </span>
                         </div>
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-300">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-900 transition-transform group-hover:scale-110 dark:bg-indigo-950/60 dark:text-indigo-300">
                             <Filter className="h-5 w-5" />
                         </div>
-                    </div>
+                    </Link>
 
-                    <div className="flex items-center justify-between rounded-2xl border border-amber-200 bg-white bg-gradient-to-r from-white to-amber-50/20 p-4 shadow-sm transition-colors sm:p-5 dark:border-amber-900/60 dark:bg-[#0D172E] dark:from-[#0D172E] dark:to-amber-950/30">
+                    <Link
+                        href="/admin/reports"
+                        className="group flex items-center justify-between rounded-2xl border border-amber-200 bg-white bg-gradient-to-r from-white to-amber-50/20 p-4 shadow-sm transition-all hover:border-amber-400 hover:shadow-md sm:p-5 dark:border-amber-900/60 dark:bg-[#0D172E] dark:from-[#0D172E] dark:to-amber-950/30 dark:hover:border-amber-500"
+                    >
                         <div>
                             <span className="text-[11px] font-bold tracking-wider text-amber-800 uppercase dark:text-amber-300">
                                 Farmacovigilancia
                             </span>
-                            <h3 className="mt-0.5 text-2xl font-black text-amber-900 dark:text-amber-200">
+                            <h3 className="mt-0.5 text-2xl font-black text-amber-900 group-hover:text-amber-600 dark:text-amber-200 dark:group-hover:text-amber-400">
                                 {stats.pending_reports}
                             </h3>
                             <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400">
-                                Reportes INH
+                                Reportes Calidad
                             </span>
                         </div>
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-800 transition-transform group-hover:scale-110 dark:bg-amber-950/80 dark:text-amber-300">
                             <ShieldAlert className="h-5 w-5" />
                         </div>
-                    </div>
+                    </Link>
 
-                    <div className="flex items-center justify-between rounded-2xl border border-blue-200 bg-white bg-gradient-to-r from-white to-blue-50/20 p-4 shadow-sm transition-colors sm:p-5 dark:border-blue-900/60 dark:bg-[#0D172E] dark:from-[#0D172E] dark:to-blue-950/30">
+                    <Link
+                        href="/admin/messages"
+                        className="group flex items-center justify-between rounded-2xl border border-blue-200 bg-white bg-gradient-to-r from-white to-blue-50/20 p-4 shadow-sm transition-all hover:border-blue-400 hover:shadow-md sm:p-5 dark:border-blue-900/60 dark:bg-[#0D172E] dark:from-[#0D172E] dark:to-blue-950/30 dark:hover:border-blue-500"
+                    >
                         <div>
                             <span className="text-[11px] font-bold tracking-wider text-blue-900 uppercase dark:text-cyan-300">
                                 Bandeja Mensajes
                             </span>
-                            <h3 className="mt-0.5 text-2xl font-black text-slate-900 dark:text-white">
+                            <h3 className="mt-0.5 text-2xl font-black text-slate-900 group-hover:text-[#002072] dark:text-white dark:group-hover:text-cyan-400">
                                 {stats.total_messages ?? messages.length}
                             </h3>
                             {(stats.pending_messages ?? 0) > 0 ? (
@@ -238,27 +250,30 @@ export default function Dashboard({
                                 </span>
                             )}
                         </div>
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#002072] dark:bg-blue-950/80 dark:text-cyan-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-[#002072] transition-transform group-hover:scale-110 dark:bg-blue-950/80 dark:text-cyan-400">
                             <MessageSquare className="h-5 w-5" />
                         </div>
-                    </div>
+                    </Link>
 
-                    <div className="col-span-2 flex items-center justify-between rounded-2xl border border-emerald-200 bg-white bg-gradient-to-r from-white to-emerald-50/20 p-3.5 shadow-sm transition-colors sm:col-span-1 sm:p-5 lg:col-span-1 dark:border-emerald-900/60 dark:bg-[#0D172E] dark:from-[#0D172E] dark:to-emerald-950/30">
+                    <Link
+                        href="/admin/quotes"
+                        className="group col-span-2 flex items-center justify-between rounded-2xl border border-emerald-200 bg-white bg-gradient-to-r from-white to-emerald-50/20 p-3.5 shadow-sm transition-all hover:border-emerald-400 hover:shadow-md sm:col-span-1 sm:p-5 lg:col-span-1 dark:border-emerald-900/60 dark:bg-[#0D172E] dark:from-[#0D172E] dark:to-emerald-950/30 dark:hover:border-emerald-500"
+                    >
                         <div>
                             <span className="text-[11px] font-bold tracking-wider text-emerald-800 uppercase dark:text-emerald-300">
                                 Demanda Comercial
                             </span>
-                            <h3 className="mt-0.5 text-2xl font-black text-emerald-900 dark:text-emerald-200">
+                            <h3 className="mt-0.5 text-2xl font-black text-emerald-900 group-hover:text-emerald-600 dark:text-emerald-200 dark:group-hover:text-emerald-400">
                                 {stats.total_quotes ?? 0}
                             </h3>
                             <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
                                 {analytics.total_quote_inquiries || 0} unidades
                             </span>
                         </div>
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 transition-transform group-hover:scale-110 dark:bg-emerald-950/80 dark:text-emerald-300">
                             <TrendingUp className="h-5 w-5" />
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Sección Principal: Las 4 Fichas Operativas de Enlace */}

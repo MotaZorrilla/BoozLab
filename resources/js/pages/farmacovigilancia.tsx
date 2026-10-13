@@ -104,15 +104,10 @@ export default function Farmacovigilancia({
                                 </h1>
                                 <p className="mx-auto max-w-xl text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-slate-300">
                                     Hemos recibido su notificación de
-                                    farmacovigilancia. Nuestro departamento de
-                                    Calidad y Farmacéutica Patrocinante
-                                    analizará la información conforme a las
-                                    normativas del{' '}
-                                    <strong>
-                                        Instituto Nacional de Higiene "Rafael
-                                        Rangel"
-                                    </strong>
-                                    .
+                                    farmacovigilancia. Nuestro Departamento de
+                                    Calidad y Regulatorio analizará la
+                                    información técnica y de lote conforme a las
+                                    normativas sanitarias vigentes del país.
                                 </p>
                             </div>
 
@@ -153,25 +148,17 @@ export default function Farmacovigilancia({
                     ) : (
                         /* Main Form Card */
                         <div className="space-y-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl sm:p-10 dark:border-slate-800 dark:bg-[#0D172E]">
-                            {/* Legal Notice */}
-                            <div className="flex items-start gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6 dark:border-amber-900/50 dark:bg-amber-950/30">
-                                <ShieldAlert className="mt-1 h-6 w-6 flex-shrink-0 text-amber-600 dark:text-amber-400" />
-                                <div className="space-y-1 text-xs leading-relaxed text-amber-900 dark:text-amber-200/90">
-                                    <h3 className="text-sm font-bold text-amber-950 dark:text-amber-300">
-                                        Canal Sanitario de Notificación
-                                        (Cumplimiento INH)
+                            {/* Aviso Oficial Institucional */}
+                            <div className="flex items-start gap-4 rounded-2xl border border-blue-200 bg-blue-50/80 p-5 sm:p-6 dark:border-blue-900/50 dark:bg-blue-950/30">
+                                <ShieldAlert className="mt-1 h-6 w-6 flex-shrink-0 text-blue-600 dark:text-cyan-400" />
+                                <div className="space-y-1 text-xs leading-relaxed text-blue-950 dark:text-blue-100">
+                                    <h3 className="text-sm font-bold text-blue-900 dark:text-cyan-300">
+                                        Canal Oficial de Farmacovigilancia & Calidad
                                     </h3>
                                     <p>
-                                        Este formulario está destinado al
-                                        registro de sospechas de reacciones
-                                        adversas a medicamentos (RAM), fallas de
-                                        empaque o reportes de calidad por parte
-                                        de pacientes, médicos o farmacéuticos
-                                        para{' '}
-                                        <strong>
-                                            BOOZ LABORATORIO VGME, C.A.
-                                        </strong>{' '}
-                                        (RIF J-40906185-0).
+                                        Las observaciones y reportes registrados en este canal son canalizados directamente al{' '}
+                                        <strong>Departamento de Calidad y Regulatorio de Booz Laboratorio VGME, C.A.</strong>{' '}
+                                        para su evaluación técnica, trazabilidad de lote y seguimiento formal conforme a las normativas sanitarias vigentes del país.
                                     </p>
                                 </div>
                             </div>

@@ -71,6 +71,22 @@ export default function LiraAssistantModal({
         }
     }, [messages, isOpen]);
 
+    useEffect(() => {
+        const handleCustomOpen = (e: Event) => {
+            const customEvent = e as CustomEvent<{ prompt?: string }>;
+            if (customEvent.detail?.prompt) {
+                const promptText = customEvent.detail.prompt;
+                setTimeout(() => {
+                    handleSend(promptText);
+                }, 250);
+            }
+        };
+
+        window.addEventListener('booz:open-lira', handleCustomOpen);
+        return () =>
+            window.removeEventListener('booz:open-lira', handleCustomOpen);
+    }, [isLoading]);
+
     const getSessionUid = () => {
         try {
             let uid = sessionStorage.getItem('booz_lira_session_uid');

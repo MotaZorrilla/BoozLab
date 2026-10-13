@@ -217,12 +217,15 @@ export default function ProductDetail({
                         {/* Commercial & Consultation Column (Right) */}
                         <div className="space-y-6 lg:col-span-7">
                             {/* Line & Code Badge (con soporte oficial Pantone 506 C) */}
+                            {/* Line & Code Badge (con soporte oficial Pantone 506 C) */}
                             <div className="flex items-center gap-2">
                                 <span
                                     className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase ${
-                                        product.product_line_id === 2
+                                        product.product_line_id === 1
                                             ? 'border border-[#842D44]/30 bg-[#842D44]/15 text-[#842D44] dark:bg-[#842D44]/30 dark:text-rose-300'
-                                            : 'border border-blue-200 bg-blue-100 text-[#002072] dark:border-blue-900 dark:bg-blue-950/60 dark:text-cyan-300'
+                                            : product.product_line_id === 2
+                                              ? 'border border-blue-200 bg-blue-100 text-[#002072] dark:border-blue-900 dark:bg-blue-950/60 dark:text-cyan-300'
+                                              : 'border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300'
                                     }`}
                                 >
                                     {product.product_line?.name ||
@@ -243,11 +246,36 @@ export default function ProductDetail({
                                 </p>
                             </div>
 
-                            {/* Description Box */}
-                            <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-5 shadow-xs dark:border-slate-800 dark:bg-[#0D172E]">
-                                <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                            {/* Ficha Resumen Tríptico / Beneficios Clave */}
+                            <div className="relative overflow-hidden rounded-3xl border border-blue-200/80 bg-gradient-to-br from-blue-50/80 via-white to-slate-50/50 p-5 shadow-sm dark:border-blue-900/50 dark:from-[#0A1329] dark:via-[#0D172E] dark:to-[#070C18]">
+                                <div className="flex items-center justify-between gap-2 border-b border-blue-100/80 pb-3 dark:border-slate-800">
+                                    <div className="flex items-center gap-2">
+                                        <Sparkles className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
+                                        <h3 className="text-xs font-black tracking-wider text-[#002072] uppercase dark:text-cyan-400">
+                                            Beneficios Clave & Acción Terapéutica
+                                        </h3>
+                                    </div>
+                                    <span className="rounded-full bg-blue-100/80 px-2.5 py-0.5 text-[10px] font-bold text-blue-800 dark:bg-blue-950 dark:text-cyan-300">
+                                        Tríptico Oficial
+                                    </span>
+                                </div>
+                                <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
                                     {product.description}
                                 </p>
+                                <div className="mt-4 flex flex-wrap gap-2 pt-1">
+                                    <span className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/90 px-2.5 py-1 text-[11px] font-medium text-slate-700 shadow-xs dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-300">
+                                        <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                                        Eficacia Comprobada
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/90 px-2.5 py-1 text-[11px] font-medium text-slate-700 shadow-xs dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-300">
+                                        <ShieldCheck className="h-3 w-3 text-blue-600 dark:text-cyan-400" />
+                                        Grado Farmacéutico
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/90 px-2.5 py-1 text-[11px] font-medium text-slate-700 shadow-xs dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-300">
+                                        <Sparkles className="h-3 w-3 text-amber-500" />
+                                        Valle de Guanape, Venezuela
+                                    </span>
+                                </div>
                             </div>
 
                             {/* Card Comercial de Cotización Institucional B2B */}
@@ -401,6 +429,52 @@ export default function ProductDetail({
                                             </span>
                                         </div>
                                     </a>
+                                </div>
+
+                                {/* Sugerencias Rápidas para Lira AI */}
+                                <div className="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800">
+                                    <span className="block text-[11px] font-bold tracking-wider text-slate-400 uppercase dark:text-slate-500">
+                                        Preguntas Clínicas Sugeridas (Lira AI):
+                                    </span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {[
+                                            `¿Para qué sirve exactamente ${product.name.split(' ')[0]}?`,
+                                            `¿Cuál es el modo de empleo y posología recomendada?`,
+                                            `¿Tiene contraindicaciones o precauciones?`,
+                                            `¿Cómo solicitar cotización de lotes para farmacias?`,
+                                        ].map((question, qIdx) => (
+                                            <button
+                                                key={qIdx}
+                                                type="button"
+                                                onClick={() => {
+                                                    trackInteractionEvent(
+                                                        'lira_suggested_query',
+                                                        'lira_ai',
+                                                        'pdp_chip',
+                                                        product.id,
+                                                        {
+                                                            question,
+                                                            product_name:
+                                                                product.name,
+                                                        },
+                                                    );
+                                                    window.dispatchEvent(
+                                                        new CustomEvent(
+                                                            'booz:open-lira',
+                                                            {
+                                                                detail: {
+                                                                    prompt: question,
+                                                                },
+                                                            },
+                                                        ),
+                                                    );
+                                                }}
+                                                className="cursor-pointer rounded-xl border border-blue-200/90 bg-blue-50/70 px-3 py-1.5 text-left text-[11px] font-medium text-[#002072] transition-colors hover:border-blue-400 hover:bg-blue-100 dark:border-slate-700 dark:bg-slate-800/90 dark:text-cyan-300 dark:hover:border-cyan-500 dark:hover:bg-slate-800"
+                                            >
+                                                💬 {question}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
 

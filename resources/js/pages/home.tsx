@@ -512,12 +512,12 @@ export default function Home({
                                 }}
                             >
                                 <img
-                                    src="/assets/img/hero_products.png"
-                                    alt="Línea Oficial de Medicamentos y Tratamientos Tópicos Booz Laboratorio"
+                                    src="/assets/img/hero_nuestra_imagen_evoluciona.jpg"
+                                    alt="¡Nuestra Imagen Evoluciona! Booz Laboratorio"
                                     className="h-full w-full rounded-2xl object-cover drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
-                                            '/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg';
+                                            '/assets/img/hero_products.png';
                                     }}
                                 />
                                 <div className="absolute right-3 bottom-3 flex items-center gap-2.5 rounded-2xl border border-slate-100/90 bg-white/95 px-3 py-2 shadow-xl backdrop-blur-md sm:right-4 sm:bottom-4 sm:gap-3 sm:px-4 sm:py-2.5 dark:border-slate-800 dark:bg-[#0D172E]/95">
@@ -526,7 +526,7 @@ export default function Home({
                                     </div>
                                     <div>
                                         <p className="text-[11px] font-bold text-slate-900 sm:text-xs dark:text-white">
-                                            Calidad Certificada
+                                            Nueva Imagen Oficial
                                         </p>
                                         <p className="text-[9px] text-slate-500 sm:text-[10px] dark:text-slate-400">
                                             Valle de Guanape, Venezuela
@@ -1296,32 +1296,41 @@ export default function Home({
                     <div className="grid grid-cols-1 items-center gap-8 sm:gap-12 lg:grid-cols-2">
                         <div className="space-y-4 sm:space-y-6">
                             <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
-                                Autoridad Sanitaria y Calidad
+                                Compromiso Institucional & Calidad
                             </span>
                             <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl lg:text-4xl dark:text-white">
-                                Rigor Farmacéutico y Buenas Prácticas de
-                                Manufactura
+                                Misión, Visión y Estándares de Manufactura
                             </h2>
-                            <p className="text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-slate-300">
-                                En <strong>BOOZ LABORATORIO VGME, C.A.</strong>,
-                                cada una de nuestras líneas terapéuticas es
-                                sometida a estrictos controles fisicoquímicos y
-                                microbiológicos. Operamos bajo las directrices
-                                del Instituto Nacional de Higiene "Rafael
-                                Rangel" (INH), asegurando eficacia terapéutica y
-                                máxima estabilidad en cada lote.
-                            </p>
+                            
+                            {/* Misión y Visión Oficiales de Booz Laboratorio */}
+                            <div className="space-y-3 rounded-2xl border border-blue-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[#0D172E]">
+                                <div>
+                                    <h4 className="text-xs font-black tracking-wide text-[#002072] uppercase dark:text-cyan-400">
+                                        Nuestra Misión
+                                    </h4>
+                                    <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                                        Investigación, desarrollo y manufactura de medicamentos (Especialidades Farmacéuticas y Productos Naturales) y Cosméticos apegados a estrictos estándares de Calidad.
+                                    </p>
+                                </div>
+                                <div className="border-t border-slate-100 pt-3 dark:border-slate-800">
+                                    <h4 className="text-xs font-black tracking-wide text-[#002072] uppercase dark:text-cyan-400">
+                                        Nuestra Visión
+                                    </h4>
+                                    <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                                        Ser una empresa líder en la Industria Farmacéutica con alta participación en el mercado, ofreciendo productos de calidad certificada e innovando continuamente en el desarrollo de nuevas fórmulas.
+                                    </p>
+                                </div>
+                            </div>
 
                             <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2 sm:gap-4">
                                 <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[#0D172E]">
                                     <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
                                     <div>
                                         <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                                            Estabilidad Garantizada
+                                            Objetivo Sanitario
                                         </h4>
                                         <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                                            Ensayos clínicos en zonas climáticas
-                                            IVb.
+                                            Garantizar la efectividad, seguridad y eficacia bajo estricto apego a las Normas Sanitarias Nacionales.
                                         </p>
                                     </div>
                                 </div>
@@ -1330,11 +1339,10 @@ export default function Home({
                                     <Microscope className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600 dark:text-cyan-400" />
                                     <div>
                                         <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                                            Control de Biofilm
+                                            Planta Valle de Guanape
                                         </h4>
                                         <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                                            Innovación activa en apósitos y
-                                            cremas dérmicas.
+                                            Gerencia General & Dpto. de Calidad garantizando el abastecimiento del mercado.
                                         </p>
                                     </div>
                                 </div>
@@ -1344,12 +1352,12 @@ export default function Home({
                         <div className="relative">
                             <div className="flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-blue-950 p-6 shadow-xl sm:rounded-3xl sm:p-8 dark:border-slate-800">
                                 <img
-                                    src="/assets/img/booz_official_logo_full.png"
-                                    alt="Laboratorio Booz"
-                                    className="max-h-36 object-contain drop-shadow-xl filter sm:max-h-52"
+                                    src="/assets/img/hero_nuestra_imagen_evoluciona.jpg"
+                                    alt="Laboratorio Booz - Nuestra Imagen Evoluciona"
+                                    className="max-h-56 object-contain drop-shadow-xl filter sm:max-h-72"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
-                                            '/assets/img/product_2.png';
+                                            '/assets/img/booz_official_logo_full.png';
                                     }}
                                 />
                             </div>
