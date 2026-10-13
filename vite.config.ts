@@ -5,6 +5,7 @@ import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+    base: process.env.VITE_BASE || (process.env.NODE_ENV === 'production' ? '/booz/build/' : '/'),
     server: {
         hmr: {
             overlay: false,
