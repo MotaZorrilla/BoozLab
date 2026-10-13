@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { ShieldAlert, CheckCircle2, ArrowLeft } from 'lucide-react';
 import React, { useState } from 'react';
 import BoozLayout from '@/layouts/booz-layout';
+import { appUrl } from '@/lib/utils';
 
 interface ProductOption {
     id: number;
@@ -77,7 +78,7 @@ export default function Farmacovigilancia({
                     {/* Header Breadcrumb */}
                     <div className="mb-6 sm:mb-8">
                         <Link
-                            href="/"
+                            href={appUrl('/')}
                             className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition-colors hover:text-[#002072] dark:text-slate-400 dark:hover:text-cyan-400"
                         >
                             <ArrowLeft className="h-4 w-4" />
@@ -138,7 +139,7 @@ export default function Farmacovigilancia({
                                     Enviar Otro Reporte
                                 </button>
                                 <Link
-                                    href="/"
+                                    href={appUrl('/')}
                                     className="cursor-pointer rounded-xl bg-[#002072] px-6 py-3 text-xs font-bold text-white shadow-md transition-all hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500"
                                 >
                                     Ir al Inicio

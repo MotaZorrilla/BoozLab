@@ -7,6 +7,7 @@ import {
 import { Link } from '@inertiajs/react';
 import { Search, FileText, Beaker, Book, ArrowRight } from 'lucide-react';
 import { Fragment, useState, useMemo, useEffect } from 'react';
+import { appUrl } from '@/lib/utils';
 import type { Product } from '@/types';
 
 interface SearchModalProps {
@@ -55,7 +56,7 @@ const toSearchItem = (product: Product): SearchItem => ({
     type: 'producto',
     title: product.name,
     subtitle: `${product.presentation} · ${product.active_ingredients}`,
-    url: `/producto/${product.slug}`,
+    url: appUrl(`/producto/${product.slug}`),
     tags: [
         product.name.toLowerCase(),
         product.active_ingredients.toLowerCase(),

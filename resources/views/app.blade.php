@@ -5,29 +5,36 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        {{-- Inline script to detect stored theme or system preference and apply it immediately without flash --}}
+        <!-- Open Graph / WhatsApp Preview (1200x630 Anti-Caché) -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://lab.motazorrilla.com/booz/">
+        <meta property="og:title" content="Laboratorio Booz C.A. · Innovación Farmacéutica y Cosmecéutica">
+        <meta property="og:description" content="Soluciones dermatológicas avanzadas, catálogo técnico oficial, asistente farmacéutico Lira y canal B2B.">
+        <meta property="og:image" content="https://lab.motazorrilla.com/booz/assets/img/booz_og_preview.jpg?v=2.0">
+        <meta property="og:image:secure_url" content="https://lab.motazorrilla.com/booz/assets/img/booz_og_preview.jpg?v=2.0">
+        <meta property="og:image:type" content="image/jpeg">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:locale" content="es_VE">
+        <meta property="og:site_name" content="Laboratorio Booz C.A.">
+
+        <!-- Twitter Card Fallback -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Laboratorio Booz C.A. · Innovación Farmacéutica y Cosmecéutica">
+        <meta name="twitter:description" content="Soluciones dermatológicas avanzadas, catálogo técnico oficial, asistente farmacéutico Lira y canal B2B.">
+        <meta name="twitter:image" content="https://lab.motazorrilla.com/booz/assets/img/booz_og_preview.jpg?v=2.0">
+
+        {{-- Inline script to detect stored theme or default to light without flash --}}
         <script>
             (function() {
                 try {
                     const stored = localStorage.getItem('appearance') || localStorage.getItem('booz_theme');
-                    const serverAppearance = '{{ $appearance ?? "system" }}';
-                    const appearance = stored || serverAppearance;
-
-                    if (appearance === 'dark') {
+                    if (stored === 'dark') {
                         document.documentElement.classList.add('dark');
                         document.documentElement.style.colorScheme = 'dark';
-                    } else if (appearance === 'light') {
+                    } else {
                         document.documentElement.classList.remove('dark');
                         document.documentElement.style.colorScheme = 'light';
-                    } else {
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        if (prefersDark) {
-                            document.documentElement.classList.add('dark');
-                            document.documentElement.style.colorScheme = 'dark';
-                        } else {
-                            document.documentElement.classList.remove('dark');
-                            document.documentElement.style.colorScheme = 'light';
-                        }
                     }
                 } catch (e) {}
             })();

@@ -10,7 +10,7 @@ export type UseAppearanceReturn = {
 };
 
 const listeners = new Set<() => void>();
-let currentAppearance: Appearance = 'system';
+let currentAppearance: Appearance = 'light';
 
 const prefersDark = (): boolean => {
     if (typeof window === 'undefined') return false;
@@ -25,16 +25,16 @@ const setCookie = (name: string, value: string, days = 365): void => {
 };
 
 const getStoredAppearance = (): Appearance => {
-    if (typeof window === 'undefined') return 'system';
+    if (typeof window === 'undefined') return 'light';
 
     const stored =
         localStorage.getItem('appearance') ||
         localStorage.getItem('booz_theme');
-    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+    if (stored === 'light' || stored === 'dark') {
         return stored;
     }
 
-    return 'system';
+    return 'light';
 };
 
 const isDarkMode = (appearance: Appearance): boolean => {
@@ -101,7 +101,7 @@ export function useAppearance(): UseAppearanceReturn {
     const appearance: Appearance = useSyncExternalStore(
         subscribe,
         () => currentAppearance,
-        () => 'system',
+        () => 'light',
     );
 
     const resolvedAppearance: ResolvedAppearance = useMemo(

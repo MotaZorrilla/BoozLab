@@ -23,6 +23,7 @@ import React, {
 import SearchModal from '@/components/search-modal';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 import BoozLayout from '@/layouts/booz-layout';
+import { appUrl } from '@/lib/utils';
 import type { Product, ProductLine, Testimonial, Faq } from '@/types';
 
 interface HomeProps {
@@ -433,8 +434,44 @@ export default function Home({
             >
                 <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
-                        {/* Hero Text */}
-                        <div className="space-y-4 text-center sm:space-y-6 lg:col-span-7 lg:text-left">
+                        {/* Hero Image Showcase (En Móvil va PRIMERO, en Desktop a la derecha) */}
+                        <div className="relative flex justify-center order-1 lg:order-2 lg:col-span-5">
+                            <div
+                                className="group relative flex aspect-[9/16] w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] items-center justify-center overflow-hidden rounded-[2.5rem] border-4 border-slate-900/10 bg-slate-950 p-2 shadow-2xl shadow-blue-900/25 transition-colors sm:p-2.5 dark:border-cyan-500/30 dark:bg-slate-950"
+                                style={{
+                                    transform: `perspective(1000px) rotateX(${tiltRotateX}deg) rotateY(${tiltRotateY}deg) translateY(${tiltTranslateY}px) scale(${tiltScale})`,
+                                    transition:
+                                        'transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                                    transformStyle: 'preserve-3d',
+                                }}
+                            >
+                                <img
+                                    src="/assets/img/hero_nuestra_imagen_evoluciona.jpg"
+                                    alt="¡Nuestra Imagen Evoluciona! Booz Laboratorio"
+                                    className="h-full w-full rounded-[2rem] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src =
+                                            '/assets/img/hero_products.png';
+                                    }}
+                                />
+                                <div className="absolute right-3 bottom-3 flex items-center gap-2.5 rounded-2xl border border-slate-100/90 bg-white/95 px-3 py-2 shadow-xl backdrop-blur-md sm:right-4 sm:bottom-4 sm:gap-3 sm:px-4 sm:py-2.5 dark:border-slate-800 dark:bg-[#0D172E]/95">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-xs font-bold text-white shadow-md shadow-blue-500/30 sm:h-9 sm:w-9 sm:text-sm">
+                                        <Sparkles className="h-4 w-4" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[11px] font-bold text-slate-900 sm:text-xs dark:text-white">
+                                            Nueva Imagen Oficial
+                                        </p>
+                                        <p className="text-[9px] font-medium text-blue-600 sm:text-[10px] dark:text-cyan-400">
+                                            Identidad Renovada
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Hero Text (En Móvil va SEGUNDO, en Desktop a la izquierda) */}
+                        <div className="space-y-4 text-center sm:space-y-6 order-2 lg:order-1 lg:col-span-7 lg:text-left">
                             <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-100/80 px-3 py-1 text-[11px] font-black tracking-wider text-[#002072] uppercase sm:text-xs dark:border-blue-800 dark:bg-blue-900/40 dark:text-cyan-300">
                                 <Sparkles className="h-3 w-3 text-blue-600 dark:text-cyan-400" />{' '}
                                 Vademécum Farmacológico
@@ -456,7 +493,7 @@ export default function Home({
 
                             <div className="flex flex-wrap items-center justify-center gap-3 pt-1 lg:justify-start">
                                 <a
-                                    href="#productos"
+                                    href={appUrl('/#productos')}
                                     className="cursor-pointer rounded-xl bg-[#002072] px-5 py-3 text-xs font-bold text-white shadow-lg shadow-blue-900/20 transition-all hover:bg-blue-800 hover:shadow-xl sm:px-6 sm:text-sm dark:bg-blue-600 dark:hover:bg-blue-500"
                                 >
                                     Conoce nuestros productos
@@ -496,42 +533,6 @@ export default function Home({
                                     <span className="text-[10px] font-medium text-slate-500 sm:text-xs dark:text-slate-400">
                                         Apego Regulatorio
                                     </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Hero Image Showcase con Inclinación 3D en Scroll */}
-                        <div className="relative flex justify-center lg:col-span-5">
-                            <div
-                                className="group relative flex aspect-square w-full max-w-sm items-center justify-center overflow-hidden rounded-3xl border border-blue-200/70 bg-gradient-to-tr from-blue-900/10 via-white to-cyan-100/40 p-2 shadow-2xl shadow-blue-900/15 transition-colors sm:max-w-md sm:p-3 dark:border-cyan-500/30 dark:from-blue-950/40 dark:via-[#0D172E] dark:to-cyan-950/30"
-                                style={{
-                                    transform: `perspective(1000px) rotateX(${tiltRotateX}deg) rotateY(${tiltRotateY}deg) translateY(${tiltTranslateY}px) scale(${tiltScale})`,
-                                    transition:
-                                        'transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1)',
-                                    transformStyle: 'preserve-3d',
-                                }}
-                            >
-                                <img
-                                    src="/assets/img/hero_nuestra_imagen_evoluciona.jpg"
-                                    alt="¡Nuestra Imagen Evoluciona! Booz Laboratorio"
-                                    className="h-full w-full rounded-2xl object-cover drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src =
-                                            '/assets/img/hero_products.png';
-                                    }}
-                                />
-                                <div className="absolute right-3 bottom-3 flex items-center gap-2.5 rounded-2xl border border-slate-100/90 bg-white/95 px-3 py-2 shadow-xl backdrop-blur-md sm:right-4 sm:bottom-4 sm:gap-3 sm:px-4 sm:py-2.5 dark:border-slate-800 dark:bg-[#0D172E]/95">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 text-xs font-bold text-white shadow-md shadow-emerald-500/20 sm:h-9 sm:w-9 sm:text-sm">
-                                        ✓
-                                    </div>
-                                    <div>
-                                        <p className="text-[11px] font-bold text-slate-900 sm:text-xs dark:text-white">
-                                            Nueva Imagen Oficial
-                                        </p>
-                                        <p className="text-[9px] text-slate-500 sm:text-[10px] dark:text-slate-400">
-                                            Valle de Guanape, Venezuela
-                                        </p>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -635,66 +636,15 @@ export default function Home({
             </section>
 
             {/* ========================================================
-                3. BENTO GRID INTERACTIVO (Lira Animado en Bucle)
+                3. BENTO GRID INTERACTIVO (Consolidado: Hola, soy Lira + ¿Qué necesitas?)
             ======================================================== */}
             <section className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-16 dark:border-slate-800 dark:bg-[#070C18]">
-                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
-                    <div className="grid grid-cols-1 items-stretch gap-6 sm:gap-8 lg:grid-cols-12">
-                        {/* Columna 1: ¿Qué necesitas? Selector de necesidad */}
-                        <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-colors sm:rounded-3xl sm:p-8 lg:col-span-4 dark:border-slate-800 dark:bg-[#0D172E]">
-                            <div>
-                                <h3 className="mb-1.5 text-lg font-bold text-blue-950 sm:text-xl dark:text-white">
-                                    ¿Qué necesitas?
-                                </h3>
-                                <p className="mb-5 text-xs text-slate-500 dark:text-slate-400">
-                                    Encuentra el producto ideal según tu
-                                    necesidad clínica inmediata.
-                                </p>
-
-                                <div className="grid grid-cols-2 gap-2">
-                                    {[
-                                        { name: 'Cuidado', icon: '🧴' },
-                                        { name: 'Protección', icon: '🛡️' },
-                                        { name: 'Tratamiento', icon: '💊' },
-                                        { name: 'Bienestar', icon: '🌿' },
-                                        { name: 'Especializado', icon: '🔬' },
-                                    ].map((need) => (
-                                        <button
-                                            key={need.name}
-                                            onClick={() =>
-                                                handleSelectNeed(need.name)
-                                            }
-                                            className={`flex cursor-pointer items-center gap-2 rounded-xl border p-2.5 text-xs font-bold transition-all sm:p-3 ${
-                                                selectedNeed === need.name
-                                                    ? 'border-[#002072] bg-[#002072] text-white shadow-md'
-                                                    : 'border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100 hover:text-slate-950 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-white'
-                                            }`}
-                                        >
-                                            <span className="text-sm">
-                                                {need.icon}
-                                            </span>
-                                            <span className="truncate">
-                                                {need.name}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {selectedNeed && (
-                                <button
-                                    onClick={handleClearNeed}
-                                    className="mt-4 cursor-pointer text-xs font-bold text-blue-600 underline dark:text-cyan-400"
-                                >
-                                    Limpiar filtro ✕
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Columna 2: Hola, soy Lira - Tu asistente virtual (Con Lira Oficial 3D Saludando Animado) */}
-                        <div className="group relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-xl sm:flex-row sm:gap-6 sm:rounded-3xl sm:p-8 lg:col-span-5">
-                            {/* Podio / Halo luminoso blanco perla de alto contraste */}
-                            <div className="relative flex h-44 w-44 flex-shrink-0 items-center justify-center sm:h-52 sm:w-52">
+                <div className="mx-auto max-w-5xl px-3 sm:px-6 lg:px-8 2xl:max-w-6xl">
+                    <div className="group relative overflow-hidden rounded-3xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-2xl sm:p-10">
+                        {/* Fila Superior: Lira Asistente Virtual */}
+                        <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-8">
+                            {/* Podio / Halo luminoso blanco perla */}
+                            <div className="relative flex h-40 w-40 flex-shrink-0 items-center justify-center sm:h-48 sm:w-48">
                                 <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-white/95 via-cyan-100/90 to-white/90 opacity-85 blur-xl transition-opacity group-hover:opacity-100 sm:inset-3" />
                                 <div className="pointer-events-none absolute inset-6 rounded-full bg-white/40 blur-md sm:inset-4" />
                                 <img
@@ -707,74 +657,83 @@ export default function Home({
                                     }}
                                 />
                             </div>
-                            <div className="space-y-2.5 text-center sm:text-left">
-                                <span className="inline-block rounded-full border border-blue-400/30 bg-blue-500/30 px-2.5 py-0.5 text-[10px] font-black tracking-wider text-blue-200 uppercase">
+
+                            <div className="flex-1 space-y-3 text-center sm:text-left">
+                                <span className="inline-block rounded-full border border-blue-400/30 bg-blue-500/30 px-3 py-0.5 text-[10px] font-black tracking-wider text-blue-200 uppercase">
                                     IA Médica
                                 </span>
-                                <h3 className="text-xl leading-tight font-black sm:text-2xl">
+                                <h3 className="text-2xl leading-tight font-black sm:text-3xl">
                                     Hola, soy Lira <br />
-                                    <span className="text-base font-normal text-cyan-300 sm:text-lg">
+                                    <span className="text-lg font-normal text-cyan-300 sm:text-xl">
                                         Tu asistente virtual
                                     </span>
                                 </h3>
-                                <p className="text-xs leading-relaxed text-slate-300">
-                                    Orientación sobre medicamentos, líneas
-                                    terapéuticas y formulaciones oficiales de
-                                    Booz Laboratorio.
+                                <p className="max-w-xl text-xs leading-relaxed text-slate-300 sm:text-sm">
+                                    Orientación sobre medicamentos, líneas terapéuticas y formulaciones oficiales de Booz Laboratorio.
                                 </p>
-                                <button
-                                    onClick={() =>
-                                        window.dispatchEvent(
-                                            new CustomEvent('booz:open-lira'),
-                                        )
-                                    }
-                                    className="group inline-flex cursor-pointer items-center gap-2.5 rounded-xl bg-white px-4 py-2 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 sm:px-5 sm:py-2.5"
-                                >
-                                    <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-cyan-400 bg-blue-50">
-                                        <img
-                                            src="/assets/img/lira_avatar_animated.gif"
-                                            alt="Lira"
-                                            className="h-full w-full object-cover"
-                                        />
-                                    </div>
-                                    <span>Hablar con Lira</span>
-                                </button>
+                                <div className="pt-1">
+                                    <button
+                                        onClick={() =>
+                                            window.dispatchEvent(
+                                                new CustomEvent('booz:open-lira'),
+                                            )
+                                        }
+                                        className="inline-flex cursor-pointer items-center gap-2.5 rounded-xl bg-white px-5 py-2.5 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 active:scale-95 sm:text-sm"
+                                    >
+                                        <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-cyan-400 bg-blue-50">
+                                            <img
+                                                src="/assets/img/lira_avatar_animated.gif"
+                                                alt="Lira"
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                        <span>Hablar con Lira</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Columna 3: Distribución B2B y Cotización Institucional */}
-                        <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-colors sm:rounded-3xl sm:p-8 lg:col-span-3 dark:border-slate-800 dark:bg-[#0D172E]">
-                            <div>
-                                <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-black tracking-wider text-emerald-800 uppercase dark:bg-emerald-950/60 dark:text-emerald-300">
-                                    Canal B2B Farma
+                        {/* Fila Inferior: ¿Qué necesitas? con Botones de Filtro Integrados */}
+                        <div className="mt-8 border-t border-white/10 pt-6">
+                            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                                <span className="text-xs font-bold tracking-wider text-cyan-300 uppercase">
+                                    ¿Qué necesitas? Encuentra tu solución inmediata:
                                 </span>
-                                <h3 className="mt-1 mb-1.5 text-lg font-bold text-blue-950 sm:text-xl dark:text-white">
-                                    Distribución B2B
-                                </h3>
-                                <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
-                                    Atención directa para droguerías aliadas (Cobeca, Grupo Farma y canal independiente). Solicita vademécum y condiciones comerciales por WhatsApp.
-                                </p>
-                                <div className="flex items-center justify-center rounded-2xl border border-emerald-100 bg-emerald-50/50 p-2.5 dark:border-emerald-900/40 dark:bg-emerald-950/30">
-                                    <img
-                                        src="/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg"
-                                        alt="Portafolio Booz Distribución B2B"
-                                        className="h-20 rounded-xl object-contain sm:h-24"
-                                    />
-                                </div>
-                            </div>
-
-                            <a
-                                href={createWhatsAppUrl(
-                                    'Hola Booz Laboratorio, solicito información y cotización institucional de productos para droguería / farmacia.',
-                                    'commercial',
+                                {selectedNeed && (
+                                    <button
+                                        onClick={handleClearNeed}
+                                        className="cursor-pointer text-xs font-bold text-cyan-400 underline hover:text-cyan-300"
+                                    >
+                                        Limpiar filtro ({selectedNeed}) ✕
+                                    </button>
                                 )}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl bg-emerald-600 py-2.5 text-center text-xs font-bold text-white shadow-md shadow-emerald-900/20 transition-all hover:bg-emerald-500"
-                            >
-                                <MessageCircle className="h-4 w-4" />
-                                <span>Cotizar por WhatsApp →</span>
-                            </a>
+                            </div>
+                            <div className="flex flex-wrap gap-2.5">
+                                {[
+                                    { name: 'Cuidado', icon: '🧴' },
+                                    { name: 'Protección', icon: '🛡️' },
+                                    { name: 'Tratamiento', icon: '💊' },
+                                    { name: 'Bienestar', icon: '🌿' },
+                                    { name: 'Especializado', icon: '🔬' },
+                                ].map((need) => (
+                                    <button
+                                        key={need.name}
+                                        onClick={() =>
+                                            handleSelectNeed(need.name)
+                                        }
+                                        className={`flex cursor-pointer items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all sm:text-sm ${
+                                            selectedNeed === need.name
+                                                ? 'bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 ring-2 ring-white'
+                                                : 'border border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/30'
+                                        }`}
+                                    >
+                                        <span className="text-sm">
+                                            {need.icon}
+                                        </span>
+                                        <span>{need.name}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -984,7 +943,7 @@ export default function Home({
                                                 className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2.5 shadow-xs transition-all dark:border-slate-800 dark:bg-[#0D172E]"
                                             >
                                                 <Link
-                                                    href={`/producto/${product.slug}`}
+                                                    href={appUrl(`/producto/${product.slug}`)}
                                                     className="block"
                                                 >
                                                     {/* Imagen Cuadrada con Badges */}
@@ -1036,7 +995,7 @@ export default function Home({
                                                 {/* Enlace a Ficha y Cotización Institucional */}
                                                 <div className="mt-2.5 flex items-center justify-between gap-1.5 border-t border-slate-100 pt-2 dark:border-slate-800">
                                                     <Link
-                                                        href={`/producto/${product.slug}`}
+                                                        href={appUrl(`/producto/${product.slug}`)}
                                                         className="text-[10px] font-bold text-[#002072] hover:underline dark:text-cyan-400"
                                                     >
                                                         Ver Ficha
@@ -1128,7 +1087,7 @@ export default function Home({
                                                     >
                                                         {/* Tarjeta 100% Clickeable hacia la Ficha Técnica */}
                                                         <Link
-                                                            href={`/producto/${product.slug}`}
+                                                            href={appUrl(`/producto/${product.slug}`)}
                                                             className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-400 hover:shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500/50 dark:hover:shadow-cyan-950/30"
                                                         >
                                                             {/* Fotografía del Fármaco y Badges */}
@@ -1350,11 +1309,11 @@ export default function Home({
                         </div>
 
                         <div className="relative">
-                            <div className="flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-blue-950 p-6 shadow-xl sm:rounded-3xl sm:p-8 dark:border-slate-800">
+                            <div className="flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-slate-900">
                                 <img
-                                    src="/assets/img/hero_nuestra_imagen_evoluciona.jpg"
-                                    alt="Laboratorio Booz - Nuestra Imagen Evoluciona"
-                                    className="max-h-56 object-contain drop-shadow-xl filter sm:max-h-72"
+                                    src="/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg"
+                                    alt="Línea de Producción Farmacéutica Booz Laboratorio"
+                                    className="h-full w-full rounded-xl object-contain drop-shadow-md"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
                                             '/assets/img/booz_official_logo_full.png';

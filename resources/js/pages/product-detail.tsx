@@ -16,6 +16,7 @@ import React from 'react';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 import BoozLayout from '@/layouts/booz-layout';
 import { trackInteractionEvent } from '@/lib/telemetry';
+import { appUrl } from '@/lib/utils';
 import type { Product } from '@/types';
 
 interface ProductDetailProps {
@@ -137,7 +138,7 @@ export default function ProductDetail({
                     {/* Navigation Bar / Breadcrumb */}
                     <div className="mb-6 flex items-center justify-between sm:mb-8">
                         <Link
-                            href="/#productos"
+                            href={appUrl('/#productos')}
                             className="inline-flex min-h-[40px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm transition-colors hover:text-[#002072] dark:border-slate-800 dark:bg-[#0D172E] dark:text-slate-300 dark:hover:text-cyan-400"
                         >
                             <ArrowLeft className="h-4 w-4" />
@@ -146,7 +147,7 @@ export default function ProductDetail({
 
                         <div className="flex items-center gap-2">
                             <a
-                                href={`/producto/${product.slug}/vademecum`}
+                                href={appUrl(`/producto/${product.slug}/vademecum`)}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-[#002072] shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-800 dark:bg-[#0D172E] dark:text-cyan-300 dark:hover:bg-slate-800"
@@ -178,7 +179,7 @@ export default function ProductDetail({
                                 <img
                                     src={product.image_path}
                                     alt={product.name}
-                                    className="h-full w-full object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-105"
+                                    className="max-h-full max-w-full object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-105"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src =
                                             '/assets/img/product_1.png';
@@ -498,7 +499,7 @@ export default function ProductDetail({
                                     </h2>
                                 </div>
                                 <Link
-                                    href="/#productos"
+                                    href={appUrl('/#productos')}
                                     className="flex items-center gap-1 text-xs font-bold text-blue-700 hover:underline dark:text-cyan-400"
                                 >
                                     <span>Ver catálogo completo</span>
@@ -510,7 +511,7 @@ export default function ProductDetail({
                                 {relatedProducts.map((rel) => (
                                     <Link
                                         key={rel.id}
-                                        href={`/producto/${rel.slug}`}
+                                        href={appUrl(`/producto/${rel.slug}`)}
                                         className="group flex items-center gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-400 hover:shadow-xl dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500"
                                     >
                                         <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-2xl bg-slate-50 p-2 transition-transform group-hover:scale-105 dark:bg-slate-800/60">

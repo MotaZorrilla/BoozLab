@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '@/components/modal';
+import { appUrl } from '@/lib/utils';
 
 interface ChatMessage {
     id?: string;
@@ -502,7 +503,7 @@ export default function LiraAssistantModal({
                                                     (p) => (
                                                         <Link
                                                             key={p.id}
-                                                            href={`/producto/${p.slug}`}
+                                                            href={appUrl(`/producto/${p.slug}`)}
                                                             onClick={onClose}
                                                             className="inline-flex min-h-[32px] items-center gap-1.5 rounded-xl border border-blue-500/30 bg-slate-800 px-3 py-1.5 text-xs text-blue-300 transition-colors hover:bg-blue-900/60"
                                                         >

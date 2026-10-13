@@ -27,6 +27,7 @@ import StoreCartDrawer, { type CartItem } from '@/components/store-cart-drawer';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 import { trackInteractionEvent } from '@/lib/telemetry';
+import { appUrl } from '@/lib/utils';
 import type { Product } from '@/types';
 
 function TikTokIcon({ className = 'h-4 w-4' }: { className?: string }) {
@@ -179,10 +180,10 @@ export default function BoozLayout({
                     <div className="flex h-16 items-center justify-between sm:h-20">
                         {/* Logo Oficial de Booz Laboratorio (Home Link - Limpio y Sólido) */}
                         <Link
-                            href="/"
+                            href={appUrl('/')}
                             className="group flex items-center gap-2.5"
                         >
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-100 bg-blue-900/10 p-1 shadow-sm transition-transform group-hover:scale-105 sm:h-11 sm:w-11 dark:border-blue-900/40 dark:bg-white/10">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-100 bg-blue-900/10 p-1.5 shadow-sm transition-transform group-hover:scale-105 sm:h-11 sm:w-11 dark:border-blue-900/40 dark:bg-white/10">
                                 <img
                                     src="/assets/img/booz_symbol_icon.png"
                                     alt="Booz Laboratorio"
@@ -202,25 +203,25 @@ export default function BoozLayout({
                         {/* Desktop Navigation Links (Limpio: Líneas, Catálogo, Glosario, Farmacovigilancia) */}
                         <div className="hidden items-center space-x-7 text-sm font-semibold text-slate-600 lg:flex dark:text-slate-300">
                             <a
-                                href="/#lineas"
+                                href={appUrl('/#lineas')}
                                 className="transition-colors hover:text-[#002072] dark:hover:text-cyan-400"
                             >
                                 Líneas
                             </a>
                             <a
-                                href="/#productos"
+                                href={appUrl('/#productos')}
                                 className="transition-colors hover:text-[#002072] dark:hover:text-cyan-400"
                             >
                                 Catálogo
                             </a>
                             <Link
-                                href="/glosario"
+                                href={appUrl('/glosario')}
                                 className="transition-colors hover:text-[#002072] dark:hover:text-cyan-400"
                             >
                                 Glosario
                             </Link>
                             <Link
-                                href="/farmacovigilancia"
+                                href={appUrl('/farmacovigilancia')}
                                 className="transition-colors hover:text-[#002072] dark:hover:text-cyan-400"
                             >
                                 Farmacovigilancia
@@ -257,32 +258,9 @@ export default function BoozLayout({
                                 <Search className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
                             </button>
 
-                            {/* Cotización Institucional por WhatsApp (B2B Droguerías y Farmacias) */}
-                            <a
-                                href={createWhatsAppUrl(
-                                    'Hola Booz Laboratorio, solicito información y cotización institucional de productos para farmacia / droguería.',
-                                    'commercial',
-                                )}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={() =>
-                                    trackInteractionEvent(
-                                        'whatsapp_click',
-                                        'whatsapp',
-                                        'header_cotizar',
-                                    )
-                                }
-                                className="inline-flex min-h-[42px] cursor-pointer items-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition-all hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-900"
-                                title="Solicitar Cotización Institucional por WhatsApp"
-                                aria-label="Cotizar productos por WhatsApp"
-                            >
-                                <MessageCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                                <span className="hidden sm:inline">Cotizar</span>
-                            </a>
-
                             {/* Acceso a Consola Administrativa (Modernizado con Indicador Activo y ShieldCheck) */}
                             <Link
-                                href="/dashboard"
+                                href={appUrl('/dashboard')}
                                 className="group hidden min-h-[42px] cursor-pointer items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#002072] hover:shadow-md sm:inline-flex dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-blue-600"
                                 title="Acceso a la Consola Administrativa y Auditoría Sanitaria"
                                 aria-label="Ir a la consola de administración"
@@ -315,7 +293,7 @@ export default function BoozLayout({
                 {isMobileMenuOpen && (
                     <div className="animate-in space-y-1.5 border-t border-slate-200 bg-white/98 px-4 py-4 shadow-2xl backdrop-blur-xl duration-200 slide-in-from-top-2 lg:hidden dark:border-slate-800 dark:bg-[#0A1124]/98">
                         <a
-                            href="/#lineas"
+                            href={appUrl('/#lineas')}
                             onClick={() => setIsMobileMenuOpen(false)}
                             className="flex items-center justify-between rounded-xl p-3 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/70"
                         >
@@ -326,7 +304,7 @@ export default function BoozLayout({
                         </a>
 
                         <a
-                            href="/#productos"
+                            href={appUrl('/#productos')}
                             onClick={() => setIsMobileMenuOpen(false)}
                             className="flex items-center justify-between rounded-xl p-3 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/70"
                         >
@@ -337,7 +315,7 @@ export default function BoozLayout({
                         </a>
 
                         <Link
-                            href="/glosario"
+                            href={appUrl('/glosario')}
                             onClick={() => setIsMobileMenuOpen(false)}
                             className="flex items-center justify-between rounded-xl p-3 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/70"
                         >
@@ -347,9 +325,9 @@ export default function BoozLayout({
                             </div>
                         </Link>
 
-                        {/* Canal Oficial de Farmacovigilancia */}
+                        {/* Canal de Farmacovigilancia */}
                         <Link
-                            href="/farmacovigilancia"
+                            href={appUrl('/farmacovigilancia')}
                             onClick={() => setIsMobileMenuOpen(false)}
                             className="flex items-center justify-between rounded-xl border border-amber-200/80 bg-amber-50/80 p-3 text-sm font-bold text-amber-950 transition-colors dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300"
                         >
@@ -357,33 +335,10 @@ export default function BoozLayout({
                                 <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                                 <span>Canal de Farmacovigilancia</span>
                             </div>
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold tracking-wider text-amber-800 uppercase dark:bg-amber-900/60 dark:text-amber-200">
-                                Oficial INH
-                            </span>
                         </Link>
 
-                        {/* Cotización WhatsApp */}
-                        <a
-                            href={createWhatsAppUrl(
-                                'Hola Booz Laboratorio, solicito información y cotización institucional para droguería / farmacia.',
-                                'commercial',
-                            )}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/90 p-3 text-sm font-bold text-emerald-900 transition-colors dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300"
-                        >
-                            <div className="flex items-center gap-3">
-                                <MessageCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                                <span>Cotización Institucional</span>
-                            </div>
-                            <span className="rounded-full bg-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
-                                WhatsApp
-                            </span>
-                        </a>
-
                         <Link
-                            href="/dashboard"
+                            href={appUrl('/dashboard')}
                             onClick={() => setIsMobileMenuOpen(false)}
                             className="flex items-center justify-between rounded-xl p-3 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/70"
                         >
@@ -405,7 +360,7 @@ export default function BoozLayout({
                 className="pb-safe fixed right-0 bottom-0 left-0 z-40 flex items-center justify-around border-t border-slate-200 bg-white/95 px-2 pt-2 shadow-2xl backdrop-blur-lg md:hidden dark:border-slate-800 dark:bg-[#0A1124]/95"
             >
                 <a
-                    href="/#lineas"
+                    href={appUrl('/#lineas')}
                     className="flex min-h-[44px] min-w-[50px] flex-col items-center justify-center gap-0.5 text-[10px] font-bold text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-cyan-400"
                 >
                     <Sparkles className="h-4 w-4" />
@@ -413,7 +368,7 @@ export default function BoozLayout({
                 </a>
 
                 <a
-                    href="/#productos"
+                    href={appUrl('/#productos')}
                     className="flex min-h-[44px] min-w-[50px] flex-col items-center justify-center gap-0.5 text-[10px] font-bold text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-cyan-400"
                 >
                     <FileText className="h-4 w-4" />
@@ -445,7 +400,7 @@ export default function BoozLayout({
                 </button>
 
                 <Link
-                    href="/glosario"
+                    href={appUrl('/glosario')}
                     className="flex min-h-[44px] min-w-[50px] flex-col items-center justify-center gap-0.5 text-[10px] font-bold text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-cyan-400"
                 >
                     <Info className="h-4 w-4" />
@@ -454,9 +409,9 @@ export default function BoozLayout({
 
                 {/* Enlace Directo a Farmacovigilancia en Móvil */}
                 <Link
-                    href="/farmacovigilancia"
+                    href={appUrl('/farmacovigilancia')}
                     className="flex min-h-[44px] min-w-[52px] flex-col items-center justify-center gap-0.5 text-[10px] font-bold text-amber-700 transition-colors hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300"
-                    title="Canal Oficial de Farmacovigilancia"
+                    title="Canal de Farmacovigilancia"
                     aria-label="Canal de Farmacovigilancia"
                 >
                     <ShieldAlert className="h-4 w-4" />
@@ -529,7 +484,7 @@ export default function BoozLayout({
                         {/* Col 1: Identity & Authorization */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 p-1">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 p-1.5">
                                     <img
                                         src="/assets/img/booz_symbol_icon.png"
                                         alt="Booz Laboratorio"
@@ -568,7 +523,6 @@ export default function BoozLayout({
                             </div>
                         </div>
 
-                        {/* Col 2: Regulatory & Pharmacovigilance */}
                         {/* Col 2: Regulatory & Clinical Tools */}
                         <div className="space-y-3">
                             <h4 className="text-xs font-bold tracking-widest text-white uppercase">
@@ -577,7 +531,7 @@ export default function BoozLayout({
                             <ul className="space-y-2 text-xs">
                                 <li>
                                     <Link
-                                        href="/glosario"
+                                        href={appUrl('/glosario')}
                                         className="flex items-center gap-2 transition-colors hover:text-cyan-400"
                                     >
                                         <Info className="h-3.5 w-3.5 text-cyan-400" />
@@ -588,27 +542,30 @@ export default function BoozLayout({
                                 </li>
                                 <li>
                                     <Link
-                                        href="/farmacovigilancia"
+                                        href={appUrl('/farmacovigilancia')}
                                         className="flex items-center gap-2 font-semibold text-amber-300 transition-colors hover:text-cyan-400"
                                     >
                                         <ShieldAlert className="h-3.5 w-3.5 text-amber-400" />
-                                        <span>Farmacovigilancia y Quejas (INH)</span>
+                                        <span>Farmacovigilancia y Quejas</span>
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link
-                                        href="/herramientas"
-                                        className="flex items-center gap-2 transition-colors hover:text-cyan-400"
+                                    <a
+                                        href={createWhatsAppUrl(
+                                            'Hola Booz Laboratorio, solicito información sobre distribución B2B (Business to Business) para farmacias y droguerías.',
+                                            'commercial',
+                                        )}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex items-center gap-2 font-medium text-emerald-400 transition-colors hover:text-emerald-300"
                                     >
-                                        <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-                                        <span>
-                                            Calculadora Pediátrica (Dosis)
-                                        </span>
-                                    </Link>
+                                        <MessageCircle className="h-3.5 w-3.5 text-emerald-400" />
+                                        <span>Distribución B2B (Business to Business)</span>
+                                    </a>
                                 </li>
                                 <li>
                                     <Link
-                                        href="/dashboard"
+                                        href={appUrl('/dashboard')}
                                         className="flex items-center gap-2 pt-1 font-bold text-blue-400 transition-colors hover:text-cyan-300"
                                     >
                                         <LayoutDashboard className="h-3.5 w-3.5 text-cyan-400" />
@@ -626,7 +583,7 @@ export default function BoozLayout({
                             <ul className="space-y-2 text-xs">
                                 <li>
                                     <a
-                                        href="/#lineas"
+                                        href={appUrl('/#lineas')}
                                         className="transition-colors hover:text-cyan-400"
                                     >
                                         Línea Ética (RX)
@@ -634,7 +591,7 @@ export default function BoozLayout({
                                 </li>
                                 <li>
                                     <a
-                                        href="/#lineas"
+                                        href={appUrl('/#lineas')}
                                         className="transition-colors hover:text-cyan-400"
                                     >
                                         Línea Dermocosmética
@@ -642,7 +599,7 @@ export default function BoozLayout({
                                 </li>
                                 <li>
                                     <a
-                                        href="/#lineas"
+                                        href={appUrl('/#lineas')}
                                         className="transition-colors hover:text-cyan-400"
                                     >
                                         Línea Natural & Bienestar
@@ -705,7 +662,7 @@ export default function BoozLayout({
                                         className="flex items-center gap-2 text-emerald-400 transition-colors hover:text-emerald-300"
                                     >
                                         <MessageCircle className="h-4 w-4 text-emerald-400" />
-                                        <span>+{contactPhone} (WhatsApp)</span>
+                                        <span>Atención WhatsApp</span>
                                     </a>
                                     <a
                                         href={`tel:+${companyPhone.replace(/\D/g, '')}`}
@@ -753,13 +710,29 @@ export default function BoozLayout({
                 onClearCart={handleClearCart}
             />
 
-            {/* Modal de Política de Calidad y Regulatorio */}
+            {/* Modal de Política de Calidad y Cumplimiento Sanitario */}
             <Modal
                 isOpen={isLegalOpen}
                 onClose={() => setIsLegalOpen(false)}
                 title="Política de Calidad y Cumplimiento Sanitario"
             >
                 <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                    <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3.5 dark:border-blue-900/40 dark:bg-blue-950/40">
+                        <h4 className="text-xs font-black uppercase text-[#002072] dark:text-cyan-400">
+                            Nuestra Misión
+                        </h4>
+                        <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                            Investigación, desarrollo y manufactura de medicamentos (Especialidades Farmacéuticas y Productos Naturales) y Cosméticos apegados a estrictos estándares de Calidad.
+                        </p>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 dark:border-slate-800 dark:bg-[#0D172E]">
+                        <h4 className="text-xs font-black uppercase text-[#002072] dark:text-cyan-400">
+                            Nuestra Visión
+                        </h4>
+                        <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                            Ser una empresa líder en la Industria Farmacéutica con alta participación en el mercado, ofreciendo productos de calidad certificada e innovando continuamente en el desarrollo de nuevas fórmulas.
+                        </p>
+                    </div>
                     <p>
                         <strong>BOOZ LABORATORIO VGME, C.A.</strong> opera bajo
                         los más rigurosos estándares de Buenas Prácticas de
@@ -767,8 +740,8 @@ export default function BoozLayout({
                         cuenta con análisis microbiológico, fisicoquímico y de
                         estabilidad certificado.
                     </p>
-                    <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-950/60">
-                        <h4 className="mb-1 font-bold text-[#002072] dark:text-cyan-400">
+                    <div className="rounded-xl border border-amber-100 bg-amber-50/70 p-3.5 dark:border-amber-900/40 dark:bg-amber-950/40">
+                        <h4 className="mb-1 text-xs font-bold text-amber-900 dark:text-amber-300">
                             Aviso contra la Automedicación
                         </h4>
                         <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300">
