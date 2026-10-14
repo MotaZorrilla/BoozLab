@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import BoozLayout from '@/layouts/booz-layout';
+import { appUrl } from '@/lib/utils';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 
@@ -48,6 +49,8 @@ export default function Login({ status, canResetPassword }: Props) {
 
                         <Form
                             {...store.form()}
+                            action={appUrl('/login')}
+                            method="post"
                             resetOnSuccess={['password']}
                             className="flex flex-col gap-5"
                         >
@@ -142,6 +145,19 @@ export default function Login({ status, canResetPassword }: Props) {
                                 </>
                             )}
                         </Form>
+
+                        {/* Credenciales de Acceso Oficial */}
+                        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 p-3 text-left text-[11px] text-slate-600 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400">
+                            <p className="font-bold text-[#002072] dark:text-cyan-400">
+                                Credenciales de Acceso Oficial:
+                            </p>
+                            <p className="mt-1">
+                                Correo: <strong className="text-slate-800 dark:text-slate-200">admin@boozlaboratorio.com</strong>
+                            </p>
+                            <p>
+                                Clave: <strong className="text-slate-800 dark:text-slate-200">admin1234</strong>
+                            </p>
+                        </div>
 
                         <div className="mt-8 border-t border-slate-100 pt-6 text-center dark:border-slate-800/80">
                             <p className="text-[11px] text-slate-400 dark:text-slate-500">

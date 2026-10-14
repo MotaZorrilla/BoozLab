@@ -83,29 +83,30 @@ export default function Home({
     const [selectedNeed, setSelectedNeed] = useState<string | null>(null);
     const [scrollY, setScrollY] = useState(0);
 
-    // Interactive mouse tilt state for Hero phone (suave, calibrado a máx 15°)
+    // Interactive mouse tilt state for Hero phone (calibrado a máx 20°)
     const [mouseTilt, setMouseTilt] = useState({ x: 0, y: 0 });
 
     const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const px = (e.clientX - rect.left) / rect.width - 0.5;
         const py = (e.clientY - rect.top) / rect.height - 0.5;
-        // Aporte de mouse suave (máx ~±3.5°)
-        setMouseTilt({ x: px * 7, y: -py * 7 });
+        setMouseTilt({ x: px * 10, y: -py * 10 });
     };
 
     const handleHeroMouseLeave = () => {
         setMouseTilt({ x: 0, y: 0 });
     };
 
-    // Interactive mouse tilt state for Showroom 12 Boxes (calibrado a máx 15°)
+    // Showroom 12 Boxes ref y progreso relativo de scroll
+    const showroomRef = useRef<HTMLDivElement>(null);
+    const [showroomScrollProgress, setShowroomScrollProgress] = useState(0.5);
     const [showroomMouseTilt, setShowroomMouseTilt] = useState({ x: 0, y: 0 });
 
     const handleShowroomMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const px = (e.clientX - rect.left) / rect.width - 0.5;
         const py = (e.clientY - rect.top) / rect.height - 0.5;
-        setShowroomMouseTilt({ x: px * 7, y: -py * 7 });
+        setShowroomMouseTilt({ x: px * 10, y: -py * 10 });
     };
 
     const handleShowroomMouseLeave = () => {
@@ -134,6 +135,12 @@ export default function Home({
             if (!ticking) {
                 window.requestAnimationFrame(() => {
                     setScrollY(window.scrollY);
+                    if (showroomRef.current) {
+                        const rect = showroomRef.current.getBoundingClientRect();
+                        const windowH = window.innerHeight;
+                        const progress = (windowH - rect.top) / (windowH + rect.height);
+                        setShowroomScrollProgress(Math.max(-0.2, Math.min(1.2, progress)));
+                    }
                     ticking = false;
                 });
                 ticking = true;
@@ -143,25 +150,26 @@ export default function Home({
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // 3D tilt calculation based on scroll + mouse tilt (calibrado estrictamente a máximo 15 grados)
+    // 3D tilt calculation based on scroll + mouse tilt (calibrado a máximo 20 grados)
     const tiltFactor = Math.min(scrollY / 500, 1);
     
-    // Hero Phone: Rotación elegante desde +5° a -7° en X, y -5° a +5° en Y, nunca excediendo 15°
-    const rawHeroX = 5 - tiltFactor * 12 + mouseTilt.y;
-    const rawHeroY = -6 + tiltFactor * 11 + mouseTilt.x;
-    const tiltRotateX = Math.max(-15, Math.min(15, rawHeroX));
-    const tiltRotateY = Math.max(-15, Math.min(15, rawHeroY));
-    const tiltRotateZ = Math.max(-6, Math.min(6, 1.2 + tiltFactor * 2.5));
-    const tiltTranslateY = tiltFactor * 18;
-    const tiltScale = 1 + tiltFactor * 0.02;
+    // Hero Phone: Rotación 3D cinemática y viva (hasta 20°)
+    const rawHeroX = 6 - tiltFactor * 16 + mouseTilt.y;
+    const rawHeroY = -8 + tiltFactor * 16 + mouseTilt.x;
+    const tiltRotateX = Math.max(-20, Math.min(20, rawHeroX));
+    const tiltRotateY = Math.max(-20, Math.min(20, rawHeroY));
+    const tiltRotateZ = Math.max(-8, Math.min(8, 1.5 + tiltFactor * 3.5));
+    const tiltTranslateY = tiltFactor * 24;
+    const tiltScale = 1 + tiltFactor * 0.03;
 
-    // Showroom 12 Boxes: Rotación 3D suave limitada a máximo 15°
-    const rawShowroomX = 4 - tiltFactor * 8 + showroomMouseTilt.y;
-    const rawShowroomY = -5 + tiltFactor * 8 + showroomMouseTilt.x;
-    const showroomRotateX = Math.max(-15, Math.min(15, rawShowroomX));
-    const showroomRotateY = Math.max(-15, Math.min(15, rawShowroomY));
-    const showroomRotateZ = Math.max(-5, Math.min(5, -0.6 + tiltFactor * 1.5));
-    const showroomTranslateY = tiltFactor * 12;
+    // Showroom 12 Boxes: Reactivo al scroll relativo de la sección y al mouse (hasta 20°)
+    const sFactor = (showroomScrollProgress - 0.5) * 2; // de -1 a +1 al cruzar la pantalla
+    const rawShowroomX = -sFactor * 14 + showroomMouseTilt.y;
+    const rawShowroomY = -sFactor * 12 + showroomMouseTilt.x;
+    const showroomRotateX = Math.max(-20, Math.min(20, rawShowroomX));
+    const showroomRotateY = Math.max(-20, Math.min(20, rawShowroomY));
+    const showroomRotateZ = Math.max(-8, Math.min(8, sFactor * 3));
+    const showroomTranslateY = -sFactor * 24;
 
     // Dynamic filtering for catalog
     const filteredProducts = useMemo(() => {
@@ -1325,6 +1333,7 @@ export default function Home({
                 5. SHOWROOM DERMOCOSMÉTICO OFICIAL (Público en la Landing Page)
             ======================================================== */}
             <section
+                ref={showroomRef}
                 className="relative overflow-hidden bg-white py-12 transition-colors duration-300 sm:py-20 dark:bg-[#0A1124]"
                 id="showroom"
             >
@@ -1344,7 +1353,7 @@ export default function Home({
                         </div>
                     </ScrollReveal>
 
-                    {/* Showroom Interactive Card con 3D Tilt suave (máximo 15°) */}
+                    {/* Showroom Interactive Card con 3D Tilt dinámico (máximo 20° + reactivo a scroll) */}
                     <ScrollReveal direction="up" delay={80}>
                         <div className="relative mx-auto max-w-5xl">
                             <div
@@ -1378,29 +1387,18 @@ export default function Home({
                                         }}
                                     />
 
-                                    {/* Badge flotante inferior */}
-                                    <div className="absolute right-3 bottom-3 left-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/20 bg-slate-950/85 p-2.5 backdrop-blur-md sm:right-6 sm:bottom-6 sm:left-6 sm:p-4">
-                                        <div className="flex items-center gap-2 sm:gap-3">
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-md sm:h-9 sm:w-9">
-                                                <Sparkles className="h-4 w-4" />
-                                            </div>
-                                            <div>
-                                                <h4 className="text-xs font-bold text-white sm:text-sm">
-                                                    12 Fórmulas Dermocosméticas Magistrales
-                                                </h4>
-                                                <p className="text-[10px] text-cyan-300 sm:text-xs">
-                                                    Cevitmer • Cutimer • Salicis • Beducis • Hidramer • Puriderm • Sulfurocis • Sport Rub • Centellacis
-                                                </p>
-                                            </div>
+                                    {/* Etiqueta moderna al margen inferior derecho (descentrada, estilo Hero) */}
+                                    <div className="absolute right-3 bottom-3 flex items-center gap-2.5 rounded-2xl border border-slate-100/90 bg-white/95 px-3 py-2 shadow-2xl backdrop-blur-md sm:right-5 sm:bottom-5 sm:gap-3 sm:px-4 sm:py-2.5 dark:border-slate-800 dark:bg-[#0D172E]/95">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-xs font-bold text-white shadow-md shadow-blue-500/30 sm:h-9 sm:w-9 sm:text-sm">
+                                            <Sparkles className="h-4 w-4" />
                                         </div>
-
-                                        <div className="hidden items-center gap-2 sm:flex">
-                                            <span className="rounded-md border border-emerald-500/30 bg-emerald-500/20 px-2.5 py-1 text-[11px] font-bold text-emerald-300">
-                                                Registro Sanitario Vigente
-                                            </span>
-                                            <span className="rounded-md border border-blue-500/30 bg-blue-500/20 px-2.5 py-1 text-[11px] font-bold text-cyan-300">
-                                                Normas Sanitarias cGMP
-                                            </span>
+                                        <div className="text-left">
+                                            <p className="text-[11px] font-bold text-slate-900 sm:text-xs dark:text-white">
+                                                12 Fórmulas Dermocosméticas
+                                            </p>
+                                            <p className="text-[9px] font-semibold text-blue-600 sm:text-[10px] dark:text-cyan-400">
+                                                Línea Magistral • Registro Sanitario
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
