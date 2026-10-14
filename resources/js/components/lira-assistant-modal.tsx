@@ -124,7 +124,7 @@ export default function LiraAssistantModal({
         setIsLoading(true);
 
         try {
-            const response = await fetch('/api/chatbot', {
+            const response = await fetch(appUrl('/api/chatbot'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ export default function LiraAssistantModal({
         setIsSubmittingContact(true);
 
         try {
-            const res = await fetch('/api/messages', {
+            const res = await fetch(appUrl('/api/messages'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -245,7 +245,7 @@ export default function LiraAssistantModal({
         'Pie Diabético (Bactrocis)',
         'Fórmula de Bacumer',
         '4 Líneas de productos',
-        'Farmacovigilancia INH',
+        'Farmacovigilancia Oficial',
     ];
 
     return (
@@ -587,7 +587,7 @@ export default function LiraAssistantModal({
                 </form>
                 <p className="pt-2 text-center text-[10px] font-medium text-slate-500">
                     🛡️ Orientación clínica de cortesía • Supervisión sanitaria
-                    conforme a normativas del INH Rafael Rangel.
+                    conforme a normativas sanitarias vigentes.
                 </p>
             </div>
         </Modal>

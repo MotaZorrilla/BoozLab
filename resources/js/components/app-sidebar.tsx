@@ -88,7 +88,7 @@ export function AppSidebar() {
                         ],
                     },
                     {
-                        title: 'Farmacovigilancia INH',
+                        title: 'Farmacovigilancia Oficial',
                         href: '/admin/reports',
                         icon: ShieldAlert,
                         badge: pendingReports > 0 ? pendingReports : undefined,
@@ -152,7 +152,7 @@ export function AppSidebar() {
     const footerNavItems: NavItem[] = [
         { title: 'Portal Web Público', href: '/', icon: Globe },
         {
-            title: 'Farmacovigilancia INH',
+            title: 'Farmacovigilancia Oficial',
             href: '/farmacovigilancia',
             icon: ShieldAlert,
         },

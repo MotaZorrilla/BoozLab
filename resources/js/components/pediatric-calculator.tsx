@@ -403,12 +403,12 @@ export default function PediatricCalculator() {
                     </div>
                 )}
 
-                {/* Descargo Ético & Regulatorio INH */}
+                {/* Descargo Ético & Regulatorio Oficial */}
                 <div className="flex items-start gap-3 rounded-2xl border border-slate-200/80 bg-slate-50 p-4 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-400">
                     <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#002072] dark:text-cyan-400" />
                     <p className="leading-relaxed">
                         <strong>
-                            Aviso Farmacológico Oficial (INH Rafael Rangel):
+                            Aviso Farmacológico Oficial:
                         </strong>{' '}
                         Esta calculadora es una herramienta de referencia
                         matemática orientada exclusivamente a profesionales de

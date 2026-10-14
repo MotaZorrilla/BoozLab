@@ -23,7 +23,29 @@ class HandleInertiaRequests extends Middleware
      */
     public function version(Request $request): ?string
     {
+        if (file_exists($manifest = public_path('build/manifest.json'))) {
+            return hash_file('xxh128', $manifest);
+        }
+
         return parent::version($request);
+    }
+
+    /**
+     * Handle version changes ensuring the /booz subpath is never lost.
+     */
+    public function onVersionChange(Request $request, \Symfony\Component\HttpFoundation\Response $response): \Symfony\Component\HttpFoundation\Response
+    {
+        if ($request->hasSession()) {
+            $request->session()->reflash();
+        }
+
+        $url = $request->fullUrl();
+        $appUrl = config('app.url');
+        if ($appUrl && str_contains($appUrl, '/booz') && !str_contains($url, '/booz')) {
+            $url = rtrim($appUrl, '/') . '/' . ltrim($request->getRequestUri(), '/');
+        }
+
+        return \Inertia\Inertia::location($url);
     }
 
     /**

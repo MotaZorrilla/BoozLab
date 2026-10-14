@@ -27,6 +27,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $appUrl = config('app.url');
+        if ($appUrl) {
+            $parsed = parse_url($appUrl);
+            $scheme = str_starts_with($appUrl, 'https://') ? 'https' : ($parsed['scheme'] ?? 'http');
+            $rootUrl = $scheme . '://' . ($parsed['host'] ?? '');
+            if (!empty($parsed['port'])) {
+                $rootUrl .= ':' . $parsed['port'];
+            }
+            \Illuminate\Support\Facades\URL::forceRootUrl($rootUrl);
+            \Illuminate\Support\Facades\URL::forceScheme($scheme);
+        }
+
         $this->configureDefaults();
         $this->configureAuthorization();
     }

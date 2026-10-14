@@ -52,6 +52,7 @@ export default function BoozLayout({
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [showScrollUp, setShowScrollUp] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [showPlantPhone, setShowPlantPhone] = useState(false);
 
     // Cart state persisted in localStorage
     const [cartItems, setCartItems] = useState<CartItem[]>(() => {
@@ -200,7 +201,7 @@ export default function BoozLayout({
                             </div>
                         </Link>
 
-                        {/* Desktop Navigation Links (Limpio: Líneas, Catálogo, Glosario, Farmacovigilancia) */}
+                        {/* Desktop Navigation Links (Limpio: Líneas, Catálogo, Farmacovigilancia) */}
                         <div className="hidden items-center space-x-7 text-sm font-semibold text-slate-600 lg:flex dark:text-slate-300">
                             <a
                                 href={appUrl('/#lineas')}
@@ -214,12 +215,6 @@ export default function BoozLayout({
                             >
                                 Catálogo
                             </a>
-                            <Link
-                                href={appUrl('/glosario')}
-                                className="transition-colors hover:text-[#002072] dark:hover:text-cyan-400"
-                            >
-                                Glosario
-                            </Link>
                             <Link
                                 href={appUrl('/farmacovigilancia')}
                                 className="transition-colors hover:text-[#002072] dark:hover:text-cyan-400"
@@ -257,18 +252,6 @@ export default function BoozLayout({
                             >
                                 <Search className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
                             </button>
-
-                            {/* Acceso a Consola Administrativa (Modernizado con Indicador Activo y ShieldCheck) */}
-                            <Link
-                                href={appUrl('/dashboard')}
-                                className="group hidden min-h-[42px] cursor-pointer items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#002072] hover:shadow-md sm:inline-flex dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-blue-600"
-                                title="Acceso a la Consola Administrativa y Auditoría Sanitaria"
-                                aria-label="Ir a la consola de administración"
-                            >
-                                <span className="flex h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                                <ShieldCheck className="h-3.5 w-3.5 text-cyan-400 transition-transform group-hover:rotate-12" />
-                                <span>Consola</span>
-                            </Link>
 
                             {/* Mobile Hamburger Menu Toggle Button (Solo visible en pantallas < lg) */}
                             <button
@@ -314,17 +297,6 @@ export default function BoozLayout({
                             </div>
                         </a>
 
-                        <Link
-                            href={appUrl('/glosario')}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex items-center justify-between rounded-xl p-3 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/70"
-                        >
-                            <div className="flex items-center gap-3">
-                                <Info className="h-4 w-4 text-blue-600 dark:text-cyan-400" />
-                                <span>Glosario Médico</span>
-                            </div>
-                        </Link>
-
                         {/* Canal de Farmacovigilancia */}
                         <Link
                             href={appUrl('/farmacovigilancia')}
@@ -334,17 +306,6 @@ export default function BoozLayout({
                             <div className="flex items-center gap-3">
                                 <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                                 <span>Canal de Farmacovigilancia</span>
-                            </div>
-                        </Link>
-
-                        <Link
-                            href={appUrl('/dashboard')}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex items-center justify-between rounded-xl p-3 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/70"
-                        >
-                            <div className="flex items-center gap-3">
-                                <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                                <span>Consola Administrativa</span>
                             </div>
                         </Link>
                     </div>
@@ -664,13 +625,49 @@ export default function BoozLayout({
                                         <MessageCircle className="h-4 w-4 text-emerald-400" />
                                         <span>Atención WhatsApp</span>
                                     </a>
-                                    <a
-                                        href={`tel:+${companyPhone.replace(/\D/g, '')}`}
-                                        className="flex items-center gap-2 text-slate-300 transition-colors hover:text-cyan-400"
-                                    >
-                                        <Phone className="h-4 w-4 text-cyan-400" />
-                                        <span>+{companyPhone} (Planta)</span>
-                                    </a>
+                                    {/* Número de Planta Interactivo (Hover / Tap Reveal) */}
+                                    <div className="relative group/phone">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setShowPlantPhone((prev) => !prev)
+                                            }
+                                            onMouseEnter={() =>
+                                                setShowPlantPhone(true)
+                                            }
+                                            className="flex cursor-pointer items-center gap-2 text-slate-300 transition-colors hover:text-cyan-400 focus:outline-none"
+                                            title="Ver número de Línea Directa Planta"
+                                            aria-label="Ver número de planta"
+                                        >
+                                            <Phone className="h-4 w-4 text-cyan-400" />
+                                            <span>Línea Directa Planta</span>
+                                        </button>
+
+                                        {/* Barra emergente interactiva con el número */}
+                                        <div
+                                            className={`absolute left-0 bottom-full z-30 mb-2 transition-all duration-300 ease-out ${
+                                                showPlantPhone
+                                                    ? 'pointer-events-auto translate-y-0 opacity-100'
+                                                    : 'pointer-events-none translate-y-2 opacity-0 group-hover/phone:pointer-events-auto group-hover/phone:translate-y-0 group-hover/phone:opacity-100'
+                                            }`}
+                                            onMouseLeave={() =>
+                                                setShowPlantPhone(false)
+                                            }
+                                        >
+                                            <div className="flex items-center gap-2.5 rounded-xl border border-cyan-500/40 bg-slate-900/98 px-3.5 py-2 shadow-2xl backdrop-blur-md">
+                                                <Phone className="h-3.5 w-3.5 animate-pulse text-cyan-400" />
+                                                <a
+                                                    href={`tel:+${companyPhone.replace(/\D/g, '')}`}
+                                                    className="font-mono text-xs font-bold tracking-wider text-white transition-colors hover:text-cyan-300"
+                                                >
+                                                    +{companyPhone}
+                                                </a>
+                                                <span className="rounded border border-cyan-800/60 bg-cyan-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-300">
+                                                    Planta
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -683,10 +680,9 @@ export default function BoozLayout({
                         </p>
                         <p className="max-w-xl text-center text-[11px] text-slate-400 md:text-right">
                             Los productos farmacéuticos aquí descritos cumplen
-                            con las especificaciones técnicas del Instituto
-                            Nacional de Higiene "Rafael Rangel" (INH). Prohibida
-                            la venta de medicamentos bajo récipe sin la
-                            correspondiente prescripción médica.
+                            con las especificaciones técnicas de los diferentes
+                            entes regulatorios. Prohibida la venta de medicamentos
+                            sin la correspondiente prescripción médica.
                         </p>
                     </div>
                 </div>

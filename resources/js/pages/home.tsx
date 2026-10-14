@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     Sparkles,
     Search,
@@ -20,6 +20,7 @@ import React, {
     useRef,
     useCallback,
 } from 'react';
+import ScrollReveal from '@/components/scroll-reveal';
 import SearchModal from '@/components/search-modal';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 import BoozLayout from '@/layouts/booz-layout';
@@ -39,6 +40,8 @@ export default function Home({
     testimonials = [],
     faqs = [],
 }: HomeProps) {
+    const { auth } = usePage<any>().props;
+    const user = auth?.user;
     const { createWhatsAppUrl } = useWhatsApp();
     const [selectedLineId, setSelectedLineId] = useState<number | null>(null);
     const [isFadingCategory, setIsFadingCategory] = useState(false);
@@ -55,14 +58,16 @@ export default function Home({
         }, 220);
     };
 
+    // Disparador directo a Lira con el requerimiento clínico seleccionado
     const handleSelectNeed = (needName: string) => {
-        setIsFadingCategory(true);
-        setTimeout(() => {
-            setSelectedNeed((prev) => (prev === needName ? null : needName));
-            setIsFadingCategory(false);
-        }, 220);
-        const el = document.getElementById('productos');
-        el?.scrollIntoView({ behavior: 'smooth' });
+        setSelectedNeed(needName);
+        window.dispatchEvent(
+            new CustomEvent('booz:open-lira', {
+                detail: {
+                    prompt: `Hola, estoy buscando productos de ${needName}. ¿Cuáles me recomiendas de su vademécum?`,
+                },
+            }),
+        );
     };
 
     const handleClearNeed = () => {
@@ -75,6 +80,20 @@ export default function Home({
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [selectedNeed, setSelectedNeed] = useState<string | null>(null);
     const [scrollY, setScrollY] = useState(0);
+
+    // Interactive mouse tilt state for Hero phone
+    const [mouseTilt, setMouseTilt] = useState({ x: 0, y: 0 });
+
+    const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        setMouseTilt({ x: px * 24, y: -py * 24 });
+    };
+
+    const handleHeroMouseLeave = () => {
+        setMouseTilt({ x: 0, y: 0 });
+    };
 
     // Contact Form Tab State
     const [contactTab, setContactTab] = useState<
@@ -107,12 +126,13 @@ export default function Home({
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // 3D tilt calculation based on scroll
-    const tiltFactor = Math.min(scrollY / 450, 1);
-    const tiltRotateX = tiltFactor * 20; // Incline forward on scroll
-    const tiltRotateY = -tiltFactor * 12; // Perspective angle
-    const tiltTranslateY = tiltFactor * 25; // Floats down smoothly
-    const tiltScale = 1 - tiltFactor * 0.04;
+    // 3D tilt calculation based on scroll + mouse tilt (efecto pronunciado y cinemático)
+    const tiltFactor = Math.min(scrollY / 400, 1.4);
+    const tiltRotateX = 12 - tiltFactor * 32 + mouseTilt.y; // Inclinación dinámica marcada
+    const tiltRotateY = -15 - tiltFactor * 36 + mouseTilt.x; // Giro pronunciado mostrando el lateral 3D
+    const tiltRotateZ = 4 + tiltFactor * 10; // Rotación Z para sensación cinemática
+    const tiltTranslateY = tiltFactor * 50; // Desplazamiento flotante pronunciado
+    const tiltScale = 1 + tiltFactor * 0.08;
 
     // Dynamic filtering for catalog
     const filteredProducts = useMemo(() => {
@@ -437,14 +457,24 @@ export default function Home({
                         {/* Hero Image Showcase (En Móvil va PRIMERO, en Desktop a la derecha) */}
                         <div className="relative flex justify-center order-1 lg:order-2 lg:col-span-5">
                             <div
-                                className="group relative flex aspect-[9/16] w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] items-center justify-center overflow-hidden rounded-[2.5rem] border-4 border-slate-900/10 bg-slate-950 p-2 shadow-2xl shadow-blue-900/25 transition-colors sm:p-2.5 dark:border-cyan-500/30 dark:bg-slate-950"
+                                onMouseMove={handleHeroMouseMove}
+                                onMouseLeave={handleHeroMouseLeave}
+                                className="group relative flex aspect-[9/16] w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] items-center justify-center overflow-hidden rounded-[2.5rem] border-4 border-slate-900/20 bg-slate-950 p-2 shadow-[0_30px_70px_-15px_rgba(0,32,114,0.45)] transition-colors sm:p-2.5 dark:border-cyan-500/40 dark:bg-slate-950 dark:shadow-[0_30px_70px_-15px_rgba(6,182,212,0.35)]"
                                 style={{
-                                    transform: `perspective(1000px) rotateX(${tiltRotateX}deg) rotateY(${tiltRotateY}deg) translateY(${tiltTranslateY}px) scale(${tiltScale})`,
+                                    transform: `perspective(900px) rotateX(${tiltRotateX}deg) rotateY(${tiltRotateY}deg) rotateZ(${tiltRotateZ}deg) translateY(${tiltTranslateY}px) scale(${tiltScale})`,
+                                    boxShadow: `${tiltRotateY * -1.2}px ${25 + tiltTranslateY * 0.4}px 65px rgba(0,32,114,0.45)`,
                                     transition:
-                                        'transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                                        'transform 0.1s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.1s ease-out',
                                     transformStyle: 'preserve-3d',
                                 }}
                             >
+                                {/* Reflejo dinámico de cristal que gira con la perspectiva */}
+                                <div
+                                    className="pointer-events-none absolute inset-0 z-20 rounded-[2.3rem] opacity-35 transition-opacity duration-300 group-hover:opacity-55"
+                                    style={{
+                                        background: `linear-gradient(${115 + tiltFactor * 40}deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.06) 42%, rgba(0,0,0,0) 65%)`,
+                                    }}
+                                />
                                 <img
                                     src="/assets/img/hero_nuestra_imagen_evoluciona.jpg"
                                     alt="¡Nuestra Imagen Evoluciona! Booz Laboratorio"
@@ -548,87 +578,90 @@ export default function Home({
                 id="lineas"
             >
                 <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
-                    <div className="mx-auto mb-10 max-w-3xl space-y-2 text-center sm:mb-14">
-                        <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
-                            Especialización Terapéutica
-                        </span>
-                        <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl lg:text-4xl dark:text-white">
-                            Nuestras 3 Líneas de Productos
-                        </h2>
-                        <p className="text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-slate-300">
-                            Formulaciones científicas de alta biodisponibilidad
-                            desarrolladas para cubrir integralmente la terapéutica ética,
-                            la salud dérmica y el bienestar familiar.
-                        </p>
-                    </div>
+                    <ScrollReveal direction="up">
+                        <div className="mx-auto mb-10 max-w-3xl space-y-2 text-center sm:mb-14">
+                            <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
+                                Especialización Terapéutica
+                            </span>
+                            <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl lg:text-4xl dark:text-white">
+                                Nuestras 3 Líneas de Productos
+                            </h2>
+                            <p className="text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-slate-300">
+                                Formulaciones científicas de alta biodisponibilidad
+                                desarrolladas para cubrir integralmente la terapéutica ética,
+                                la salud dérmica y el bienestar familiar.
+                            </p>
+                        </div>
+                    </ScrollReveal>
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-                        {productLines.map((line) => {
+                        {productLines.map((line, idx) => {
                             const isSelected = selectedLineId === line.id;
                             const count = products.filter(
                                 (p) => p.product_line_id === line.id,
                             ).length;
 
                             return (
-                                <div
-                                    key={line.id}
-                                    onClick={() => {
-                                        handleSelectCategory(
-                                            isSelected ? null : line.id,
-                                        );
-                                        const el =
-                                            document.getElementById(
-                                                'productos',
+                                <ScrollReveal key={line.id} direction="up" delay={idx * 80}>
+                                    <div
+                                        onClick={() => {
+                                            handleSelectCategory(
+                                                isSelected ? null : line.id,
                                             );
-                                        el?.scrollIntoView({
-                                            behavior: 'smooth',
-                                        });
-                                    }}
-                                    className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-5 text-white transition-all duration-300 sm:rounded-3xl sm:p-6 ${
-                                        line.id === 1
-                                            ? /* CERTIFICADO OFICIAL: PANTONE 506 C Borgoña/Vinotinto Booz Ética */
-                                              'bg-gradient-to-br from-[#581827] via-[#842D44] to-[#3B0E19] hover:from-[#6E1E31] hover:to-[#4A1220]'
-                                            : line.id === 2
-                                              ? /* Azul Corporativo Booz Dermocosmética */
-                                                'bg-gradient-to-br from-[#002072] via-blue-900 to-indigo-950 hover:from-blue-900 hover:to-indigo-900'
-                                              : /* Esmeralda / Verde Natural & Bienestar */
-                                                'bg-gradient-to-br from-emerald-950 via-teal-950 to-slate-950 hover:from-emerald-900 hover:to-teal-900'
-                                    } ${isSelected ? 'scale-[1.02] shadow-2xl ring-4 ring-cyan-400' : 'shadow-lg hover:scale-[1.02]'}`}
-                                >
-                                    <div>
-                                        <div className="mb-3 flex items-center justify-between">
-                                            <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-black tracking-wider uppercase">
-                                                {count} Productos
-                                            </span>
-                                            <span className="text-2xl">
-                                                {line.id === 1
-                                                    ? '💊'
-                                                    : line.id === 2
-                                                      ? '🧴'
-                                                      : '🌿'}
-                                            </span>
+                                            const el =
+                                                document.getElementById(
+                                                    'productos',
+                                                );
+                                            el?.scrollIntoView({
+                                                behavior: 'smooth',
+                                            });
+                                        }}
+                                        className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-5 text-white transition-all duration-300 sm:rounded-3xl sm:p-6 ${
+                                            line.id === 1
+                                                ? /* CERTIFICADO OFICIAL: PANTONE 506 C Borgoña/Vinotinto Booz Ética */
+                                                  'bg-gradient-to-br from-[#581827] via-[#842D44] to-[#3B0E19] hover:from-[#6E1E31] hover:to-[#4A1220]'
+                                                : line.id === 2
+                                                  ? /* Azul Corporativo Booz Dermocosmética */
+                                                    'bg-gradient-to-br from-[#002072] via-blue-900 to-indigo-950 hover:from-blue-900 hover:to-indigo-900'
+                                                  : /* Esmeralda / Verde Natural & Bienestar */
+                                                    'bg-gradient-to-br from-emerald-950 via-teal-950 to-slate-950 hover:from-emerald-900 hover:to-teal-900'
+                                        } ${isSelected ? 'scale-[1.02] shadow-2xl ring-4 ring-cyan-400' : 'shadow-lg hover:scale-[1.02]'}`}
+                                    >
+                                        <div>
+                                            <div className="mb-3 flex items-center justify-between">
+                                                <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-black tracking-wider uppercase">
+                                                    {count} Productos
+                                                </span>
+                                                <span className="text-2xl">
+                                                    {line.id === 1
+                                                        ? '💊'
+                                                        : line.id === 2
+                                                          ? '🧴'
+                                                          : '🌿'}
+                                                </span>
+                                            </div>
+
+                                            <h3 className="mb-2 text-lg leading-snug font-bold sm:text-xl">
+                                                {line.name}
+                                            </h3>
+
+                                            <p className="line-clamp-3 text-xs leading-relaxed text-slate-300">
+                                                {line.description}
+                                            </p>
                                         </div>
 
-                                        <h3 className="mb-2 text-lg leading-snug font-bold sm:text-xl">
-                                            {line.name}
-                                        </h3>
-
-                                        <p className="line-clamp-3 text-xs leading-relaxed text-slate-300">
-                                            {line.description}
-                                        </p>
-                                    </div>
-
-                                    <div className="pt-4 sm:pt-6">
-                                        <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-center text-xs font-bold transition-colors hover:bg-white/20">
-                                            <span>
-                                                {isSelected
-                                                    ? 'Línea Seleccionada ✓'
-                                                    : 'Ver productos'}
-                                            </span>
-                                            <ArrowRight className="h-3 w-3" />
+                                        <div className="pt-4 sm:pt-6">
+                                            <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-center text-xs font-bold transition-colors hover:bg-white/20">
+                                                <span>
+                                                    {isSelected
+                                                        ? 'Línea Seleccionada ✓'
+                                                        : 'Ver productos'}
+                                                </span>
+                                                <ArrowRight className="h-3 w-3" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </ScrollReveal>
                             );
                         })}
                     </div>
@@ -640,102 +673,104 @@ export default function Home({
             ======================================================== */}
             <section className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-16 dark:border-slate-800 dark:bg-[#070C18]">
                 <div className="mx-auto max-w-5xl px-3 sm:px-6 lg:px-8 2xl:max-w-6xl">
-                    <div className="group relative overflow-hidden rounded-3xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-2xl sm:p-10">
-                        {/* Fila Superior: Lira Asistente Virtual */}
-                        <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-8">
-                            {/* Podio / Halo luminoso blanco perla */}
-                            <div className="relative flex h-40 w-40 flex-shrink-0 items-center justify-center sm:h-48 sm:w-48">
-                                <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-white/95 via-cyan-100/90 to-white/90 opacity-85 blur-xl transition-opacity group-hover:opacity-100 sm:inset-3" />
-                                <div className="pointer-events-none absolute inset-6 rounded-full bg-white/40 blur-md sm:inset-4" />
-                                <img
-                                    src="/assets/img/lira_greeting_animated.gif"
-                                    alt="Lira Asistente Virtual Saludando"
-                                    className="relative z-10 h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,32,114,0.5)] transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-105"
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src =
-                                            '/assets/img/lira_head_avatar.png';
-                                    }}
-                                />
+                    <ScrollReveal direction="up">
+                        <div className="group relative overflow-hidden rounded-3xl border border-blue-900/40 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-2xl sm:p-10">
+                            {/* Fila Superior: Lira Asistente Virtual */}
+                            <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-8">
+                                {/* Podio / Halo luminoso blanco perla */}
+                                <div className="relative flex h-40 w-40 flex-shrink-0 items-center justify-center sm:h-48 sm:w-48">
+                                    <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-white/95 via-cyan-100/90 to-white/90 opacity-85 blur-xl transition-opacity group-hover:opacity-100 sm:inset-3" />
+                                    <div className="pointer-events-none absolute inset-6 rounded-full bg-white/40 blur-md sm:inset-4" />
+                                    <img
+                                        src="/assets/img/lira_greeting_animated.gif"
+                                        alt="Lira Asistente Virtual Saludando"
+                                        className="relative z-10 h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,32,114,0.5)] transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-105"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src =
+                                                '/assets/img/lira_head_avatar.png';
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="flex-1 space-y-3 text-center sm:text-left">
+                                    <span className="inline-block rounded-full border border-blue-400/30 bg-blue-500/30 px-3 py-0.5 text-[10px] font-black tracking-wider text-blue-200 uppercase">
+                                        IA Médica
+                                    </span>
+                                    <h3 className="text-2xl leading-tight font-black sm:text-3xl">
+                                        Hola, soy Lira <br />
+                                        <span className="text-lg font-normal text-cyan-300 sm:text-xl">
+                                            Tu asistente virtual
+                                        </span>
+                                    </h3>
+                                    <p className="max-w-xl text-xs leading-relaxed text-slate-300 sm:text-sm">
+                                        Orientación sobre medicamentos, líneas terapéuticas y formulaciones oficiales de Booz Laboratorio.
+                                    </p>
+                                    <div className="pt-1">
+                                        <button
+                                            onClick={() =>
+                                                window.dispatchEvent(
+                                                    new CustomEvent('booz:open-lira'),
+                                                )
+                                            }
+                                            className="inline-flex cursor-pointer items-center gap-2.5 rounded-xl bg-white px-5 py-2.5 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 active:scale-95 sm:text-sm"
+                                        >
+                                            <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-cyan-400 bg-blue-50">
+                                                <img
+                                                    src="/assets/img/lira_avatar_animated.gif"
+                                                    alt="Lira"
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            </div>
+                                            <span>Hablar con Lira</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="flex-1 space-y-3 text-center sm:text-left">
-                                <span className="inline-block rounded-full border border-blue-400/30 bg-blue-500/30 px-3 py-0.5 text-[10px] font-black tracking-wider text-blue-200 uppercase">
-                                    IA Médica
-                                </span>
-                                <h3 className="text-2xl leading-tight font-black sm:text-3xl">
-                                    Hola, soy Lira <br />
-                                    <span className="text-lg font-normal text-cyan-300 sm:text-xl">
-                                        Tu asistente virtual
+                            {/* Fila Inferior: ¿Qué necesitas? con Botones de Filtro Integrados */}
+                            <div className="mt-8 border-t border-white/10 pt-6">
+                                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                                    <span className="text-xs font-bold tracking-wider text-cyan-300 uppercase">
+                                        ¿Qué necesitas? Encuentra tu solución inmediata:
                                     </span>
-                                </h3>
-                                <p className="max-w-xl text-xs leading-relaxed text-slate-300 sm:text-sm">
-                                    Orientación sobre medicamentos, líneas terapéuticas y formulaciones oficiales de Booz Laboratorio.
-                                </p>
-                                <div className="pt-1">
-                                    <button
-                                        onClick={() =>
-                                            window.dispatchEvent(
-                                                new CustomEvent('booz:open-lira'),
-                                            )
-                                        }
-                                        className="inline-flex cursor-pointer items-center gap-2.5 rounded-xl bg-white px-5 py-2.5 text-xs font-black text-blue-950 shadow-lg transition-all hover:bg-blue-50 active:scale-95 sm:text-sm"
-                                    >
-                                        <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-cyan-400 bg-blue-50">
-                                            <img
-                                                src="/assets/img/lira_avatar_animated.gif"
-                                                alt="Lira"
-                                                className="h-full w-full object-cover"
-                                            />
-                                        </div>
-                                        <span>Hablar con Lira</span>
-                                    </button>
+                                    {selectedNeed && (
+                                        <button
+                                            onClick={handleClearNeed}
+                                            className="cursor-pointer text-xs font-bold text-cyan-400 underline hover:text-cyan-300"
+                                        >
+                                            Limpiar filtro ({selectedNeed}) ✕
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="flex flex-wrap gap-2.5">
+                                    {[
+                                        { name: 'Cuidado', icon: '🧴' },
+                                        { name: 'Protección', icon: '🛡️' },
+                                        { name: 'Tratamiento', icon: '💊' },
+                                        { name: 'Bienestar', icon: '🌿' },
+                                        { name: 'Especializado', icon: '🔬' },
+                                    ].map((need) => (
+                                        <button
+                                            key={need.name}
+                                            onClick={() =>
+                                                handleSelectNeed(need.name)
+                                            }
+                                            className={`flex cursor-pointer items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all sm:text-sm ${
+                                                selectedNeed === need.name
+                                                    ? 'bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 ring-2 ring-white'
+                                                    : 'border border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/30'
+                                            }`}
+                                        >
+                                            <span className="text-sm">
+                                                {need.icon}
+                                            </span>
+                                            <span>{need.name}</span>
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         </div>
-
-                        {/* Fila Inferior: ¿Qué necesitas? con Botones de Filtro Integrados */}
-                        <div className="mt-8 border-t border-white/10 pt-6">
-                            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                                <span className="text-xs font-bold tracking-wider text-cyan-300 uppercase">
-                                    ¿Qué necesitas? Encuentra tu solución inmediata:
-                                </span>
-                                {selectedNeed && (
-                                    <button
-                                        onClick={handleClearNeed}
-                                        className="cursor-pointer text-xs font-bold text-cyan-400 underline hover:text-cyan-300"
-                                    >
-                                        Limpiar filtro ({selectedNeed}) ✕
-                                    </button>
-                                )}
-                            </div>
-                            <div className="flex flex-wrap gap-2.5">
-                                {[
-                                    { name: 'Cuidado', icon: '🧴' },
-                                    { name: 'Protección', icon: '🛡️' },
-                                    { name: 'Tratamiento', icon: '💊' },
-                                    { name: 'Bienestar', icon: '🌿' },
-                                    { name: 'Especializado', icon: '🔬' },
-                                ].map((need) => (
-                                    <button
-                                        key={need.name}
-                                        onClick={() =>
-                                            handleSelectNeed(need.name)
-                                        }
-                                        className={`flex cursor-pointer items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all sm:text-sm ${
-                                            selectedNeed === need.name
-                                                ? 'bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 ring-2 ring-white'
-                                                : 'border border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/30'
-                                        }`}
-                                    >
-                                        <span className="text-sm">
-                                            {need.icon}
-                                        </span>
-                                        <span>{need.name}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                    </ScrollReveal>
                 </div>
             </section>
 
@@ -748,32 +783,34 @@ export default function Home({
             >
                 <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
                     {/* Header del Catálogo */}
-                    <div className="mb-6 flex flex-col justify-between gap-4 sm:mb-8 md:flex-row md:items-end">
-                        <div>
-                            <span className="mb-1 block text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
-                                Portafolio Clínico Oficial
-                            </span>
-                            <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl dark:text-white">
-                                Vademécum Farmacológico
-                            </h2>
-                            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                Mostrando {filteredProducts.length} formulaciones
-                                registradas ante las autoridades sanitarias (INH).
-                            </p>
-                        </div>
+                    <ScrollReveal direction="up">
+                        <div className="mb-6 flex flex-col justify-between gap-4 sm:mb-8 md:flex-row md:items-end">
+                            <div>
+                                <span className="mb-1 block text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
+                                    Portafolio Clínico Oficial
+                                </span>
+                                <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl dark:text-white">
+                                    Vademécum Farmacológico
+                                </h2>
+                                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                    Mostrando {filteredProducts.length} formulaciones
+                                    registradas ante las autoridades sanitarias nacionales.
+                                </p>
+                            </div>
 
-                        {/* Search in Catalog Input */}
-                        <div className="relative w-full md:w-80">
-                            <Search className="absolute top-3 left-3 h-4 w-4 text-slate-400" />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Buscar medicamento o principio..."
-                                className="w-full rounded-xl border border-slate-200 bg-white py-2 pr-4 pl-9 text-xs text-slate-900 transition-colors outline-none focus:border-transparent focus:ring-2 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                            />
+                            {/* Search in Catalog Input */}
+                            <div className="relative w-full md:w-80">
+                                <Search className="absolute top-3 left-3 h-4 w-4 text-slate-400" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Buscar medicamento o principio..."
+                                    className="w-full rounded-xl border border-slate-200 bg-white py-2 pr-4 pl-9 text-xs text-slate-900 transition-colors outline-none focus:border-transparent focus:ring-2 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </ScrollReveal>
 
                     {/* Selector de Vista Táctil para Teléfonos: Cuadrícula vs Carrusel 3D */}
                     <div className="mb-4 flex items-center justify-between gap-1 rounded-xl border border-slate-200/60 bg-slate-100 p-1 sm:hidden dark:border-slate-700 dark:bg-slate-800/80">
@@ -940,20 +977,26 @@ export default function Home({
                                         {filteredProducts.map((product) => (
                                             <div
                                                 key={`grid-${product.id}`}
-                                                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2.5 shadow-xs transition-all dark:border-slate-800 dark:bg-[#0D172E]"
+                                                onClick={() => router.visit(appUrl(`/producto/${product.slug}`))}
+                                                role="link"
+                                                tabIndex={0}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        router.visit(appUrl(`/producto/${product.slug}`));
+                                                    }
+                                                }}
+                                                className="group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2.5 shadow-xs transition-all hover:border-blue-400 hover:shadow-md dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500/50"
                                             >
-                                                <Link
-                                                    href={appUrl(`/producto/${product.slug}`)}
-                                                    className="block"
-                                                >
-                                                    {/* Imagen Cuadrada con Badges */}
+                                                {/* Imagen Cuadrada con Badges */}
+                                                <div>
                                                     <div className="relative mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-2 dark:bg-slate-800/60">
                                                         <img
                                                             src={
                                                                 product.image_path
                                                             }
                                                             alt={product.name}
-                                                            className="h-full w-full object-contain"
+                                                            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
                                                             onError={(e) => {
                                                                 (
                                                                     e.target as HTMLImageElement
@@ -979,7 +1022,7 @@ export default function Home({
                                                     </div>
 
                                                     {/* Información del Fármaco */}
-                                                    <h4 className="line-clamp-1 text-xs font-bold text-slate-900 dark:text-white">
+                                                    <h4 className="line-clamp-1 text-xs font-bold text-slate-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-cyan-400">
                                                         {product.name}
                                                     </h4>
                                                     <p className="line-clamp-1 text-[10px] font-semibold text-[#002072] dark:text-cyan-400">
@@ -990,16 +1033,13 @@ export default function Home({
                                                     <p className="line-clamp-1 text-[10px] text-slate-400 dark:text-slate-500">
                                                         {product.presentation}
                                                     </p>
-                                                </Link>
+                                                </div>
 
                                                 {/* Enlace a Ficha y Cotización Institucional */}
                                                 <div className="mt-2.5 flex items-center justify-between gap-1.5 border-t border-slate-100 pt-2 dark:border-slate-800">
-                                                    <Link
-                                                        href={appUrl(`/producto/${product.slug}`)}
-                                                        className="text-[10px] font-bold text-[#002072] hover:underline dark:text-cyan-400"
-                                                    >
+                                                    <span className="text-[10px] font-bold text-[#002072] group-hover:underline dark:text-cyan-400">
                                                         Ver Ficha
-                                                    </Link>
+                                                    </span>
                                                     <a
                                                         href={createWhatsAppUrl(
                                                             `Hola Booz Laboratorio, solicito cotización para el producto: ${product.name} (${product.presentation}).`,
@@ -1086,9 +1126,17 @@ export default function Home({
                                                         className="py-2"
                                                     >
                                                         {/* Tarjeta 100% Clickeable hacia la Ficha Técnica */}
-                                                        <Link
-                                                            href={appUrl(`/producto/${product.slug}`)}
-                                                            className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-400 hover:shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500/50 dark:hover:shadow-cyan-950/30"
+                                                        <div
+                                                            onClick={() => router.visit(appUrl(`/producto/${product.slug}`))}
+                                                            role="link"
+                                                            tabIndex={0}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                                    e.preventDefault();
+                                                                    router.visit(appUrl(`/producto/${product.slug}`));
+                                                                }
+                                                            }}
+                                                            className="group relative flex h-full cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-400 hover:shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-[#0D172E] dark:hover:border-cyan-500/50 dark:hover:shadow-cyan-950/30"
                                                         >
                                                             {/* Fotografía del Fármaco y Badges */}
                                                             <div>
@@ -1188,7 +1236,7 @@ export default function Home({
                                                                     </a>
                                                                 </div>
                                                             </div>
-                                                        </Link>
+                                                        </div>
                                                     </div>
                                                 ),
                                             )}
@@ -1245,85 +1293,89 @@ export default function Home({
             </section>
 
             {/* ========================================================
-                5. SECCIÓN DE CONOCIMIENTO & AUTORIDAD CLÍNICA
+                5. SECCIÓN DE CONOCIMIENTO & AUTORIDAD CLÍNICA (Solo usuarios autenticados)
             ======================================================== */}
-            <section
-                className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-20 dark:border-slate-800 dark:bg-[#070C18]"
-                id="conocimiento"
-            >
-                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
-                    <div className="grid grid-cols-1 items-center gap-8 sm:gap-12 lg:grid-cols-2">
-                        <div className="space-y-4 sm:space-y-6">
-                            <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
-                                Compromiso Institucional & Calidad
-                            </span>
-                            <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl lg:text-4xl dark:text-white">
-                                Misión, Visión y Estándares de Manufactura
-                            </h2>
-                            
-                            {/* Misión y Visión Oficiales de Booz Laboratorio */}
-                            <div className="space-y-3 rounded-2xl border border-blue-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[#0D172E]">
-                                <div>
-                                    <h4 className="text-xs font-black tracking-wide text-[#002072] uppercase dark:text-cyan-400">
-                                        Nuestra Misión
-                                    </h4>
-                                    <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-                                        Investigación, desarrollo y manufactura de medicamentos (Especialidades Farmacéuticas y Productos Naturales) y Cosméticos apegados a estrictos estándares de Calidad.
-                                    </p>
-                                </div>
-                                <div className="border-t border-slate-100 pt-3 dark:border-slate-800">
-                                    <h4 className="text-xs font-black tracking-wide text-[#002072] uppercase dark:text-cyan-400">
-                                        Nuestra Visión
-                                    </h4>
-                                    <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-                                        Ser una empresa líder en la Industria Farmacéutica con alta participación en el mercado, ofreciendo productos de calidad certificada e innovando continuamente en el desarrollo de nuevas fórmulas.
-                                    </p>
-                                </div>
-                            </div>
+            {user ? (
+                <ScrollReveal direction="up">
+                    <section
+                        className="border-y border-slate-200 bg-slate-50 py-12 transition-colors duration-300 sm:py-20 dark:border-slate-800 dark:bg-[#070C18]"
+                        id="conocimiento"
+                    >
+                        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
+                            <div className="grid grid-cols-1 items-center gap-8 sm:gap-12 lg:grid-cols-2">
+                                <div className="space-y-4 sm:space-y-6">
+                                    <span className="text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
+                                        Compromiso Institucional & Calidad
+                                    </span>
+                                    <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl lg:text-4xl dark:text-white">
+                                        Misión, Visión y Estándares de Manufactura
+                                    </h2>
+                                    
+                                    {/* Misión y Visión Oficiales de Booz Laboratorio */}
+                                    <div className="space-y-3 rounded-2xl border border-blue-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[#0D172E]">
+                                        <div>
+                                            <h4 className="text-xs font-black tracking-wide text-[#002072] uppercase dark:text-cyan-400">
+                                                Nuestra Misión
+                                            </h4>
+                                            <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                                                Investigación, desarrollo y manufactura de medicamentos (Especialidades Farmacéuticas y Productos Naturales) y Cosméticos apegados a estrictos estándares de Calidad.
+                                            </p>
+                                        </div>
+                                        <div className="border-t border-slate-100 pt-3 dark:border-slate-800">
+                                            <h4 className="text-xs font-black tracking-wide text-[#002072] uppercase dark:text-cyan-400">
+                                                Nuestra Visión
+                                            </h4>
+                                            <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                                                Ser una empresa líder en la Industria Farmacéutica con alta participación en el mercado, ofreciendo productos de calidad certificada e innovando continuamente en el desarrollo de nuevas fórmulas.
+                                            </p>
+                                        </div>
+                                    </div>
 
-                            <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2 sm:gap-4">
-                                <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[#0D172E]">
-                                    <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
-                                    <div>
-                                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                                            Objetivo Sanitario
-                                        </h4>
-                                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                                            Garantizar la efectividad, seguridad y eficacia bajo estricto apego a las Normas Sanitarias Nacionales.
-                                        </p>
+                                    <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2 sm:gap-4">
+                                        <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[#0D172E]">
+                                            <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
+                                            <div>
+                                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                                    Objetivo Sanitario
+                                                </h4>
+                                                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                                    Garantizar la efectividad, seguridad y eficacia bajo estricto apego a las Normas Sanitarias Nacionales.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[#0D172E]">
+                                            <Microscope className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600 dark:text-cyan-400" />
+                                            <div>
+                                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                                    Planta Valle de Guanape
+                                                </h4>
+                                                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                                    Gerencia General & Dpto. de Calidad garantizando el abastecimiento del mercado.
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[#0D172E]">
-                                    <Microscope className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600 dark:text-cyan-400" />
-                                    <div>
-                                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                                            Planta Valle de Guanape
-                                        </h4>
-                                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                                            Gerencia General & Dpto. de Calidad garantizando el abastecimiento del mercado.
-                                        </p>
+                                <div className="relative">
+                                    <div className="flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-slate-900">
+                                        <img
+                                            src="/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg"
+                                            alt="Línea de Producción Farmacéutica Booz Laboratorio"
+                                            className="h-full w-full rounded-xl object-contain drop-shadow-md"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src =
+                                                    '/assets/img/booz_official_logo_full.png';
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div className="relative">
-                            <div className="flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-slate-900">
-                                <img
-                                    src="/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg"
-                                    alt="Línea de Producción Farmacéutica Booz Laboratorio"
-                                    className="h-full w-full rounded-xl object-contain drop-shadow-md"
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src =
-                                            '/assets/img/booz_official_logo_full.png';
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                    </section>
+                </ScrollReveal>
+            ) : null}
 
 
             {/* ========================================================
@@ -1337,49 +1389,52 @@ export default function Home({
                     <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
                         {/* Accordion FAQ */}
                         <div className="space-y-4 lg:col-span-6">
-                            <span className="block text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
-                                Resolución de Dudas
-                            </span>
-                            <h2 className="mb-4 text-2xl font-black tracking-tight text-blue-950 sm:text-3xl dark:text-white">
-                                Preguntas Frecuentes
-                            </h2>
+                            <ScrollReveal direction="up">
+                                <span className="block text-xs font-bold tracking-widest text-blue-600 uppercase dark:text-cyan-400">
+                                    Resolución de Dudas
+                                </span>
+                                <h2 className="mb-4 text-2xl font-black tracking-tight text-blue-950 sm:text-3xl dark:text-white">
+                                    Preguntas Frecuentes
+                                </h2>
+                            </ScrollReveal>
                             <div className="space-y-3">
-                                {faqs.map((faq) => {
+                                {faqs.map((faq, idx) => {
                                     const isOpen = openFaqId === faq.id;
                                     return (
-                                        <div
-                                            key={faq.id}
-                                            className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all sm:rounded-2xl dark:border-slate-800 dark:bg-[#0D172E]"
-                                        >
-                                            <button
-                                                onClick={() =>
-                                                    toggleFaq(faq.id)
-                                                }
-                                                className="flex w-full cursor-pointer items-center justify-between gap-3 p-4 text-left text-xs font-bold text-slate-900 transition-colors hover:text-blue-600 sm:text-sm dark:text-white dark:hover:text-cyan-400"
-                                            >
-                                                <span>{faq.question}</span>
-                                                <ChevronDown
-                                                    className={`h-4 w-4 flex-shrink-0 text-slate-400 transition-transform duration-200 ${
-                                                        isOpen
-                                                            ? 'rotate-180 text-blue-600 dark:text-cyan-400'
-                                                            : ''
-                                                    }`}
-                                                />
-                                            </button>
+                                        <ScrollReveal key={faq.id} direction="up" delay={idx * 60}>
+                                            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all sm:rounded-2xl dark:border-slate-800 dark:bg-[#0D172E]">
+                                                <button
+                                                    onClick={() =>
+                                                        toggleFaq(faq.id)
+                                                    }
+                                                    className="flex w-full cursor-pointer items-center justify-between gap-3 p-4 text-left text-xs font-bold text-slate-900 transition-colors hover:text-blue-600 sm:text-sm dark:text-white dark:hover:text-cyan-400"
+                                                >
+                                                    <span>{faq.question}</span>
+                                                    <ChevronDown
+                                                        className={`h-4 w-4 flex-shrink-0 text-slate-400 transition-transform duration-200 ${
+                                                            isOpen
+                                                                ? 'rotate-180 text-blue-600 dark:text-cyan-400'
+                                                                : ''
+                                                        }`}
+                                                    />
+                                                </button>
 
-                                            {isOpen && (
-                                                <div className="animate-fadeIn border-t border-slate-100 px-4 pt-3 pb-4 text-xs leading-relaxed text-slate-600 dark:border-slate-800/80 dark:text-slate-300">
-                                                    {faq.answer}
-                                                </div>
-                                            )}
-                                        </div>
+                                                {isOpen && (
+                                                    <div className="animate-fadeIn border-t border-slate-100 px-4 pt-3 pb-4 text-xs leading-relaxed text-slate-600 dark:border-slate-800/80 dark:text-slate-300">
+                                                        {faq.answer}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </ScrollReveal>
                                     );
                                 })}
                             </div>
                         </div>
 
                         {/* Interactive Contact & Report Form */}
-                        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors sm:rounded-3xl sm:p-8 lg:col-span-6 dark:border-slate-800 dark:bg-[#0D172E]">
+                        <div className="lg:col-span-6">
+                            <ScrollReveal direction="up" delay={120}>
+                                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors sm:rounded-3xl sm:p-8 dark:border-slate-800 dark:bg-[#0D172E]">
                             <h3 className="mb-2 text-xl font-black text-blue-950 dark:text-white">
                                 Estamos para escucharte
                             </h3>
@@ -1584,6 +1639,8 @@ export default function Home({
                                     </button>
                                 </form>
                             )}
+                                </div>
+                            </ScrollReveal>
                         </div>
                     </div>
                 </div>

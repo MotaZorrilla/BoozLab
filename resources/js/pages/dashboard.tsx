@@ -314,7 +314,7 @@ export default function Dashboard({
                                         Administración completa de los 18
                                         fármacos de producción nacional,
                                         principios activos, posologías, números
-                                        de registro sanitario INH, precios y
+                                        de registro sanitario oficial, precios y
                                         stock.
                                     </p>
                                 </div>
@@ -368,14 +368,14 @@ export default function Dashboard({
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-black text-slate-900 transition-colors group-hover:text-amber-700 dark:text-white dark:group-hover:text-amber-400">
-                                        Farmacovigilancia INH
+                                        Farmacovigilancia Oficial
                                     </h3>
                                     <p className="mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                                         Recepción de notificaciones de
                                         reacciones adversas (RAM), control
                                         estricto de lotes de planta, dictámenes
                                         técnicos y emisión de actas sanitarias
-                                        para el INH.
+                                        oficiales.
                                     </p>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 border-t border-slate-100 pt-2 text-xs dark:border-slate-800/80">
@@ -402,7 +402,7 @@ export default function Dashboard({
                                     href="/admin/reports"
                                     className="inline-flex w-full items-center justify-between rounded-2xl bg-amber-700 px-4 py-3 text-xs font-bold text-white shadow-sm transition-all hover:bg-amber-800"
                                 >
-                                    <span>Ir a Farmacovigilancia INH</span>
+                                    <span>Ir a Farmacovigilancia Oficial</span>
                                     <ChevronRight className="h-4 w-4" />
                                 </Link>
                             </div>
@@ -592,7 +592,7 @@ export default function Dashboard({
                         <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                         <span>
                             Plataforma Clínica operando bajo Buenas Prácticas de
-                            Manufactura (BPM) y normativas sanitarias INH.
+                            Manufactura (BPM) y normativas sanitarias vigentes.
                         </span>
                     </div>
                     <div className="font-mono text-[11px] text-slate-400">
