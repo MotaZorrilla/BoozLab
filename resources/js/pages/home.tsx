@@ -12,6 +12,8 @@ import {
     LayoutGrid,
     SlidersHorizontal,
     MessageCircle,
+    Building2,
+    LayoutDashboard,
 } from 'lucide-react';
 import React, {
     useState,
@@ -81,18 +83,33 @@ export default function Home({
     const [selectedNeed, setSelectedNeed] = useState<string | null>(null);
     const [scrollY, setScrollY] = useState(0);
 
-    // Interactive mouse tilt state for Hero phone
+    // Interactive mouse tilt state for Hero phone (suave, calibrado a máx 15°)
     const [mouseTilt, setMouseTilt] = useState({ x: 0, y: 0 });
 
     const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const px = (e.clientX - rect.left) / rect.width - 0.5;
         const py = (e.clientY - rect.top) / rect.height - 0.5;
-        setMouseTilt({ x: px * 24, y: -py * 24 });
+        // Aporte de mouse suave (máx ~±3.5°)
+        setMouseTilt({ x: px * 7, y: -py * 7 });
     };
 
     const handleHeroMouseLeave = () => {
         setMouseTilt({ x: 0, y: 0 });
+    };
+
+    // Interactive mouse tilt state for Showroom 12 Boxes (calibrado a máx 15°)
+    const [showroomMouseTilt, setShowroomMouseTilt] = useState({ x: 0, y: 0 });
+
+    const handleShowroomMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        setShowroomMouseTilt({ x: px * 7, y: -py * 7 });
+    };
+
+    const handleShowroomMouseLeave = () => {
+        setShowroomMouseTilt({ x: 0, y: 0 });
     };
 
     // Contact Form Tab State
@@ -110,7 +127,7 @@ export default function Home({
         product_name: '',
     });
 
-    // Scroll listener optimizado con requestAnimationFrame para animación 3D del Hero
+    // Scroll listener optimizado con requestAnimationFrame para animaciones 3D
     useEffect(() => {
         let ticking = false;
         const handleScroll = () => {
@@ -126,13 +143,25 @@ export default function Home({
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // 3D tilt calculation based on scroll + mouse tilt (efecto pronunciado y cinemático)
-    const tiltFactor = Math.min(scrollY / 400, 1.4);
-    const tiltRotateX = 12 - tiltFactor * 32 + mouseTilt.y; // Inclinación dinámica marcada
-    const tiltRotateY = -15 - tiltFactor * 36 + mouseTilt.x; // Giro pronunciado mostrando el lateral 3D
-    const tiltRotateZ = 4 + tiltFactor * 10; // Rotación Z para sensación cinemática
-    const tiltTranslateY = tiltFactor * 50; // Desplazamiento flotante pronunciado
-    const tiltScale = 1 + tiltFactor * 0.08;
+    // 3D tilt calculation based on scroll + mouse tilt (calibrado estrictamente a máximo 15 grados)
+    const tiltFactor = Math.min(scrollY / 500, 1);
+    
+    // Hero Phone: Rotación elegante desde +5° a -7° en X, y -5° a +5° en Y, nunca excediendo 15°
+    const rawHeroX = 5 - tiltFactor * 12 + mouseTilt.y;
+    const rawHeroY = -6 + tiltFactor * 11 + mouseTilt.x;
+    const tiltRotateX = Math.max(-15, Math.min(15, rawHeroX));
+    const tiltRotateY = Math.max(-15, Math.min(15, rawHeroY));
+    const tiltRotateZ = Math.max(-6, Math.min(6, 1.2 + tiltFactor * 2.5));
+    const tiltTranslateY = tiltFactor * 18;
+    const tiltScale = 1 + tiltFactor * 0.02;
+
+    // Showroom 12 Boxes: Rotación 3D suave limitada a máximo 15°
+    const rawShowroomX = 4 - tiltFactor * 8 + showroomMouseTilt.y;
+    const rawShowroomY = -5 + tiltFactor * 8 + showroomMouseTilt.x;
+    const showroomRotateX = Math.max(-15, Math.min(15, rawShowroomX));
+    const showroomRotateY = Math.max(-15, Math.min(15, rawShowroomY));
+    const showroomRotateZ = Math.max(-5, Math.min(5, -0.6 + tiltFactor * 1.5));
+    const showroomTranslateY = tiltFactor * 12;
 
     // Dynamic filtering for catalog
     const filteredProducts = useMemo(() => {
@@ -1293,7 +1322,141 @@ export default function Home({
             </section>
 
             {/* ========================================================
-                5. SECCIÓN DE CONOCIMIENTO & AUTORIDAD CLÍNICA (Solo usuarios autenticados)
+                5. SHOWROOM DERMOCOSMÉTICO OFICIAL (Público en la Landing Page)
+            ======================================================== */}
+            <section
+                className="relative overflow-hidden bg-white py-12 transition-colors duration-300 sm:py-20 dark:bg-[#0A1124]"
+                id="showroom"
+            >
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 2xl:max-w-[1536px] 2xl:px-12 3xl:max-w-[1840px]">
+                    <ScrollReveal direction="up">
+                        <div className="mx-auto mb-10 max-w-3xl space-y-3 text-center sm:mb-14">
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold tracking-widest text-[#002072] uppercase dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-cyan-400">
+                                <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-400" />
+                                Showroom Clínico Oficial
+                            </span>
+                            <h2 className="text-2xl font-black tracking-tight text-blue-950 sm:text-3xl lg:text-4xl dark:text-white">
+                                Muestra Clínica de Nuestra Línea Dermocosmética
+                            </h2>
+                            <p className="text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-slate-300">
+                                Doce formulaciones magistrales desarrolladas bajo los más rigurosos estándares sanitarios venezolanos e internacionales. Presentaciones oficiales listas para prescripción médica y distribución hospitalaria.
+                            </p>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* Showroom Interactive Card con 3D Tilt suave (máximo 15°) */}
+                    <ScrollReveal direction="up" delay={80}>
+                        <div className="relative mx-auto max-w-5xl">
+                            <div
+                                onMouseMove={handleShowroomMouseMove}
+                                onMouseLeave={handleShowroomMouseLeave}
+                                className="group relative overflow-hidden rounded-3xl border border-blue-900/20 bg-gradient-to-b from-slate-900 via-[#0D172E] to-slate-950 p-3 shadow-2xl transition-all sm:p-6 dark:border-cyan-500/30"
+                                style={{
+                                    transform: `perspective(1000px) rotateX(${showroomRotateX}deg) rotateY(${showroomRotateY}deg) rotateZ(${showroomRotateZ}deg) translateY(${showroomTranslateY}px)`,
+                                    boxShadow: `${showroomRotateY * -1.5}px ${20 + showroomTranslateY * 0.5}px 60px rgba(0,32,114,0.35)`,
+                                    transition:
+                                        'transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.12s ease-out',
+                                    transformStyle: 'preserve-3d',
+                                }}
+                            >
+                                {/* Reflejo dinámico de cristal */}
+                                <div
+                                    className="pointer-events-none absolute inset-0 z-20 rounded-3xl opacity-20 transition-opacity duration-300 group-hover:opacity-35"
+                                    style={{
+                                        background: `linear-gradient(${120 + tiltFactor * 30}deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 45%, rgba(0,0,0,0) 70%)`,
+                                    }}
+                                />
+
+                                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-slate-950/80">
+                                    <img
+                                        src="/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg"
+                                        alt="Showroom de la Línea Dermocosmética Booz Laboratorio - 12 Fórmulas Oficiales"
+                                        className="h-full w-full object-contain drop-shadow-2xl transition-transform duration-700 group-hover:scale-[1.02]"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src =
+                                                '/assets/img/hero_products.png';
+                                        }}
+                                    />
+
+                                    {/* Badge flotante inferior */}
+                                    <div className="absolute right-3 bottom-3 left-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/20 bg-slate-950/85 p-2.5 backdrop-blur-md sm:right-6 sm:bottom-6 sm:left-6 sm:p-4">
+                                        <div className="flex items-center gap-2 sm:gap-3">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-md sm:h-9 sm:w-9">
+                                                <Sparkles className="h-4 w-4" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-xs font-bold text-white sm:text-sm">
+                                                    12 Fórmulas Dermocosméticas Magistrales
+                                                </h4>
+                                                <p className="text-[10px] text-cyan-300 sm:text-xs">
+                                                    Cevitmer • Cutimer • Salicis • Beducis • Hidramer • Puriderm • Sulfurocis • Sport Rub • Centellacis
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="hidden items-center gap-2 sm:flex">
+                                            <span className="rounded-md border border-emerald-500/30 bg-emerald-500/20 px-2.5 py-1 text-[11px] font-bold text-emerald-300">
+                                                Registro Sanitario Vigente
+                                            </span>
+                                            <span className="rounded-md border border-blue-500/30 bg-blue-500/20 px-2.5 py-1 text-[11px] font-bold text-cyan-300">
+                                                Normas Sanitarias cGMP
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* Características Clínicas del Showroom */}
+                    <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
+                        <ScrollReveal direction="up" delay={120}>
+                            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-xs transition-colors dark:border-slate-800 dark:bg-[#0D172E]">
+                                <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                        Inocuidad & Pureza Clínica
+                                    </h4>
+                                    <p className="mt-1 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                                        Microbiología y estabilidad certificadas en cada lote de producción en Planta Valle de Guanape.
+                                    </p>
+                                </div>
+                            </div>
+                        </ScrollReveal>
+
+                        <ScrollReveal direction="up" delay={180}>
+                            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-xs transition-colors dark:border-slate-800 dark:bg-[#0D172E]">
+                                <Microscope className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600 dark:text-cyan-400" />
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                        Presentación en Estuche
+                                    </h4>
+                                    <p className="mt-1 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                                        Empaque primario y secundario con protección actínica y precinto de inviolabilidad farmacéutica.
+                                    </p>
+                                </div>
+                            </div>
+                        </ScrollReveal>
+
+                        <ScrollReveal direction="up" delay={240}>
+                            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-xs transition-colors dark:border-slate-800 dark:bg-[#0D172E]">
+                                <Building2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-cyan-600 dark:text-cyan-400" />
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                        Distribución Ética & B2B
+                                    </h4>
+                                    <p className="mt-1 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                                        Abastecimiento prioritario para droguerías, clínicas, farmacias y profesionales de la salud.
+                                    </p>
+                                </div>
+                            </div>
+                        </ScrollReveal>
+                    </div>
+                </div>
+            </section>
+
+            {/* ========================================================
+                6. SECCIÓN DE CONOCIMIENTO & AUTORIDAD CLÍNICA (Solo usuarios autenticados)
             ======================================================== */}
             {user ? (
                 <ScrollReveal direction="up">
@@ -1359,16 +1522,29 @@ export default function Home({
                                 </div>
 
                                 <div className="relative">
-                                    <div className="flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-xl sm:rounded-3xl sm:p-5 dark:border-slate-800 dark:bg-slate-900">
-                                        <img
-                                            src="/assets/img/Foto_Muestra_Linea_12_Estuches_Dermatologicos.jpeg"
-                                            alt="Línea de Producción Farmacéutica Booz Laboratorio"
-                                            className="h-full w-full rounded-xl object-contain drop-shadow-md"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).src =
-                                                    '/assets/img/booz_official_logo_full.png';
-                                            }}
-                                        />
+                                    <div className="flex flex-col justify-between rounded-2xl border border-blue-900/30 bg-gradient-to-br from-[#002072] via-indigo-950 to-slate-950 p-6 text-white shadow-xl dark:border-slate-800 sm:rounded-3xl sm:p-8">
+                                        <div className="space-y-4">
+                                            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/40 px-3 py-1 text-xs font-semibold text-cyan-300">
+                                                <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+                                                <span>Acceso Corporativo & Operativo</span>
+                                            </div>
+                                            <h3 className="text-xl font-extrabold text-white sm:text-2xl">
+                                                Consola Técnica & Aseguramiento de Calidad
+                                            </h3>
+                                            <p className="text-xs leading-relaxed text-slate-300">
+                                                Gestión de vademécum oficial, documentación técnica confidencial de planta y reportes de farmacovigilancia reservada para el personal autorizado de Booz Laboratorio C.A.
+                                            </p>
+                                        </div>
+
+                                        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                                            <Link
+                                                href={appUrl('/dashboard')}
+                                                className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-5 py-3 text-xs font-bold text-slate-950 shadow-md transition-all hover:bg-cyan-400"
+                                            >
+                                                <LayoutDashboard className="h-4 w-4" />
+                                                <span>Ingresar al Panel Administrativo</span>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

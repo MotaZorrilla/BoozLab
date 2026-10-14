@@ -32,6 +32,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\EnsurePermission::class,
         ]);
 
+        $middleware->redirectTo(
+            guests: fn (Request $request) => route('login'),
+            users: fn (Request $request) => route('dashboard'),
+        );
+
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
@@ -47,6 +52,11 @@ return Application::configure(basePath: dirname(__DIR__))
                     'message' => 'El recurso clínico solicitado no fue encontrado en el servidor.',
                 ], 404);
             }
+
+            return \Inertia\Inertia::render('error', [
+                'status' => 404,
+                'message' => 'La formulación médica, sección o recurso clínico no fue encontrado en el catálogo oficial.',
+            ])->toResponse($request)->setStatusCode(404);
         });
 
         $exceptions->render(function (TooManyRequestsHttpException $e, Request $request) {

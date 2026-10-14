@@ -526,7 +526,7 @@ export default function BoozLayout({
                                 </li>
                                 <li>
                                     <Link
-                                        href={appUrl('/dashboard')}
+                                        href={appUrl('/login')}
                                         className="flex items-center gap-2 pt-1 font-bold text-blue-400 transition-colors hover:text-cyan-300"
                                     >
                                         <LayoutDashboard className="h-3.5 w-3.5 text-cyan-400" />
